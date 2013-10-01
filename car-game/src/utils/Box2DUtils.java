@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Box2DUtils {
 
-	public static Body createPolygonBody(World world, Vector2 pos, float width, float height,float density, float friction, float restitution,boolean dynamic){
+	public static Body createPolygonBody(World world, Vector2 pos, float width, float height,float density, float friction, float restitution,boolean dynamic,boolean sensor){
         BodyDef bodyDef = new BodyDef();  
         if(dynamic){
         	bodyDef.type = BodyType.DynamicBody;
@@ -24,6 +24,7 @@ public class Box2DUtils {
         fixtureDef.density = density;  
         fixtureDef.friction = friction;  
         fixtureDef.restitution = restitution;
+        fixtureDef.isSensor = sensor;
         body.createFixture(fixtureDef);
         body.resetMassData();
         return body;

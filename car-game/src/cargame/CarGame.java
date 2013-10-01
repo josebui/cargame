@@ -7,31 +7,29 @@ import pong.client.core.BodyEditorLoader;
 import utils.Box2DUtils;
 import cargame.elements.Car;
 import cargame.elements.Element;
+import cargame.elements.TrackSensor;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.GdxNativesLoader;
 
 public class CarGame implements ApplicationListener {
+	
+	private static final String TRACKS_PATH = "tracks/track1";
+	
 	private World world;
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
@@ -42,6 +40,7 @@ public class CarGame implements ApplicationListener {
 	static final int BOX_POSITION_ITERATIONS = 2;
 	
 	private List<Element> elements;
+	private List<Sprite> staticSprites;
 	
 	Car car1; // Player1's car
 	Car car2; // Player2's car
@@ -56,24 +55,33 @@ public class CarGame implements ApplicationListener {
 		
 		
 	}
-
+	
 	@Override
 	public void create() {
 		
 		elements = new ArrayList<Element>();
 		
+		// Static sprites
+		staticSprites = new ArrayList<Sprite>();
+		
+		// Background
+		Sprite spriteBackground = new Sprite(new Texture("img/racetrack.png"));
+		spriteBackground.setScale(0.27f,0.27f);
+		spriteBackground.setOrigin(0f,0f);
+		staticSprites.add(spriteBackground);
 		
 		Gdx.graphics.setDisplayMode(1200, 800, false);
+//		Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 		camera = new OrthographicCamera(300,200);  
         camera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
         camera.update();
         
         batch = new SpriteBatch();
         
-        Box2DUtils.createPolygonBody(world, new Vector2(0, 0), camera.viewportWidth, 1.0f, 0f, 0.1f, 2, false);
-        Box2DUtils.createPolygonBody(world, new Vector2(0, camera.viewportHeight), (camera.viewportWidth) , 1.0f, 0f, 0.1f, 2, false);
-        Box2DUtils.createPolygonBody(world, new Vector2(0, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false);
-        Box2DUtils.createPolygonBody(world, new Vector2(camera.viewportWidth, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false);
+        Box2DUtils.createPolygonBody(world, new Vector2(0, 0), camera.viewportWidth, 1.0f, 0f, 0.1f, 2, false, false);
+        Box2DUtils.createPolygonBody(world, new Vector2(0, camera.viewportHeight), (camera.viewportWidth) , 1.0f, 0f, 0.1f, 2, false, false);
+        Box2DUtils.createPolygonBody(world, new Vector2(0, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false, false);
+        Box2DUtils.createPolygonBody(world, new Vector2(camera.viewportWidth, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false, false);
         
         car1 = new Car(this,Car.SPRITE_2);
         car2 = new Car(this,Car.SPRITE_4);
@@ -82,55 +90,62 @@ public class CarGame implements ApplicationListener {
         elements.add(car2);
         
         //Load track
-        loadTrack();
+        loadTrack("track1");
         
         // Collision listeners
-        world.setContactListener(new ContactListener() {
-
-            @Override
-            public void beginContact(Contact contact) {
-                Fixture fixtureA = contact.getFixtureA();
-                Fixture fixtureB = contact.getFixtureB();
-                System.out.println("beginContact"+ " between " + fixtureA.toString() + " and " + fixtureB.toString());
-            }
-
-            @Override
-            public void endContact(Contact contact) {
-                Fixture fixtureA = contact.getFixtureA();
-                Fixture fixtureB = contact.getFixtureB();
-                System.out.println("endContact"+" between " + fixtureA.toString() + " and " + fixtureB.toString());
-            }
-
-            @Override
-            public void preSolve(Contact contact, Manifold oldManifold) {
-            }
-
-            @Override
-            public void postSolve(Contact contact, ContactImpulse impulse) {
-            }
-
-        });
+//        world.setContactListener(new ContactListener() {
+//
+//            @Override
+//            public void beginContact(Contact contact) {
+//                Fixture fixtureA = contact.getFixtureA();
+//                Fixture fixtureB = contact.getFixtureB();
+////                System.out.println("beginContact"+ " between " + fixtureA.toString() + " and " + fixtureB.toString());
+//            }
+//
+//            @Override
+//            public void endContact(Contact contact) {
+//                Fixture fixtureA = contact.getFixtureA();
+//                Fixture fixtureB = contact.getFixtureB();
+////                System.out.println("endContact"+" between " + fixtureA.toString() + " and " + fixtureB.toString());
+//            }
+//
+//            @Override
+//            public void preSolve(Contact contact, Manifold oldManifold) {
+//            }
+//
+//            @Override
+//            public void postSolve(Contact contact, ContactImpulse impulse) {
+//            }
+//
+//        });
         
         debugRenderer = new Box2DDebugRenderer(true,false,false,true,false,false);  
 	}
 	
-	public void loadTrack(){
-		// Loads tracks file created with Physics body editor (https://code.google.com/p/box2d-editor/) 
-		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("tracks/track1"));
-	 
-	    BodyDef bd = new BodyDef();
-	    bd.position.set(0, 0);
-	    //bd.type = BodyType.DynamicBody;
-	 
-	    FixtureDef fd = new FixtureDef();
-	    fd.density = 1;
-	    fd.friction = 0.1f;
-	    fd.restitution = 0.3f;
-	 
-	    Body body = world.createBody(bd);
-	 
-	    // Creates the box2D object with the name in the Physics body editor bodies list
-	    loader.attachFixture(body, "Name", fd, 280);
+	public void loadTrack(String trackName) {
+		// Loads tracks file created with Physics body editor
+		// (https://code.google.com/p/box2d-editor/)
+		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal(TRACKS_PATH));
+
+		BodyDef bd = new BodyDef();
+		bd.position.set(0, 0);
+		// bd.type = BodyType.DynamicBody;
+
+		FixtureDef fd = new FixtureDef();
+		fd.density = 1;
+		fd.friction = 0.1f;
+		fd.restitution = 0.3f;
+
+		Body body = world.createBody(bd);
+
+		// Creates the box2D object with the name in the Physics body editor
+		// bodies list
+		loader.attachFixture(body, trackName, fd, 280);
+		
+		// Track contact listener
+		TrackSensor sensor = new TrackSensor(this);
+		world.setContactListener(sensor);
+		
 	}
 
 	@Override
@@ -177,11 +192,16 @@ public class CarGame implements ApplicationListener {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		
-		BitmapFont font = new BitmapFont();
+		// Static sprites
+		for(Sprite sprite: staticSprites){
+			sprite.draw(batch);
+		}
+		
+//		BitmapFont font = new BitmapFont();
 //		TextureAtlas textureAtlas = new TextureAtlas("data/main");
 //		font = new BitmapFont(Gdx.files.internal("fonts/font1.fnt"));
-		font.setScale(0.5f, 0.5f);
-		font.draw(batch, "hola", 10, 10);
+//		font.setScale(0.5f, 0.5f);
+//		font.draw(batch, "hola", 10, 10);
 		
 		for(Element element : elements){
 			Body body = element.getBody();
@@ -196,8 +216,8 @@ public class CarGame implements ApplicationListener {
 			}
 		}
 		batch.end();
-
 		
+//		debugRenderer.render(world, camera.combined);
 
 	}
 
@@ -217,17 +237,8 @@ public class CarGame implements ApplicationListener {
 		return world;
 	}
 
-	public void setWorld(World world) {
-		this.world = world;
+	public List<Element> getElements() {
+		return elements;
 	}
-
-	public OrthographicCamera getCamera() {
-		return camera;
-	}
-
-	public void setCamera(OrthographicCamera camera) {
-		this.camera = camera;
-	}
-	
 	
 }

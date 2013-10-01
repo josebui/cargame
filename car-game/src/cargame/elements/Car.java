@@ -26,9 +26,12 @@ public class Car implements Element{
 	
 	private String spritePath; 
 	
+	private int laps;
+	
 	public Car(CarGame game,String spritePath) {
 		this.game = game;
 		this.spritePath = spritePath;
+		this.laps = 0;
 		createCarObject();
 	}
 	
@@ -43,7 +46,7 @@ public class Car implements Element{
 	}
 	
 	private void createCarObject(){
-		body = Box2DUtils.createPolygonBody(game.getWorld(), Car.CAR_STARTING_POS, 2f, 7f, 0.1f, 10f, 0.1f,true);
+		body = Box2DUtils.createPolygonBody(game.getWorld(), Car.CAR_STARTING_POS, 2f, 7f, 0.1f, 10f, 0.1f,true,false);
 		
 		// Car image
 		Sprite sprite = new Sprite(new Texture(this.spritePath));
@@ -54,6 +57,16 @@ public class Car implements Element{
 
 	public Body getBody(){
 		return body;
+	}
+	
+	public void addLap(){
+		this.laps++;
+		System.out.println("Laps "+this.toString()+":"+this.laps);
+	}
+	
+	public void removeLap(){
+		this.laps--;
+		System.out.println("Laps "+this.toString()+":"+this.laps);
 	}
 
 }
