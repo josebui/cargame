@@ -170,6 +170,9 @@ public class CarGame implements ApplicationListener {
 			car2.setEngineSpeed(-Car.HORSEPOWERS);
 		}
 		
+		// Box2d Render
+		debugRenderer.render(world, camera.combined);
+		
 		// Set object images
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
@@ -193,10 +196,9 @@ public class CarGame implements ApplicationListener {
 			}
 		}
 		batch.end();
+
 		
-		
-		// Render
-		debugRenderer.render(world, camera.combined);
+
 	}
 
 	@Override
