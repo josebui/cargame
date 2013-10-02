@@ -10,6 +10,7 @@ import java.util.Map;
 
 import cargame.core.Client;
 import cargame.core.GameInfo;
+import cargame.core.MovingPosition;
 import cargame.core.Player;
 import cargame.screens.GameOver;
 import cargame.screens.GameScreen;
@@ -60,7 +61,7 @@ public class CarGame extends Game implements Client{
 	
 	private Integer getPlayerId(){
 		try {
-			Socket socket = new Socket("localhost",1234);
+			Socket socket = new Socket("localhost",1235);
 			
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 			objectOutputStream.writeObject("ID");
@@ -128,7 +129,7 @@ public class CarGame extends Game implements Client{
 	@Override
 	public void sendMyPlayerInfo(Player player) {
 		try {
-			Socket socket = new Socket("localhost",1234);
+			Socket socket = new Socket("localhost",1235);
 			
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 			objectOutputStream.writeObject(player);
@@ -165,6 +166,7 @@ public class CarGame extends Game implements Client{
 	}
 
 	public Player getMyPlayer() {
+		
 		return myPlayer;
 	}
 

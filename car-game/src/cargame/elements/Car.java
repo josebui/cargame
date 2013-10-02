@@ -82,6 +82,7 @@ public class Car implements Element{
 	}
 	
 	public void setPosition(MovingPosition movingPosition){
+		if(movingPosition == null) return;
 		this.getBody().setTransform(new Vector2(movingPosition.xPos, movingPosition.yPos), movingPosition.angle);
 		this.getBody().setLinearVelocity(new Vector2(movingPosition.linearSpeedX, movingPosition.linearSpeedY));
 		this.getBody().setAngularVelocity(movingPosition.angularSpeed);
@@ -94,6 +95,19 @@ public class Car implements Element{
 	public void setPlayer(Player player) {
 		this.player = player;
 		this.setPosition(player.movingPosition);
+	}
+	
+	public void updatePosition(){
+		if(player.movingPosition == null){
+			player.movingPosition = new MovingPosition();
+		}
+		
+		player.movingPosition.xPos = getBody().getPosition().x;
+		player.movingPosition.yPos = getBody().getPosition().y;
+		player.movingPosition.angle = getBody().getPosition().angle();
+		player.movingPosition.linearSpeedX = getBody().getLinearVelocity().x;
+		player.movingPosition.linearSpeedY = getBody().getLinearVelocity().y;
+		player.movingPosition.angularSpeed = getBody().getAngularVelocity();
 	}
 	
 }

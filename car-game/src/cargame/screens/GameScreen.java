@@ -149,6 +149,8 @@ public class GameScreen implements Screen {
 //			car2.setEngineSpeed(-Car.HORSEPOWERS);
 //		}
 		
+		playerCar.updatePosition();
+		
 		for(int playerId : CarGame.getInstance().getPlayers().keySet()){
         	if(playerCar.getPlayer().id != playerId){
         		if(players.containsKey(playerId)){
