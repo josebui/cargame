@@ -22,10 +22,10 @@ public class TrackSensor implements ContactListener {
 	private Body sensor1;
 	private Body sensor2;
 	
-	private boolean wrongDirection;
+	private Map<Car,Boolean> wrongDirection;
 	
-	Map<Car,Boolean> passedSensor1;
-	Map<Car,Boolean> passedSensor2;
+	private Map<Car,Boolean> passedSensor1;
+	private Map<Car,Boolean> passedSensor2;
 	
 	public TrackSensor(GameScreen game) {
 		super();
@@ -33,16 +33,19 @@ public class TrackSensor implements ContactListener {
 		this.game = game;
 		
 		// Finish line sensors
-		this.wrongDirection = true;
+		
 		passedSensor1 = new HashMap<Car, Boolean>();
 		passedSensor2 = new HashMap<Car, Boolean>();
 		sensor2 = Box2DUtils.createPolygonBody(game.getWorld(), new Vector2(135, 25), 1f, 15f, 0f, 0f, 0f, false,true);
 		sensor1 = Box2DUtils.createPolygonBody(game.getWorld(), new Vector2(140, 25), 1f, 15f, 0f, 0f, 0f, false,true);
 		
+		wrongDirection =  new HashMap<Car, Boolean>();
+		
 		// Move cars to start line
 		for(int i=0;i<game.getElements().size();i++){
 			Car car = (Car) game.getElements().get(i);
 			if(car != null){
+				wrongDirection.put(car, true);
 				car.getBody().setTransform(sensor1.getPosition().x+10, sensor1.getPosition().y, (float)( sensor1.getAngle()-Math.PI/2.0));
 			}
 			
@@ -50,15 +53,15 @@ public class TrackSensor implements ContactListener {
 	}
 
 	@Override
-	public void beginContact(Contact contact) {
+	public void endContact(Contact contact) {
 
 		// Finish line sensors
 		Car car = getCarCollision(contact,sensor1);
         if(car != null){
         	passedSensor1.put(car, true);
         	if(passedSensor2.containsKey(car) && passedSensor2.get(car)){
-        		if(!wrongDirection){
-        			wrongDirection = true; 
+        		if(!wrongDirection.get(car)){
+        			wrongDirection.put(car,true); 
         		}
         		
         		passedSensor2.put(car, false);
@@ -70,8 +73,8 @@ public class TrackSensor implements ContactListener {
         if(car != null){
         	passedSensor2.put(car, true);
         	if(passedSensor1.containsKey(car) && passedSensor1.get(car)){
-        		if(wrongDirection){
-        			wrongDirection = false;
+        		if(wrongDirection.get(car)){
+        			wrongDirection.put(car, false);
         		}else{
         			car.addLap();
         		}
@@ -82,7 +85,7 @@ public class TrackSensor implements ContactListener {
 	}
 
 	@Override
-	public void endContact(Contact contact) {
+	public void beginContact(Contact contact) {
 	}
 	
 	private Car getCarCollision(Contact contact,Body sensor){
