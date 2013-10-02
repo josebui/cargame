@@ -8,13 +8,16 @@ import utils.Box2DUtils;
 import cargame.elements.Car;
 import cargame.elements.Element;
 import cargame.elements.TrackSensor;
+import cargame.ui.Hud;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -42,9 +45,13 @@ public class CarGame implements ApplicationListener {
 	private List<Element> elements;
 	private List<Sprite> staticSprites;
 	
+	private Hud playerHud;
+	
 	Car car1; // Player1's car
 	Car car2; // Player2's car
 
+	Car playerCar;
+	
 	static {
 		GdxNativesLoader.load();
 	}
@@ -52,14 +59,15 @@ public class CarGame implements ApplicationListener {
 	public CarGame() {
 		super();
 		world = new World(new Vector2(0, 0), true);
-		
-		
 	}
 	
 	@Override
 	public void create() {
 		
 		elements = new ArrayList<Element>();
+		
+		// Player Hud
+		playerHud = new Hud(this);
 		
 		// Static sprites
 		staticSprites = new ArrayList<Sprite>();
@@ -72,52 +80,27 @@ public class CarGame implements ApplicationListener {
 		
 		Gdx.graphics.setDisplayMode(1200, 800, false);
 //		Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-		camera = new OrthographicCamera(300,200);  
+		camera = new OrthographicCamera(276,205);  
         camera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
         camera.update();
         
         batch = new SpriteBatch();
         
+        // Boundaries
         Box2DUtils.createPolygonBody(world, new Vector2(0, 0), camera.viewportWidth, 1.0f, 0f, 0.1f, 2, false, false);
         Box2DUtils.createPolygonBody(world, new Vector2(0, camera.viewportHeight), (camera.viewportWidth) , 1.0f, 0f, 0.1f, 2, false, false);
         Box2DUtils.createPolygonBody(world, new Vector2(0, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false, false);
         Box2DUtils.createPolygonBody(world, new Vector2(camera.viewportWidth, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false, false);
-        
+
+        // Cars
         car1 = new Car(this,Car.SPRITE_2);
+        playerCar = car1; 
         car2 = new Car(this,Car.SPRITE_4);
-        
         elements.add(car1);
         elements.add(car2);
         
         //Load track
         loadTrack("track1");
-        
-        // Collision listeners
-//        world.setContactListener(new ContactListener() {
-//
-//            @Override
-//            public void beginContact(Contact contact) {
-//                Fixture fixtureA = contact.getFixtureA();
-//                Fixture fixtureB = contact.getFixtureB();
-////                System.out.println("beginContact"+ " between " + fixtureA.toString() + " and " + fixtureB.toString());
-//            }
-//
-//            @Override
-//            public void endContact(Contact contact) {
-//                Fixture fixtureA = contact.getFixtureA();
-//                Fixture fixtureB = contact.getFixtureB();
-////                System.out.println("endContact"+" between " + fixtureA.toString() + " and " + fixtureB.toString());
-//            }
-//
-//            @Override
-//            public void preSolve(Contact contact, Manifold oldManifold) {
-//            }
-//
-//            @Override
-//            public void postSolve(Contact contact, ContactImpulse impulse) {
-//            }
-//
-//        });
         
         debugRenderer = new Box2DDebugRenderer(true,false,false,true,false,false);  
 	}
@@ -197,11 +180,8 @@ public class CarGame implements ApplicationListener {
 			sprite.draw(batch);
 		}
 		
-//		BitmapFont font = new BitmapFont();
-//		TextureAtlas textureAtlas = new TextureAtlas("data/main");
-//		font = new BitmapFont(Gdx.files.internal("fonts/font1.fnt"));
-//		font.setScale(0.5f, 0.5f);
-//		font.draw(batch, "hola", 10, 10);
+		// Hud
+		playerHud.render(batch);
 		
 		for(Element element : elements){
 			Body body = element.getBody();
@@ -239,6 +219,14 @@ public class CarGame implements ApplicationListener {
 
 	public List<Element> getElements() {
 		return elements;
+	}
+
+	public OrthographicCamera getCamera() {
+		return camera;
+	}
+
+	public Car getPlayerCar() {
+		return playerCar;
 	}
 	
 }

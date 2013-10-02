@@ -69,4 +69,11 @@ public class Car implements Element{
 		System.out.println("Laps "+this.toString()+":"+this.laps);
 	}
 
+	public int getLaps() {
+		return laps;
+	}
+
+	public float getSpeed(){
+		return getBody().getLinearVelocity().len()*1.5f;
+	}
 }

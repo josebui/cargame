@@ -21,6 +21,8 @@ public class TrackSensor implements ContactListener {
 	private Body sensor1;
 	private Body sensor2;
 	
+	private boolean wrongDirection;
+	
 	Map<Car,Boolean> passedSensor1;
 	Map<Car,Boolean> passedSensor2;
 	
@@ -29,7 +31,8 @@ public class TrackSensor implements ContactListener {
 		
 		this.game = game;
 		
-		// Finish line sensros
+		// Finish line sensors
+		this.wrongDirection = true;
 		passedSensor1 = new HashMap<Car, Boolean>();
 		passedSensor2 = new HashMap<Car, Boolean>();
 		sensor2 = Box2DUtils.createPolygonBody(game.getWorld(), new Vector2(135, 25), 1f, 15f, 0f, 0f, 0f, false,true);
@@ -53,7 +56,10 @@ public class TrackSensor implements ContactListener {
         if(car != null){
         	passedSensor1.put(car, true);
         	if(passedSensor2.containsKey(car) && passedSensor2.get(car)){
-        		car.removeLap();
+        		if(!wrongDirection){
+        			wrongDirection = true; 
+        		}
+        		
         		passedSensor2.put(car, false);
         		passedSensor1.put(car, false);
         	}
@@ -63,7 +69,11 @@ public class TrackSensor implements ContactListener {
         if(car != null){
         	passedSensor2.put(car, true);
         	if(passedSensor1.containsKey(car) && passedSensor1.get(car)){
-        		car.addLap();
+        		if(wrongDirection){
+        			wrongDirection = false;
+        		}else{
+        			car.addLap();
+        		}
         		passedSensor1.put(car, false);
         		passedSensor2.put(car, false);
         	}
