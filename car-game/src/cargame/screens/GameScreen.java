@@ -1,11 +1,14 @@
 package cargame.screens;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pong.client.core.BodyEditorLoader;
 import utils.Box2DUtils;
 import cargame.CarGame;
+import cargame.core.Player;
 import cargame.elements.Car;
 import cargame.elements.Element;
 import cargame.elements.TrackSensor;
@@ -46,18 +49,24 @@ public class GameScreen implements Screen {
 	
 	private Hud playerHud;
 	
-	Car car1; // Player1's car
-	Car car2; // Player2's car
-
-	Car playerCar;
+	private boolean gameOver;
+	
+	private Car playerCar;
+	
+	private Map<Integer,Car> players;
 	
 	static {
 		GdxNativesLoader.load();
 	}
 	
-	public GameScreen() {
+	public GameScreen(Player clientPlayer) {
 		super();
 		world = new World(new Vector2(0, 0), true);
+		gameOver = false;
+		
+		playerCar = new Car(clientPlayer, this, Car.SPRITE_2);
+		
+		players = new HashMap<Integer, Car>();
 	}
 	
 	private void loadTrack(String trackName) {
@@ -108,32 +117,55 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		world.step(BOX_STEP, BOX_VELOCITY_ITERATIONS, BOX_POSITION_ITERATIONS);
 		
-		// Key listeners
-		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
-			car1.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
-		}
-		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)){
-			car1.setSteeringAngle((float)-Car.MAX_STEER_ANGLE);
-		}
-		if (Gdx.input.isKeyPressed(Keys.DPAD_UP)){
-			car1.setEngineSpeed(Car.HORSEPOWERS);
-		}
-		if (Gdx.input.isKeyPressed(Keys.DPAD_DOWN)){
-			car1.setEngineSpeed(-Car.HORSEPOWERS);
+		if(gameOver){
+			CarGame.getInstance().switchScreen(CarGame.GAMEOVER_SCREEN);
+			return;
 		}
 		
-		if (Gdx.input.isKeyPressed(Keys.A)){
-			car2.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
+		// Key listeners
+		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
+			playerCar.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
 		}
-		if (Gdx.input.isKeyPressed(Keys.D)){
-			car2.setSteeringAngle((float)-Car.MAX_STEER_ANGLE);
+		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)){
+			playerCar.setSteeringAngle((float)-Car.MAX_STEER_ANGLE);
 		}
-		if (Gdx.input.isKeyPressed(Keys.W)){
-			car2.setEngineSpeed(Car.HORSEPOWERS);
+		if (Gdx.input.isKeyPressed(Keys.DPAD_UP)){
+			playerCar.setEngineSpeed(Car.HORSEPOWERS);
 		}
-		if (Gdx.input.isKeyPressed(Keys.S)){
-			car2.setEngineSpeed(-Car.HORSEPOWERS);
+		if (Gdx.input.isKeyPressed(Keys.DPAD_DOWN)){
+			playerCar.setEngineSpeed(-Car.HORSEPOWERS);
 		}
+		
+//		if (Gdx.input.isKeyPressed(Keys.A)){
+//			car2.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
+//		}
+//		if (Gdx.input.isKeyPressed(Keys.D)){
+//			car2.setSteeringAngle((float)-Car.MAX_STEER_ANGLE);
+//		}
+//		if (Gdx.input.isKeyPressed(Keys.W)){
+//			car2.setEngineSpeed(Car.HORSEPOWERS);
+//		}
+//		if (Gdx.input.isKeyPressed(Keys.S)){
+//			car2.setEngineSpeed(-Car.HORSEPOWERS);
+//		}
+		
+		for(int playerId : CarGame.getInstance().getPlayers().keySet()){
+        	if(playerCar.getPlayer().id != playerId){
+        		if(players.containsKey(playerId)){
+        			Car otherCar = players.get(playerId);
+        			otherCar.setPlayer(CarGame.getInstance().getPlayers().get(playerId));
+//        			Player player = CarGame.getInstance().getPlayers().get(playerId);
+//            		players.put(playerId, value)
+        		}else{
+        			Player otherPlayer = CarGame.getInstance().getPlayers().get(playerId);
+        			Car otherCar = new Car(otherPlayer, this, Car.SPRITE_3 );
+        			elements.add(otherCar);
+        			otherCar.createCarObject();
+        			players.put(otherPlayer.id, otherCar);
+        		}
+        		
+        	}
+        }
 		
 		if (Gdx.input.isKeyPressed(Keys.Q)){
 			CarGame.getInstance().switchScreen(CarGame.GAMEOVER_SCREEN);
@@ -169,7 +201,10 @@ public class GameScreen implements Screen {
 		batch.end();
 		
 		if(playerCar.getLaps() > 0){
-			CarGame.getInstance().switchScreen(CarGame.GAMEOVER_SCREEN);
+			gameOver = true;
+//			car1.getBody().setActive(false);
+//			car1.getBody().setAwake(false);
+//			CarGame.getInstance().switchScreen(CarGame.GAMEOVER_SCREEN);
 		}
 		
 //		debugRenderer.render(world, camera.combined);
@@ -219,11 +254,14 @@ public class GameScreen implements Screen {
         Box2DUtils.createPolygonBody(world, new Vector2(camera.viewportWidth, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false, false);
 
         // Cars
-        car1 = new Car(this,Car.SPRITE_2);
-        playerCar = car1; 
-        car2 = new Car(this,Car.SPRITE_4);
-        elements.add(car1);
-        elements.add(car2);
+        playerCar.createCarObject();
+//        car1 = new Car(this,Car.SPRITE_2);
+//        playerCar = car1; 
+        
+        
+//        car2 = new Car(this,Car.SPRITE_4);
+        elements.add(playerCar);
+//        elements.add(car2);
         
         //Load track
         loadTrack("track1");

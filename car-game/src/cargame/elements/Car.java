@@ -1,6 +1,8 @@
 package cargame.elements;
 
 import utils.Box2DUtils;
+import cargame.core.MovingPosition;
+import cargame.core.Player;
 import cargame.screens.GameScreen;
 
 import com.badlogic.gdx.graphics.Texture;
@@ -28,11 +30,13 @@ public class Car implements Element{
 	
 	private int laps;
 	
-	public Car(GameScreen game,String spritePath) {
+	private Player player;
+	
+	public Car(Player player,GameScreen game,String spritePath) {
 		this.game = game;
 		this.spritePath = spritePath;
 		this.laps = 0;
-		createCarObject();
+		this.player =player;
 	}
 	
 	public void setEngineSpeed(float engineSpeed){
@@ -45,7 +49,7 @@ public class Car implements Element{
 		body.setAngularVelocity(steeringAngle);
 	}
 	
-	private void createCarObject(){
+	public void createCarObject(){
 		body = Box2DUtils.createPolygonBody(game.getWorld(), Car.CAR_STARTING_POS, 2f, 7f, 0.1f, 10f, 0.1f,true,false);
 		
 		// Car image
@@ -76,4 +80,20 @@ public class Car implements Element{
 	public float getSpeed(){
 		return getBody().getLinearVelocity().len()*1.5f;
 	}
+	
+	public void setPosition(MovingPosition movingPosition){
+		this.getBody().setTransform(new Vector2(movingPosition.xPos, movingPosition.yPos), movingPosition.angle);
+		this.getBody().setLinearVelocity(new Vector2(movingPosition.linearSpeedX, movingPosition.linearSpeedY));
+		this.getBody().setAngularVelocity(movingPosition.angularSpeed);
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+		this.setPosition(player.movingPosition);
+	}
+	
 }
