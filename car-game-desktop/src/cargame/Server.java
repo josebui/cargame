@@ -41,20 +41,22 @@ public class Server {
 				ObjectInputStream objectInputStream =  new ObjectInputStream(socket.getInputStream());
 				
 				Object response = objectInputStream.readObject();
+				ObjectOutputStream objectOutputStream;
 				if(response.getClass().equals(String.class)){
-				
-					ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+					objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 					objectOutputStream.writeObject(getUniqueId());
+					
 				}else{
 					Player player = (Player)response;
 					this.getPlayers().put(player.id, player);
 					
-					ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+					objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 					objectOutputStream.writeObject(players);
-					
-					objectInputStream.close();
-					objectOutputStream.close();
 				}
+				objectOutputStream.close();
+				objectInputStream.close();
+				
+				socket.close();
 			}
 			
 		} catch (IOException e) {
