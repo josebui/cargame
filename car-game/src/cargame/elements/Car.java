@@ -1,7 +1,7 @@
 package cargame.elements;
 
 import utils.Box2DUtils;
-import cargame.CarGame;
+import cargame.screens.GameScreen;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -20,7 +20,7 @@ public class Car implements Element{
 	public static final String SPRITE_3 = "img\\car4.png";
 	public static final String SPRITE_4 = "img\\coche.png";
 	
-	private CarGame game;
+	private GameScreen game;
 	
 	private Body body;
 	
@@ -28,7 +28,7 @@ public class Car implements Element{
 	
 	private int laps;
 	
-	public Car(CarGame game,String spritePath) {
+	public Car(GameScreen game,String spritePath) {
 		this.game = game;
 		this.spritePath = spritePath;
 		this.laps = 0;

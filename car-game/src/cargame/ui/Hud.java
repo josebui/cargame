@@ -1,19 +1,20 @@
 package cargame.ui;
 
+import cargame.screens.GameScreen;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import cargame.CarGame;
 
 public class Hud {
 
-	private CarGame game;
+	private GameScreen game;
 	
 	private BitmapFont font;
 	
-	public Hud(CarGame game) {
+	public Hud(GameScreen game) {
 		this.game = game;
 		font = new BitmapFont(Gdx.files.internal("fonts/font1.fnt"));
 		font.setScale(0.04f, 0.04f);

@@ -11,6 +11,6 @@ public class Main {
 		cfg.width = 1024;
 		cfg.height = 768;
 		
-		new LwjglApplication(new CarGame(), cfg);
+		new LwjglApplication(CarGame.getInstance(), cfg);
 	}
 }
