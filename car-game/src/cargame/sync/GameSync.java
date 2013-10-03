@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.Map;
 
 import cargame.CarGame;
@@ -14,13 +15,27 @@ import cargame.core.Player;
 
 public class GameSync extends Thread implements Client {
 
+	private String url;
+	private int port;
+	
 	private CarGame game;
 	private boolean running;
+	
+	private Socket socket;
 
 	public GameSync(CarGame game) {
 		super();
 		this.game = game;
 		this.running = true; 
+		this.port = 12345;
+		this.url = "localhost";
+		try {
+			this.socket = new Socket(this.url,this.port);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -40,17 +55,15 @@ public class GameSync extends Thread implements Client {
 	
 	public Integer getPlayerId(){
 		try {
-			Socket socket = new Socket("localhost",1235);
-			
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 			objectOutputStream.writeObject("ID");
 			
 			ObjectInputStream objectInputStream = new ObjectInputStream( socket.getInputStream());
 			Integer playerId = (Integer) objectInputStream.readObject();
 			
-			objectInputStream.close();
-			objectOutputStream.close();
-			socket.close();
+//			objectInputStream.close();
+//			objectOutputStream.close();
+//			socket.close();
 			return playerId;
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -86,17 +99,19 @@ public class GameSync extends Thread implements Client {
 	@Override
 	public void sendMyPlayerInfo(Player player) {
 		try {
-			Socket socket = new Socket("localhost",1235);
+			
+			player.time = (new Date()).getTime();
 			
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 			objectOutputStream.writeObject(player);
 			
 			ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-			game.setPlayers((Map<Integer, Player>) objectInputStream.readObject());
+			Map<Integer, Player> newPlayerList = (Map<Integer, Player>) objectInputStream.readObject();
+			syncPlayersInfo(newPlayerList);
 //			
-			objectInputStream.close();
-			objectOutputStream.close();
-			socket.close();
+//			objectInputStream.close();
+//			objectOutputStream.close();
+//			socket.close();
 			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -111,6 +126,17 @@ public class GameSync extends Thread implements Client {
 		
 	}
 	
-	
+	private void syncPlayersInfo(Map<Integer, Player> newPlayerList){
+		Map<Integer, Player> playerList = game.getPlayers();
+		for(Integer playerId : newPlayerList.keySet()){
+			Player newPlayerInfo = newPlayerList.get(playerId);
+			Player actualPlayerInfo = playerList.put(playerId, newPlayerInfo);
+			if(actualPlayerInfo != null){
+				if(newPlayerInfo.time <= actualPlayerInfo.time){
+					playerList.put(playerId, actualPlayerInfo);
+				}
+			}
+		}
+	}
 	
 }

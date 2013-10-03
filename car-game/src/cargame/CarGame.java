@@ -1,15 +1,8 @@
 package cargame;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
-import cargame.core.Client;
-import cargame.core.GameInfo;
 import cargame.core.Player;
 import cargame.screens.GameOver;
 import cargame.screens.GameScreen;
@@ -87,10 +80,6 @@ public class CarGame extends Game{
 			players = new HashMap<Integer, Player>();
 		}
 		return players;
-	}
-
-	public void setPlayers(Map<Integer, Player> players) {
-		this.players = players;
 	}
 
 	public Player getMyPlayer() {

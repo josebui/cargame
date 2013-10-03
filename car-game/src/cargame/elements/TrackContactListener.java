@@ -11,11 +11,10 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
-import cargame.CarGame;
 import cargame.screens.GameScreen;
 import cargame.utils.Box2DUtils;
 
-public class TrackSensor implements ContactListener {
+public class TrackContactListener implements ContactListener {
 
 	private GameScreen game;
 	private Body sensor1;
@@ -26,7 +25,7 @@ public class TrackSensor implements ContactListener {
 	private Map<Car,Boolean> passedSensor1;
 	private Map<Car,Boolean> passedSensor2;
 	
-	public TrackSensor(GameScreen game) {
+	public TrackContactListener(GameScreen game) {
 		super();
 		
 		this.game = game;

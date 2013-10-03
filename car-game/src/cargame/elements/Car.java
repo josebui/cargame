@@ -1,5 +1,7 @@
 package cargame.elements;
 
+import java.util.Date;
+
 import cargame.core.MovingPosition;
 import cargame.core.Player;
 import cargame.screens.GameScreen;
@@ -42,11 +44,19 @@ public class Car implements Element{
 	public void setEngineSpeed(float engineSpeed){
 		Vector2 vector = (new Vector2(engineSpeed,engineSpeed)); 
 		body.applyForce(Box2DUtils.rotateVector(vector,body.getAngle()), body.getPosition(),true);
+		updateTime();
 	}
 	
 	public void setSteeringAngle(float steeringAngle){
 		if(body.getLinearVelocity().len() < 20) return;
 		body.setAngularVelocity(steeringAngle);
+		updateTime();
+	}
+	
+	private void updateTime(){
+		if(player != null){
+			player.time = (new Date()).getTime();
+		}
 	}
 	
 	public void createCarObject(){
@@ -57,6 +67,8 @@ public class Car implements Element{
 		sprite.setSize(15f, 15f);
 		sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
 		body.setUserData(sprite);
+		
+		updateTime();
 	}
 
 	public Body getBody(){
@@ -93,6 +105,7 @@ public class Car implements Element{
 	}
 
 	public void setPlayer(Player player) {
+		if(player.time <= this.player.time) return;
 		this.player = player;
 		this.setPosition(player.movingPosition);
 	}
