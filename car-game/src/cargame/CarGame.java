@@ -18,7 +18,7 @@ import cargame.sync.GameSync;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 
-public class CarGame extends Game implements Client{
+public class CarGame extends Game{
 	
 	private static CarGame instance;
 	
@@ -46,7 +46,9 @@ public class CarGame extends Game implements Client{
 	
 	private CarGame() {
 		super();
-		Integer playerId = getPlayerId();
+		
+		gameSync = new GameSync(this);
+		Integer playerId = gameSync.getPlayerId();
 		if(playerId == null){
 			return;
 		}
@@ -55,7 +57,7 @@ public class CarGame extends Game implements Client{
 		
 		gameScreen = new GameScreen(myPlayer);
 		gameOverScreen = new GameOver();
-		gameSync = new GameSync(this);
+		
 	}
 	
 	@Override
@@ -78,79 +80,6 @@ public class CarGame extends Game implements Client{
 			System.out.println("Next screen");
 			this.setScreen(nextScreen);
 		}
-	}
-
-	@Override
-	public cargame.core.ServerStatus ServerStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public GameInfo currentGame() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setCurrentGame(int gameInfoID, Player player) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private Integer getPlayerId(){
-		try {
-			Socket socket = new Socket("localhost",1235);
-			
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-			objectOutputStream.writeObject("ID");
-			
-			ObjectInputStream objectInputStream = new ObjectInputStream( socket.getInputStream());
-			Integer playerId = (Integer) objectInputStream.readObject();
-			
-			objectInputStream.close();
-			objectOutputStream.close();
-			socket.close();
-			return playerId;
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	@Override
-	public void sendMyPlayerInfo(Player player) {
-		try {
-			Socket socket = new Socket("localhost",1235);
-			
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-			objectOutputStream.writeObject(player);
-			
-			ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-			players = (Map<Integer, Player>) objectInputStream.readObject();
-//			
-			objectInputStream.close();
-			objectOutputStream.close();
-			socket.close();
-			
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 
 	public Map<Integer, Player> getPlayers() {
