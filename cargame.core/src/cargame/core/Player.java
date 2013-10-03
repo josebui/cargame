@@ -14,4 +14,5 @@ public class Player implements Serializable{
 	public int lapCount;
 	public MovingPosition movingPosition;
 	public NetworkHealthStatus networkHealthStatus;
+	public long time;
 }

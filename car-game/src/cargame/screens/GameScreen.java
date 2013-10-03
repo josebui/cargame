@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pong.client.core.BodyEditorLoader;
-import utils.Box2DUtils;
 import cargame.CarGame;
 import cargame.core.Player;
 import cargame.elements.Car;
 import cargame.elements.Element;
 import cargame.elements.TrackSensor;
 import cargame.ui.Hud;
+import cargame.utils.BodyEditorLoader;
+import cargame.utils.Box2DUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;

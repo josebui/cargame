@@ -10,7 +10,6 @@ import java.util.Map;
 
 import cargame.core.Client;
 import cargame.core.GameInfo;
-import cargame.core.MovingPosition;
 import cargame.core.Player;
 import cargame.screens.GameOver;
 import cargame.screens.GameScreen;
@@ -59,33 +58,6 @@ public class CarGame extends Game implements Client{
 		gameSync = new GameSync(this);
 	}
 	
-	private Integer getPlayerId(){
-		try {
-			Socket socket = new Socket("localhost",1235);
-			
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-			objectOutputStream.writeObject("ID");
-			
-			ObjectInputStream objectInputStream = new ObjectInputStream( socket.getInputStream());
-			Integer playerId = (Integer) objectInputStream.readObject();
-			
-			objectInputStream.close();
-			objectOutputStream.close();
-			socket.close();
-			return playerId;
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
 	@Override
 	public void create() {
 		this.setScreen(gameScreen);
@@ -126,6 +98,33 @@ public class CarGame extends Game implements Client{
 		
 	}
 
+	private Integer getPlayerId(){
+		try {
+			Socket socket = new Socket("localhost",1235);
+			
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+			objectOutputStream.writeObject("ID");
+			
+			ObjectInputStream objectInputStream = new ObjectInputStream( socket.getInputStream());
+			Integer playerId = (Integer) objectInputStream.readObject();
+			
+			objectInputStream.close();
+			objectOutputStream.close();
+			socket.close();
+			return playerId;
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@Override
 	public void sendMyPlayerInfo(Player player) {
 		try {
@@ -166,7 +165,6 @@ public class CarGame extends Game implements Client{
 	}
 
 	public Player getMyPlayer() {
-		
 		return myPlayer;
 	}
 
