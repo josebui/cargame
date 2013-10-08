@@ -105,7 +105,7 @@ public class Car implements Element{
 	}
 
 	public void setPlayer(Player player) {
-		if(player.time <= this.player.time) return;
+//		if(player.time <= this.player.time) return;
 		this.player = player;
 		this.setPosition(player.movingPosition);
 	}

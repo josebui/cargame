@@ -5,12 +5,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import cargame.CarGame;
 import cargame.core.Client;
 import cargame.core.GameInfo;
+import cargame.core.MovingPosition;
 import cargame.core.Player;
 
 public class GameSync extends Thread implements Client {
@@ -29,6 +31,7 @@ public class GameSync extends Thread implements Client {
 		this.running = true; 
 		this.port = 1235;
 		this.url = "localhost";
+//		this.url = "10.9.202.13";
 	}
 	
 	@Override
@@ -93,40 +96,34 @@ public class GameSync extends Thread implements Client {
 		
 		ObjectInputStream objectInputStream;
 		ObjectOutputStream objectOutputStream;
-		if(server){
-			
-		}else{
-			
-		}
-		
-		
-		Player request;
+		float[] request;
 		while(true){
 			if(server){
 				objectInputStream =  new ObjectInputStream(socket.getInputStream());
-				request = (Player)objectInputStream.readObject();
+				request = (float[])objectInputStream.readObject();
+				syncPlayerInfo(0,request);
 //				System.out.println("Receive:"+request.movingPosition.xPos);
 				
 				objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
-				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
-				otherPlayer.put(request.id, request);
+//				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
+//				otherPlayer.put(request.id, request);
 //				game.setPlayers(otherPlayer);
-				syncPlayersInfo(otherPlayer);
-				objectOutputStream.writeObject(game.getMyPlayer());
+				
+				objectOutputStream.writeObject(game.getMyPlayer().movingPosition.getValues());
 				System.out.println("Send:"+game.getMyPlayer().movingPosition.xPos);
 //				objectInputStream.close();
 //				objectOutputStream.close();
 			}else{
 				objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
-				objectOutputStream.writeObject(game.getMyPlayer());
+				objectOutputStream.writeObject(game.getMyPlayer().movingPosition.getValues());
 //				System.out.println("Send:"+game.getMyPlayer().movingPosition.xPos);
 				
 				objectInputStream =  new ObjectInputStream(socket.getInputStream());
-				request = (Player)objectInputStream.readObject();
-				System.out.println("Receive:"+request.movingPosition.xPos);
-				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
-				otherPlayer.put(request.id, request);
-				syncPlayersInfo(otherPlayer);
+				request = (float[])objectInputStream.readObject();
+				System.out.println("Receive:"+request);
+//				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
+//				otherPlayer.put(request.id, request);
+				syncPlayerInfo(1,request);
 //				game.setPlayers(otherPlayer);
 //				objectInputStream.close();
 //				objectOutputStream.close();
@@ -169,6 +166,19 @@ public class GameSync extends Thread implements Client {
 				}
 			}
 		}
+	}
+	
+	private void syncPlayerInfo(int playerId, float[] values){
+		Map<Integer, Player> playerList = game.getPlayers();
+		if(!playerList.containsKey(playerId)){
+			Player newPlayer = new Player();
+			newPlayer.id = playerId;
+			newPlayer.movingPosition = new MovingPosition();
+			playerList.put(playerId, newPlayer);
+		}
+		Player player = playerList.get(playerId);
+		player.time = (new Date()).getTime();
+		player.movingPosition.setValues(values);
 	}
 
 	@Override
