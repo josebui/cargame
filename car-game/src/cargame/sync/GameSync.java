@@ -5,8 +5,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +27,7 @@ public class GameSync extends Thread implements Client {
 		this.game = game;
 		this.server = server;
 		this.running = true; 
-		this.port = 12345;
+		this.port = 1235;
 		this.url = "localhost";
 	}
 	
@@ -57,7 +55,7 @@ public class GameSync extends Thread implements Client {
 	public void runAsServer(){
 		
 		try {
-			ServerSocket serverSocket = new ServerSocket(1236);
+			ServerSocket serverSocket = new ServerSocket(this.port);
 			System.out.println("Server started...");
 			Socket socket = serverSocket.accept();
 			interact(socket,true);
@@ -75,57 +73,10 @@ public class GameSync extends Thread implements Client {
 		}
 	}
 	
-	private void interact(Socket socket, boolean server) throws IOException, ClassNotFoundException{
-		
-		ObjectInputStream objectInputStream;
-		ObjectOutputStream objectOutputStream;
-		if(server){
-			
-		}else{
-			
-//			objectOutputStream.writeObject(game.getMyPlayer());
-		}
-		
-		
-		Player request;
-//		Player response = new Player();
-		while(true){
-			if(server){
-				objectInputStream =  new ObjectInputStream(socket.getInputStream());
-				objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
-				request = (Player)objectInputStream.readObject();
-				System.out.println("Receive:"+request.movingPosition.xPos);
-				
-				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
-				otherPlayer.put(request.id, request);
-				game.setPlayers(otherPlayer);
-				objectOutputStream.writeObject(game.getMyPlayer());
-				System.out.println("Send:"+game.getMyPlayer().movingPosition.xPos);
-				objectInputStream.close();
-				objectOutputStream.close();
-//				objectInputStream.
-			}else{
-				objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
-				objectInputStream =  new ObjectInputStream(socket.getInputStream());
-				objectOutputStream.writeObject(game.getMyPlayer());
-				System.out.println("Send:"+game.getMyPlayer().movingPosition.xPos);
-				
-				request = (Player)objectInputStream.readObject();
-				System.out.println("Receive:"+request.movingPosition.xPos);
-				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
-				otherPlayer.put(request.id, request);
-				game.setPlayers(otherPlayer);
-				objectInputStream.close();
-				objectOutputStream.close();
-			}
-			
-		}
-	}
-	
 	public void runAsClient(){
 		
 		try {
-			Socket socket = new Socket("localhost",1236);
+			Socket socket = new Socket(this.url,this.port);
 			System.out.println("Client started...");
 			
 			interact(socket,false);
@@ -138,34 +89,52 @@ public class GameSync extends Thread implements Client {
 		}
 	}
 	
+	private void interact(Socket socket, boolean server) throws IOException, ClassNotFoundException{
+		
+		ObjectInputStream objectInputStream;
+		ObjectOutputStream objectOutputStream;
+		if(server){
+			
+		}else{
+			
+		}
+		
+		
+		Player request;
+		while(true){
+			if(server){
+				objectInputStream =  new ObjectInputStream(socket.getInputStream());
+				request = (Player)objectInputStream.readObject();
+//				System.out.println("Receive:"+request.movingPosition.xPos);
+				
+				objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
+				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
+				otherPlayer.put(request.id, request);
+//				game.setPlayers(otherPlayer);
+				syncPlayersInfo(otherPlayer);
+				objectOutputStream.writeObject(game.getMyPlayer());
+				System.out.println("Send:"+game.getMyPlayer().movingPosition.xPos);
+//				objectInputStream.close();
+//				objectOutputStream.close();
+			}else{
+				objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
+				objectOutputStream.writeObject(game.getMyPlayer());
+//				System.out.println("Send:"+game.getMyPlayer().movingPosition.xPos);
+				
+				objectInputStream =  new ObjectInputStream(socket.getInputStream());
+				request = (Player)objectInputStream.readObject();
+				System.out.println("Receive:"+request.movingPosition.xPos);
+				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
+				otherPlayer.put(request.id, request);
+				syncPlayersInfo(otherPlayer);
+//				game.setPlayers(otherPlayer);
+//				objectInputStream.close();
+//				objectOutputStream.close();
+			}
+			
+		}
+	}
 	
-//	public Integer getPlayerId(){
-//		try {
-//			Socket socket = new Socket("localhost",1235);
-//			
-//			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-//			objectOutputStream.writeObject("ID");
-//			
-//			ObjectInputStream objectInputStream = new ObjectInputStream( socket.getInputStream());
-//			Integer playerId = (Integer) objectInputStream.readObject();
-//			
-//			objectInputStream.close();
-//			objectOutputStream.close();
-//			socket.close();
-//			return playerId;
-//		} catch (UnknownHostException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
-
 	@Override
 	public cargame.core.ServerStatus ServerStatus() {
 		// TODO Auto-generated method stub
@@ -186,32 +155,7 @@ public class GameSync extends Thread implements Client {
 
 	@Override
 	public void sendMyPlayerInfo(Player player) {
-//		try {
-//			
-//			player.time = (new Date()).getTime();
-//			
-//			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-//			objectOutputStream.writeObject(player);
-//			
-//			ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-//			Map<Integer, Player> newPlayerList = (Map<Integer, Player>) objectInputStream.readObject();
-//			syncPlayersInfo(newPlayerList);
-////			
-////			objectInputStream.close();
-////			objectOutputStream.close();
-////			socket.close();
-//			
-//		} catch (UnknownHostException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
+
 	}
 	
 	private void syncPlayersInfo(Map<Integer, Player> newPlayerList){
@@ -225,6 +169,12 @@ public class GameSync extends Thread implements Client {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void startGame() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
