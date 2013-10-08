@@ -1,0 +1,67 @@
+
+import java.io.*;
+import java.net.*;
+import java.rmi.UnknownHostException;
+import java.util.*;
+
+public class TrackerClient extends Thread {
+
+	private int TIME_BETWEEN_TRIES = 1000;
+
+	public TrackerClient() throws IOException {
+		super("MulticastServerThread");
+	}
+
+	public void run() {
+		DatagramSocket socket = null;
+		DatagramPacket sendPacket = null;
+		DatagramPacket recPacket = null;
+		
+		try{
+		//------Preparing the Socket----------------------
+		byte[] buf = new byte[1000];
+		socket = new DatagramSocket();
+		socket.setSoTimeout(TIME_BETWEEN_TRIES);		
+		//-------Preparing the Send Packet----------------
+		String dString = "Alive!";
+        buf = dString.getBytes();        
+        InetAddress address = InetAddress.getByName("127.0.0.1");
+        sendPacket = new DatagramPacket(buf, buf.length,
+				address, 4445);
+		//-------Preparing the recieve Packet Data-------
+		recPacket = new DatagramPacket(buf, buf.length,
+				address, 4445);
+		}catch(UnknownHostException e){
+			//IP address provided is faulty, check it again
+			//To-Do the Appropriate job for Socket Exception
+		}catch(SocketException e){
+			//Can not open new socket, check the permissions
+			//To-Do the Appropriate job for Socket Exception
+			e.printStackTrace();
+		}
+		while (true) {
+			try {
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				socket.send(sendPacket);
+				
+				socket.receive(recPacket);
+				String receivedMSG = new String(recPacket.getData(), 0,
+						recPacket.getLength());
+				System.out.println(receivedMSG);
+
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+}

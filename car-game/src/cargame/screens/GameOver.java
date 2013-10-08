@@ -2,19 +2,15 @@ package cargame.screens;
 
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenAccessor;
-import aurelienribon.tweenengine.TweenEquation;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class GameOver implements Screen {
+public class GameOver extends ScreenAdapter {
 
 	private BitmapFont font;
 	private SpriteBatch batch;
@@ -26,24 +22,13 @@ public class GameOver implements Screen {
 	
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-
+		batch.dispose();
+		font.dispose();
 	}
 
 	@Override
 	public void render(float delta) {
+		super.render(delta);
 //		Gdx.gl.glClearColor( 1, 0, 0, 0.5f );
 //		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 		tweenManager.update(delta);
@@ -54,19 +39,8 @@ public class GameOver implements Screen {
 	}
 
 	@Override
-	public void resize(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void show() {
+		super.show();
 		font = new BitmapFont(Gdx.files.internal("fonts/font1.fnt"));
 		font.setScale(0.4f, 0.4f);
 		batch = new SpriteBatch();

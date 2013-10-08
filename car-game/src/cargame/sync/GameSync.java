@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,9 @@ import cargame.core.Player;
 
 public class GameSync extends Thread implements Client {
 
+	private String url;
+	private int port;
+	
 	private CarGame game;
 	private boolean running;
 	private boolean server;
@@ -25,6 +29,8 @@ public class GameSync extends Thread implements Client {
 		this.game = game;
 		this.server = server;
 		this.running = true; 
+		this.port = 12345;
+		this.url = "localhost";
 	}
 	
 	@Override
@@ -180,32 +186,45 @@ public class GameSync extends Thread implements Client {
 
 	@Override
 	public void sendMyPlayerInfo(Player player) {
-		try {
-			Socket socket = new Socket("localhost",1235);
-			
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-			objectOutputStream.writeObject(player);
-			
-			ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-			game.setPlayers((Map<Integer, Player>) objectInputStream.readObject());
+//		try {
 //			
-			objectInputStream.close();
-			objectOutputStream.close();
-			socket.close();
-			
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//			player.time = (new Date()).getTime();
+//			
+//			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+//			objectOutputStream.writeObject(player);
+//			
+//			ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+//			Map<Integer, Player> newPlayerList = (Map<Integer, Player>) objectInputStream.readObject();
+//			syncPlayersInfo(newPlayerList);
+////			
+////			objectInputStream.close();
+////			objectOutputStream.close();
+////			socket.close();
+//			
+//		} catch (UnknownHostException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 	}
 	
-	
+	private void syncPlayersInfo(Map<Integer, Player> newPlayerList){
+		Map<Integer, Player> playerList = game.getPlayers();
+		for(Integer playerId : newPlayerList.keySet()){
+			Player newPlayerInfo = newPlayerList.get(playerId);
+			Player actualPlayerInfo = playerList.put(playerId, newPlayerInfo);
+			if(actualPlayerInfo != null){
+				if(newPlayerInfo.time <= actualPlayerInfo.time){
+					playerList.put(playerId, actualPlayerInfo);
+				}
+			}
+		}
+	}
 	
 }
