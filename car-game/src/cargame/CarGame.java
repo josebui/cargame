@@ -23,9 +23,11 @@ public class CarGame extends Game{
 	private static CarGame instance;
 	
 	public static CarGame getInstance(){
-		if(instance == null){
-			instance = new CarGame();
-		}
+		return instance;
+	}
+	
+	public static CarGame createInstance(boolean server){
+		instance = new CarGame(server);
 		return instance;
 	}
 	
@@ -44,16 +46,16 @@ public class CarGame extends Game{
 	
 	private GameSync gameSync;
 	
-	private CarGame() {
+	private CarGame(boolean server) {
 		super();
 		
-		gameSync = new GameSync(this);
-		Integer playerId = gameSync.getPlayerId();
-		if(playerId == null){
-			return;
-		}
+		gameSync = new GameSync(this,server);
+//		Integer playerId = gameSync.getPlayerId();
+//		if(playerId == null){
+//			return;
+//		}
 		myPlayer = new Player();
-		myPlayer.id = playerId;
+		myPlayer.id = (server)?1:0;
 		
 		gameScreen = new GameScreen(myPlayer);
 		gameOverScreen = new GameOver();

@@ -36,12 +36,15 @@ public class Server {
 	
 	public void start(){
 		try {
+			System.out.println("Server started...");
+			Socket socket = serverSocket.accept();
+			
+			ObjectInputStream objectInputStream =  new ObjectInputStream(socket.getInputStream());
+			ObjectOutputStream objectOutputStream;
+			
 			while(true){
-				Socket socket = serverSocket.accept();
-				ObjectInputStream objectInputStream =  new ObjectInputStream(socket.getInputStream());
 				
 				Object response = objectInputStream.readObject();
-				ObjectOutputStream objectOutputStream;
 				if(response.getClass().equals(String.class)){
 					objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 					objectOutputStream.writeObject(getUniqueId());
@@ -53,12 +56,13 @@ public class Server {
 					objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 					objectOutputStream.writeObject(players);
 				}
-				objectOutputStream.close();
-				objectInputStream.close();
 				
-				socket.close();
+				
+				
 			}
-			
+			//objectOutputStream.close();
+			//objectInputStream.close();
+			//socket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
