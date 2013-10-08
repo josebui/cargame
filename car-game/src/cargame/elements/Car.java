@@ -1,9 +1,11 @@
 package cargame.elements;
 
-import utils.Box2DUtils;
+import java.util.Date;
+
 import cargame.core.MovingPosition;
 import cargame.core.Player;
 import cargame.screens.GameScreen;
+import cargame.utils.Box2DUtils;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -42,11 +44,19 @@ public class Car implements Element{
 	public void setEngineSpeed(float engineSpeed){
 		Vector2 vector = (new Vector2(engineSpeed,engineSpeed)); 
 		body.applyForce(Box2DUtils.rotateVector(vector,body.getAngle()), body.getPosition(),true);
+		updateTime();
 	}
 	
 	public void setSteeringAngle(float steeringAngle){
 		if(body.getLinearVelocity().len() < 20) return;
 		body.setAngularVelocity(steeringAngle);
+		updateTime();
+	}
+	
+	private void updateTime(){
+		if(player != null){
+			player.time = (new Date()).getTime();
+		}
 	}
 	
 	public void createCarObject(){
@@ -57,6 +67,8 @@ public class Car implements Element{
 		sprite.setSize(15f, 15f);
 		sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
 		body.setUserData(sprite);
+		
+		updateTime();
 	}
 
 	public Body getBody(){
@@ -83,9 +95,9 @@ public class Car implements Element{
 	
 	public void setPosition(MovingPosition movingPosition){
 		if(movingPosition == null) return;
-		this.getBody().setTransform(new Vector2(movingPosition.xPos, movingPosition.yPos), movingPosition.angle);
-//		this.getBody().setLinearVelocity(new Vector2(movingPosition.linearSpeedX, movingPosition.linearSpeedY));
-//		this.getBody().setAngularVelocity(movingPosition.angularSpeed);
+		this.getBody().setTransform(movingPosition.xPos, movingPosition.yPos, movingPosition.angle);
+		this.getBody().setLinearVelocity(new Vector2(movingPosition.linearSpeedX, movingPosition.linearSpeedY));
+		this.getBody().setAngularVelocity(movingPosition.angularSpeed);
 	}
 
 	public Player getPlayer() {
@@ -93,6 +105,7 @@ public class Car implements Element{
 	}
 
 	public void setPlayer(Player player) {
+		if(player.time <= this.player.time) return;
 		this.player = player;
 		this.setPosition(player.movingPosition);
 	}
@@ -104,10 +117,10 @@ public class Car implements Element{
 		
 		player.movingPosition.xPos = getBody().getPosition().x;
 		player.movingPosition.yPos = getBody().getPosition().y;
-		player.movingPosition.angle = getBody().getPosition().angle();
+		player.movingPosition.angle = getBody().getAngle();
 		player.movingPosition.linearSpeedX = getBody().getLinearVelocity().x;
 		player.movingPosition.linearSpeedY = getBody().getLinearVelocity().y;
-//		player.movingPosition.angularSpeed = getBody().getAngularVelocity();
+		player.movingPosition.angularSpeed = getBody().getAngularVelocity();
 	}
 	
 }

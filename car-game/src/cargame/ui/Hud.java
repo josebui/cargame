@@ -33,4 +33,8 @@ public class Hud {
 		font.draw(batch, game.getPlayerCar().getLaps()+"", 230, this.game.getCamera().viewportHeight-3);
 	}
 	
+	public void dispose(){
+		font.dispose();
+	}
+	
 }

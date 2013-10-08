@@ -5,18 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pong.client.core.BodyEditorLoader;
-import utils.Box2DUtils;
 import cargame.CarGame;
 import cargame.core.Player;
 import cargame.elements.Car;
 import cargame.elements.Element;
-import cargame.elements.TrackSensor;
+import cargame.elements.TrackContactListener;
 import cargame.ui.Hud;
-
+import cargame.utils.BodyEditorLoader;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -31,18 +29,17 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.GdxNativesLoader;
 
-public class GameScreen implements Screen {
+public class GameScreen extends ScreenAdapter {
 
 	private static final String TRACKS_PATH = "tracks/track1";
+	private static final float BOX_STEP = 1 / 60f;
+	private static final int BOX_VELOCITY_ITERATIONS = 6;
+	private static final int BOX_POSITION_ITERATIONS = 2;
 	
 	private World world;
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
-	
-	static final float BOX_STEP = 1 / 60f;
-	static final int BOX_VELOCITY_ITERATIONS = 6;
-	static final int BOX_POSITION_ITERATIONS = 2;
 	
 	private List<Element> elements;
 	private List<Sprite> staticSprites;
@@ -52,8 +49,7 @@ public class GameScreen implements Screen {
 	private boolean gameOver;
 	
 	private Car playerCar;
-	
-	private Map<Integer,Car> players;
+	private Map<Integer,Car> otherPlayersCars;
 	
 	static {
 		GdxNativesLoader.load();
@@ -63,10 +59,49 @@ public class GameScreen implements Screen {
 		super();
 		world = new World(new Vector2(0, 0), true);
 		gameOver = false;
-		
 		playerCar = new Car(clientPlayer, this, Car.SPRITE_2);
+		otherPlayersCars = new HashMap<Integer, Car>();
+	}
+	
+	@Override
+	public void show() {
+		elements = new ArrayList<Element>();
 		
-		players = new HashMap<Integer, Car>();
+		// Player Hud
+		playerHud = new Hud(this);
+		
+		// Static sprites
+		staticSprites = new ArrayList<Sprite>();
+		
+		// Background
+		Sprite spriteBackground = new Sprite(new Texture("img/racetrack.png"));
+		spriteBackground.setScale(0.27f,0.27f);
+		spriteBackground.setOrigin(0f,0f);
+		staticSprites.add(spriteBackground);
+		
+		Gdx.graphics.setDisplayMode(1200, 800, false);
+//		Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+		camera = new OrthographicCamera(276,205);
+//		camera = new OrthographicCamera(200,150);
+        camera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
+        camera.update();
+        
+        batch = new SpriteBatch();
+        
+        // Boundaries
+//        Box2DUtils.createPolygonBody(world, new Vector2(0, 0), camera.viewportWidth, 1.0f, 0f, 0.1f, 2, false, false);
+//        Box2DUtils.createPolygonBody(world, new Vector2(0, camera.viewportHeight), (camera.viewportWidth) , 1.0f, 0f, 0.1f, 2, false, false);
+//        Box2DUtils.createPolygonBody(world, new Vector2(0, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false, false);
+//        Box2DUtils.createPolygonBody(world, new Vector2(camera.viewportWidth, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false, false);
+        
+        // Cars
+        playerCar.createCarObject();
+        elements.add(playerCar);
+        
+        // Load track
+        loadTrack("track1");
+        
+        debugRenderer = new Box2DDebugRenderer(true,false,false,true,false,false);  
 	}
 	
 	private void loadTrack(String trackName) {
@@ -90,30 +125,21 @@ public class GameScreen implements Screen {
 		loader.attachFixture(body, trackName, fd, 280);
 		
 		// Track contact listener
-		TrackSensor sensor = new TrackSensor(this);
+		TrackContactListener sensor = new TrackContactListener(this);
 		world.setContactListener(sensor);
 		
 	}
 
 	@Override
 	public void dispose() {
+		super.dispose();
 		batch.dispose();
-	}
-
-	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-
+		playerHud.dispose();
 	}
 
 	@Override
 	public void render(float delta) {
+		super.render(delta);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		world.step(BOX_STEP, BOX_VELOCITY_ITERATIONS, BOX_POSITION_ITERATIONS);
 		
@@ -121,6 +147,9 @@ public class GameScreen implements Screen {
 			CarGame.getInstance().switchScreen(CarGame.GAMEOVER_SCREEN);
 			return;
 		}
+		
+//		camera.position.set(playerCar.getBody().getPosition().x, playerCar.getBody().getPosition().y, 0);
+//		camera.update();
 		
 		// Key listeners
 		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
@@ -136,34 +165,21 @@ public class GameScreen implements Screen {
 			playerCar.setEngineSpeed(-Car.HORSEPOWERS);
 		}
 		
-//		if (Gdx.input.isKeyPressed(Keys.A)){
-//			car2.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
-//		}
-//		if (Gdx.input.isKeyPressed(Keys.D)){
-//			car2.setSteeringAngle((float)-Car.MAX_STEER_ANGLE);
-//		}
-//		if (Gdx.input.isKeyPressed(Keys.W)){
-//			car2.setEngineSpeed(Car.HORSEPOWERS);
-//		}
-//		if (Gdx.input.isKeyPressed(Keys.S)){
-//			car2.setEngineSpeed(-Car.HORSEPOWERS);
-//		}
-		
 		playerCar.updatePosition();
 		
 		for(int playerId : CarGame.getInstance().getPlayers().keySet()){
         	if(playerCar.getPlayer().id != playerId){
-        		if(players.containsKey(playerId)){
-        			Car otherCar = players.get(playerId);
+        		if(otherPlayersCars.containsKey(playerId)){
+        			// Update other player position
+        			Car otherCar = otherPlayersCars.get(playerId);
         			otherCar.setPlayer(CarGame.getInstance().getPlayers().get(playerId));
-//        			Player player = CarGame.getInstance().getPlayers().get(playerId);
-//            		players.put(playerId, value)
         		}else{
+        			// Create new player
         			Player otherPlayer = CarGame.getInstance().getPlayers().get(playerId);
         			Car otherCar = new Car(otherPlayer, this, Car.SPRITE_3 );
         			elements.add(otherCar);
         			otherCar.createCarObject();
-        			players.put(otherPlayer.id, otherCar);
+        			otherPlayersCars.put(otherPlayer.id, otherCar);
         		}
         		
         	}
@@ -190,9 +206,12 @@ public class GameScreen implements Screen {
 		
 		for(Element element : elements){
 			Body body = element.getBody();
-			element.getBody().setAngularVelocity((float) (element.getBody().getAngularVelocity()*0.5));
-			element.getBody().setLinearVelocity(element.getBody().getLinearVelocity().mul(0.95f));
+//			if(element.equals(playerCar)){
+				element.getBody().setAngularVelocity((float) (element.getBody().getAngularVelocity()*0.5));
+				element.getBody().setLinearVelocity(element.getBody().getLinearVelocity().scl(0.95f));
+//			}
 			
+			// Cars sprites
 			if(body.getUserData() != null && body.getUserData() instanceof Sprite) {
 				Sprite sprite = (Sprite) body.getUserData();
 				sprite.setPosition(body.getPosition().x - sprite.getWidth()/2, body.getPosition().y - sprite.getHeight() /2);
@@ -202,74 +221,11 @@ public class GameScreen implements Screen {
 		}
 		batch.end();
 		
-		if(playerCar.getLaps() > 0){
+		if(playerCar.getLaps() > 5){
 			gameOver = true;
-//			car1.getBody().setActive(false);
-//			car1.getBody().setAwake(false);
-//			CarGame.getInstance().switchScreen(CarGame.GAMEOVER_SCREEN);
 		}
 		
 //		debugRenderer.render(world, camera.combined);
-
-	}
-
-	@Override
-	public void resize(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void show() {
-		elements = new ArrayList<Element>();
-		
-		// Player Hud
-		playerHud = new Hud(this);
-		
-		// Static sprites
-		staticSprites = new ArrayList<Sprite>();
-		
-		// Background
-		Sprite spriteBackground = new Sprite(new Texture("img/racetrack.png"));
-		spriteBackground.setScale(0.27f,0.27f);
-		spriteBackground.setOrigin(0f,0f);
-		staticSprites.add(spriteBackground);
-		
-		Gdx.graphics.setDisplayMode(1200, 800, false);
-//		Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-		camera = new OrthographicCamera(276,205);  
-        camera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
-        camera.update();
-        
-        batch = new SpriteBatch();
-        
-        // Boundaries
-        Box2DUtils.createPolygonBody(world, new Vector2(0, 0), camera.viewportWidth, 1.0f, 0f, 0.1f, 2, false, false);
-        Box2DUtils.createPolygonBody(world, new Vector2(0, camera.viewportHeight), (camera.viewportWidth) , 1.0f, 0f, 0.1f, 2, false, false);
-        Box2DUtils.createPolygonBody(world, new Vector2(0, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false, false);
-        Box2DUtils.createPolygonBody(world, new Vector2(camera.viewportWidth, 0), 1.0f, camera.viewportHeight, 0f, 0.1f, 2, false, false);
-
-        // Cars
-        playerCar.createCarObject();
-//        car1 = new Car(this,Car.SPRITE_2);
-//        playerCar = car1; 
-        
-        
-//        car2 = new Car(this,Car.SPRITE_4);
-        elements.add(playerCar);
-//        elements.add(car2);
-        
-        //Load track
-        loadTrack("track1");
-        
-        debugRenderer = new Box2DDebugRenderer(true,false,false,true,false,false);  
-
 
 	}
 

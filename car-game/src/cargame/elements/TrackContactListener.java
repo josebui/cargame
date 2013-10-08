@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import utils.Box2DUtils;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -13,10 +11,10 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
-import cargame.CarGame;
 import cargame.screens.GameScreen;
+import cargame.utils.Box2DUtils;
 
-public class TrackSensor implements ContactListener {
+public class TrackContactListener implements ContactListener {
 
 	private GameScreen game;
 	private Body sensor1;
@@ -27,7 +25,7 @@ public class TrackSensor implements ContactListener {
 	private Map<Car,Boolean> passedSensor1;
 	private Map<Car,Boolean> passedSensor2;
 	
-	public TrackSensor(GameScreen game) {
+	public TrackContactListener(GameScreen game) {
 		super();
 		
 		this.game = game;
@@ -73,7 +71,7 @@ public class TrackSensor implements ContactListener {
         if(car != null){
         	passedSensor2.put(car, true);
         	if(passedSensor1.containsKey(car) && passedSensor1.get(car)){
-        		if(!wrongDirection.containsKey(car) || wrongDirection.get(car)){
+        		if(wrongDirection.containsKey(car) && wrongDirection.get(car)){
         			wrongDirection.put(car, false);
         		}else{
         			car.addLap();

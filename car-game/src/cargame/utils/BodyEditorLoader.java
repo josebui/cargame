@@ -1,4 +1,4 @@
-package pong.client.core;
+package cargame.utils;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
