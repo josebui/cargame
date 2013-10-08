@@ -74,11 +74,9 @@ public class GameSync extends Thread implements Client {
 		ObjectInputStream objectInputStream;
 		ObjectOutputStream objectOutputStream;
 		if(server){
-			objectInputStream =  new ObjectInputStream(socket.getInputStream());
-			objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
+			
 		}else{
-			objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
-			objectInputStream =  new ObjectInputStream(socket.getInputStream());
+			
 //			objectOutputStream.writeObject(game.getMyPlayer());
 		}
 		
@@ -87,6 +85,8 @@ public class GameSync extends Thread implements Client {
 //		Player response = new Player();
 		while(true){
 			if(server){
+				objectInputStream =  new ObjectInputStream(socket.getInputStream());
+				objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
 				request = (Player)objectInputStream.readObject();
 				System.out.println("Receive:"+request.movingPosition.xPos);
 				
@@ -95,8 +95,12 @@ public class GameSync extends Thread implements Client {
 				game.setPlayers(otherPlayer);
 				objectOutputStream.writeObject(game.getMyPlayer());
 				System.out.println("Send:"+game.getMyPlayer().movingPosition.xPos);
-				
+				objectInputStream.close();
+				objectOutputStream.close();
+//				objectInputStream.
 			}else{
+				objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
+				objectInputStream =  new ObjectInputStream(socket.getInputStream());
 				objectOutputStream.writeObject(game.getMyPlayer());
 				System.out.println("Send:"+game.getMyPlayer().movingPosition.xPos);
 				
@@ -105,7 +109,8 @@ public class GameSync extends Thread implements Client {
 				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
 				otherPlayer.put(request.id, request);
 				game.setPlayers(otherPlayer);
-				
+				objectInputStream.close();
+				objectOutputStream.close();
 			}
 			
 		}
