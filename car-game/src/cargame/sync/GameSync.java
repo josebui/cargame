@@ -1,20 +1,14 @@
 package cargame.sync;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
-
 import cargame.CarGame;
 import cargame.core.Client;
 import cargame.core.GameInfo;
@@ -23,8 +17,11 @@ import cargame.core.Player;
 
 public class GameSync extends Thread implements Client {
 
+	private static final int MESSAGE_LENGTH = 500;
+	
 	private String url;
-	private int port;
+	private int serverPort;
+	private int clientPort;
 	
 	private CarGame game;
 	private boolean running;
@@ -35,25 +32,18 @@ public class GameSync extends Thread implements Client {
 		this.game = game;
 		this.server = server;
 		this.running = true; 
-		this.port = 1234;
-		this.url = "localhost";
-//		this.url = "10.9.202.13";
+		this.serverPort = 1234;
+		this.clientPort = 1234;
+//		this.url = "localhost";
+		this.url = "10.9.202.13";
+//		this.url = "192.168.0.102";
 	}
 	
 	@Override
 	public void run(){
 		while(running){
-			//sendMyPlayerInfo(game.getMyPlayer());
-			receiveData(server);
+			receiveData();
 			sendData();
-//			if(server){
-//				//runAsServer();
-//				receiveData(server);
-//			}else{
-//				sendData();
-//				
-//				//runAsClient();
-//			}
 		}
 	}
 
@@ -65,73 +55,17 @@ public class GameSync extends Thread implements Client {
 		this.running = running;
 	}
 	
-	@SuppressWarnings("resource")
-	public void runAsServer(){
-		
-		try {
-			ServerSocket serverSocket = new ServerSocket(this.port);
-			System.out.println("Server started...");
-			Socket socket = serverSocket.accept();
-			interact(socket,true);
-			
-			//objectOutputStream.close();
-//			objectInputStream.close();
-//			socket.close();
-//			serverSocket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void runAsClient(){
-		
-		try {
-			Socket socket = new Socket(this.url,this.port);
-			System.out.println("Client started...");
-			
-			interact(socket,false);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	private void sendData() {
 		try {
 			DatagramSocket serverSocket = new DatagramSocket();
-
-//			byte[] receiveData = new byte[1024];
-			byte[] sendData = new byte[1024];
-//			receiveData = new byte[1024];
-
-//			DatagramPacket receivePacket = new DatagramPacket(receiveData,	receiveData.length);
-
-//			System.out.println("Waiting for datagram packet");
-
-//			serverSocket.receive(receivePacket);
-
-//			String sentence = new String(receivePacket.getData());
-
-//			InetAddress IPAddress = receivePacket.getAddress();
-
-//			int port = receivePacket.getPort();
-
-//			System.out.println("From: " + IPAddress + ":" + port);
-//			System.out.println("Message: " + sentence);
+			byte[] sendData = new byte[MESSAGE_LENGTH];
 
 			String valueString = Arrays.toString(game.getMyPlayer().movingPosition.getValues());
 			String capitalizedSentence = valueString.substring(1, valueString.length()-1);
 
 			sendData = capitalizedSentence.getBytes();
 			InetAddress IPAddress = InetAddress.getByName(this.url); 
-			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,IPAddress , port);
+			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,IPAddress , (server)?this.clientPort:this.serverPort);
 
 			serverSocket.send(sendPacket);
 			serverSocket.close();
@@ -144,23 +78,19 @@ public class GameSync extends Thread implements Client {
 		}
 	}
 	
-	private void receiveData(boolean server){
+	private void receiveData(){
+		DatagramSocket serverSocket = null;
 		try {
-			DatagramSocket serverSocket = new DatagramSocket(this.port);
-
-			byte[] receiveData = new byte[1024];
-//			byte[] sendData = new byte[1024];
-//			receiveData = new byte[1024];
+			serverSocket = new DatagramSocket((server)?this.serverPort:this.clientPort);
+			serverSocket.setSoTimeout(20);
+			byte[] receiveData = new byte[MESSAGE_LENGTH];
 
 			DatagramPacket receivePacket = new DatagramPacket(receiveData,	receiveData.length);
-
-//			System.out.println("Waiting for datagram packet");
 
 			serverSocket.receive(receivePacket);
 
 			String sentence = new String(receivePacket.getData());
 
-			System.out.println(sentence);
 			
 			String[] stringValues = sentence.split(",");
 			float[] values = new float[6];
@@ -168,69 +98,17 @@ public class GameSync extends Thread implements Client {
 				values[i] = Float.parseFloat(stringValues[i]);
 			}
 			syncPlayerInfo((server)?0:1, values);
-//			InetAddress IPAddress = receivePacket.getAddress();
-
-//			int port = receivePacket.getPort();
-
-//			System.out.println("From: " + IPAddress + ":" + port);
-//			System.out.println("Message: " + sentence);
-
-//			String capitalizedSentence = Arrays.toString(game.getMyPlayer().movingPosition.getValues());
-
-//			sendData = capitalizedSentence.getBytes();
-//			InetAddress IPAddress = InetAddress.getByName(this.url); 
-//			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,IPAddress , port);
-
-//			serverSocket.send(sendPacket);
 			serverSocket.close();
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
+		}catch(SocketTimeoutException e){
+			
+		}catch (Exception e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} 
+		if(serverSocket!=null && !serverSocket.isClosed()){
+			serverSocket.close();
 		}
 	}
 	
-	private void interact(Socket socket, boolean server) throws IOException, ClassNotFoundException{
-		
-		ObjectInputStream objectInputStream;
-		ObjectOutputStream objectOutputStream;
-		float[] request;
-		while(true){
-			if(server){
-				objectInputStream =  new ObjectInputStream(socket.getInputStream());
-				request = (float[])objectInputStream.readObject();
-				syncPlayerInfo(0,request);
-//				System.out.println("Receive:"+request.movingPosition.xPos);
-				
-				objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
-//				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
-//				otherPlayer.put(request.id, request);
-//				game.setPlayers(otherPlayer);
-				
-				objectOutputStream.writeObject(game.getMyPlayer().movingPosition.getValues());
-				System.out.println("Send:"+game.getMyPlayer().movingPosition.xPos);
-//				objectInputStream.close();
-//				objectOutputStream.close();
-			}else{
-				objectOutputStream= new ObjectOutputStream(socket.getOutputStream());
-				objectOutputStream.writeObject(game.getMyPlayer().movingPosition.getValues());
-//				System.out.println("Send:"+game.getMyPlayer().movingPosition.xPos);
-				
-				objectInputStream =  new ObjectInputStream(socket.getInputStream());
-				request = (float[])objectInputStream.readObject();
-				System.out.println("Receive:"+request);
-//				Map<Integer,Player> otherPlayer = new HashMap<Integer, Player>();
-//				otherPlayer.put(request.id, request);
-				syncPlayerInfo(1,request);
-//				game.setPlayers(otherPlayer);
-//				objectInputStream.close();
-//				objectOutputStream.close();
-			}
-			
-		}
-	}
 	
 	@Override
 	public cargame.core.ServerStatus ServerStatus() {
