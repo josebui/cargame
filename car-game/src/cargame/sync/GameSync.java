@@ -1,6 +1,10 @@
 package cargame.sync;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -9,6 +13,7 @@ import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
+
 import cargame.CarGame;
 import cargame.core.Client;
 import cargame.core.GameInfo;
@@ -33,9 +38,9 @@ public class GameSync extends Thread implements Client {
 		this.server = server;
 		this.running = true; 
 		this.serverPort = 1234;
-		this.clientPort = 1234;
+		this.clientPort = 1235;
 //		this.url = "localhost";
-		this.url = "10.9.202.13";
+		this.url = "10.9.153.28";
 //		this.url = "192.168.0.102";
 	}
 	
@@ -58,15 +63,21 @@ public class GameSync extends Thread implements Client {
 	private void sendData() {
 		try {
 			DatagramSocket serverSocket = new DatagramSocket();
-			byte[] sendData = new byte[MESSAGE_LENGTH];
+//			byte[] sendData = new byte[MESSAGE_LENGTH];
 
-			String valueString = Arrays.toString(game.getMyPlayer().movingPosition.getValues());
-			String capitalizedSentence = valueString.substring(1, valueString.length()-1);
-
-			sendData = capitalizedSentence.getBytes();
-			InetAddress IPAddress = InetAddress.getByName(this.url); 
-			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,IPAddress , (server)?this.clientPort:this.serverPort);
-
+//			String valueString = Arrays.toString(game.getMyPlayer().movingPosition.getValues());
+//			String capitalizedSentence = valueString.substring(1, valueString.length()-1);
+			
+//			sendData = capitalizedSentence.getBytes();
+			InetAddress IPAddress = InetAddress.getByName(this.url);
+			
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+			objectOutputStream.writeObject(game.getMyPlayer());
+			byte[] data = outputStream.toByteArray();
+			
+			//DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,IPAddress , (server)?this.clientPort:this.serverPort);
+			DatagramPacket sendPacket = new DatagramPacket(data, data.length,IPAddress , (server)?this.clientPort:this.serverPort);
 			serverSocket.send(sendPacket);
 			serverSocket.close();
 		} catch (SocketException e) {
@@ -86,18 +97,23 @@ public class GameSync extends Thread implements Client {
 			byte[] receiveData = new byte[MESSAGE_LENGTH];
 
 			DatagramPacket receivePacket = new DatagramPacket(receiveData,	receiveData.length);
-
 			serverSocket.receive(receivePacket);
-
-			String sentence = new String(receivePacket.getData());
+			
+			byte[] data = receivePacket.getData();
+			
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+			ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+			Player receivedPlayer = (Player)objectInputStream.readObject();
+			syncPlayerInfo(receivedPlayer);
+//			String sentence = new String(receivePacket.getData());
 
 			
-			String[] stringValues = sentence.split(",");
-			float[] values = new float[6];
-			for(int i=0;i<stringValues.length;i++){
-				values[i] = Float.parseFloat(stringValues[i]);
-			}
-			syncPlayerInfo((server)?0:1, values);
+//			String[] stringValues = sentence.split(",");
+//			float[] values = new float[6];
+//			for(int i=0;i<stringValues.length;i++){
+//				values[i] = Float.parseFloat(stringValues[i]);
+//			}
+//			syncPlayerInfo((server)?0:1, values);
 			serverSocket.close();
 		}catch(SocketTimeoutException e){
 			
@@ -157,6 +173,11 @@ public class GameSync extends Thread implements Client {
 		Player player = playerList.get(playerId);
 		player.time = (new Date()).getTime();
 		player.movingPosition.setValues(values);
+	}
+	
+	private void syncPlayerInfo(Player player){
+		Map<Integer, Player> playerList = game.getPlayers();
+		playerList.put(player.id, player);
 	}
 
 	@Override
