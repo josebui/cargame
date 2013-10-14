@@ -15,4 +15,6 @@ public interface Client {
 	// information for server
 	void sendMyPlayerInfo(Player player);
 
+	void startGame();
+	
 }
