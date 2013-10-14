@@ -63,6 +63,7 @@ public class TrackerClient extends Thread {
 				String receivedMSG = new String(recPacket.getData(), 0,
 						recPacket.getLength());
 				System.out.println(receivedMSG);
+				break;
 
 			} catch (SocketTimeoutException e) {
 				tries++;

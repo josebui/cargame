@@ -34,10 +34,12 @@ public class GUI {
 	private JLabel lblPort;
 	private JTextPane textPane;
 	private JLabel lblCarGameTracker;
-	private final Action startAction = new SwingAction();
+	private final Action startAction = new SwingAction(this);
 	private final Action stopAction = new SwingAction_1();
 	private JButton btnStart;
 	private JButton btnStop;
+	private Tracker tracker;
+	private JTextArea textArea;
 	/**
 	 * Launch the application.
 	 */
@@ -95,7 +97,7 @@ public class GUI {
 		textField.setColumns(10);
 		
 		textField_1 = new JTextField();
-		textField_1.setText("6666");
+		textField_1.setText("4445");
 		textField_1.setBounds(77, 42, 180, 23);
 		frmTrackerCar.getContentPane().add(textField_1);
 		textField_1.setColumns(10);
@@ -108,7 +110,7 @@ public class GUI {
 		lblPort.setBounds(29, 46, 46, 14);
 		frmTrackerCar.getContentPane().add(lblPort);
 		
-		JTextArea textArea = new JTextArea();
+		textArea = new JTextArea();
 	    JScrollPane scrollPane = new JScrollPane( textArea );
 		//textPane = new JTextPane();
 	    textArea.setEditable(false);
@@ -122,25 +124,41 @@ public class GUI {
 	}
 
 	private class SwingAction extends AbstractAction {
-		public SwingAction() {
+		GUI guiObject;
+		public SwingAction(GUI guiObject) {
+			this.guiObject = guiObject;
 			putValue(NAME, "Start");
 			putValue(SHORT_DESCRIPTION, "Some short description");
 		}
 		public void actionPerformed(ActionEvent e) {
-			btnStop.setEnabled(true);
-			btnStart.setEnabled(false);
+			Console.redirectOutput( textArea );
+			toggleButtons();
 			System.out.println("Started...");
+			tracker = new Tracker(guiObject);
+			tracker.setPort(Integer.parseInt(textField_1.getText()));
+			tracker.start();
 		}
 	}
 	private class SwingAction_1 extends AbstractAction {
+
 		public SwingAction_1() {
 			putValue(NAME, "Stop");
 			putValue(SHORT_DESCRIPTION, "Some short description");
 		}
 		public void actionPerformed(ActionEvent e) {
+			tracker.stopTracker();
+			//Console.redirectOutput( textArea );
+			System.out.println("Stopped...");
+		}
+	}
+	
+	public void toggleButtons(){
+		if(btnStart.isEnabled()){
+			btnStop.setEnabled(true);
+			btnStart.setEnabled(false);
+		}else{
 			btnStart.setEnabled(true);
 			btnStop.setEnabled(false);
-			System.out.println("Stopped...");
 		}
 	}
 }
