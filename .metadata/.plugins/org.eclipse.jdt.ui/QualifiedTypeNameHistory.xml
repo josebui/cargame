@@ -3,4 +3,5 @@
 <fullyQualifiedTypeName name="java.rmi.UnknownHostException"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.net.SocketTimeoutException"/>
+<fullyQualifiedTypeName name="java.util.ResourceBundle.Control"/>
 </qualifiedTypeNameHistroy>
