@@ -15,13 +15,19 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.AbstractAction;
+
+import java.awt.event.ActionEvent;
+
+import javax.swing.Action;
 
 
 public class CarGameUI {
 
 	private JFrame frmCarGame;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField ipTextField;
+	private JTextField portTextField;
+	private final Action startProcess = new SwingAction();
 
 	/**
 	 * Launch the application.
@@ -71,9 +77,9 @@ public class CarGameUI {
 		frmCarGame.getContentPane().setLayout(null);
 		
 		
-		textField = new JTextField();
-		textField.setBounds(101, 22, 107, 20);
-		textField.setInputVerifier(new InputVerifier() {
+		ipTextField = new JTextField();
+		ipTextField.setBounds(101, 22, 107, 20);
+		ipTextField.setInputVerifier(new InputVerifier() {
             Pattern pat = Pattern.compile("\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\."+
                     "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
                     "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
@@ -97,17 +103,17 @@ public class CarGameUI {
                 return m.matches();
             }
         });
-		frmCarGame.getContentPane().add(textField);
-		textField.setColumns(10);
+		frmCarGame.getContentPane().add(ipTextField);
+		ipTextField.setColumns(10);
 		
 		JLabel lblTrackerIp = new JLabel("Tracker IP:");
 		lblTrackerIp.setBounds(10, 25, 62, 14);
 		frmCarGame.getContentPane().add(lblTrackerIp);
 		
-		textField_1 = new JTextField();
-		textField_1.setBounds(138, 53, 70, 20);
-		frmCarGame.getContentPane().add(textField_1);
-		textField_1.setInputVerifier(new InputVerifier() {
+		portTextField = new JTextField();
+		portTextField.setBounds(138, 53, 70, 20);
+		frmCarGame.getContentPane().add(portTextField);
+		portTextField.setInputVerifier(new InputVerifier() {
             Pattern pat = Pattern.compile("\\b([0-9]+)");
             public boolean shouldYieldFocus(JComponent input) {
                 boolean inputOK = verify(input);
@@ -133,14 +139,34 @@ public class CarGameUI {
                 	return false;
             }
         });
-		textField_1.setColumns(10);
+		portTextField.setColumns(10);
 		
 		JLabel lblTrackerPort = new JLabel(" Tracker Port: ");
 		lblTrackerPort.setBounds(10, 56, 86, 14);
 		frmCarGame.getContentPane().add(lblTrackerPort);
 		
 		JButton btnConnectPlay = new JButton("Connect & Play");
+		btnConnectPlay.setAction(startProcess);
 		btnConnectPlay.setBounds(37, 84, 158, 24);
 		frmCarGame.getContentPane().add(btnConnectPlay);
+	}
+	private class SwingAction extends AbstractAction {
+		public SwingAction() {
+			putValue(NAME, "Connect & Play");
+			putValue(SHORT_DESCRIPTION, "Click to Start Playing");
+			
+		}
+		public void actionPerformed(ActionEvent e) {			
+			try {
+				StartGame startGame = new StartGame(ipTextField.getText(), Integer.parseInt(portTextField.getText()));
+				startGame.start();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 	}
 }

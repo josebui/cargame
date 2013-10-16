@@ -1,0 +1,10 @@
+import java.io.IOException;
+
+
+public class StartGame {
+	public void startTrackerClient() throws IOException{
+		TrackerClient trackerClient = new TrackerClient();
+		trackerClient.start();
+	}
+
+}
