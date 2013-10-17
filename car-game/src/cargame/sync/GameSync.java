@@ -10,7 +10,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -37,10 +36,10 @@ public class GameSync extends Thread implements Client {
 		this.game = game;
 		this.server = server;
 		this.running = true; 
-		this.serverPort = 1234;
-		this.clientPort = 1235;
-//		this.url = "localhost";
-		this.url = "10.9.153.28";
+		this.serverPort = 12343;
+		this.clientPort = 12353;
+		this.url = "localhost";
+//		this.url = "10.9.193.134";
 //		this.url = "192.168.0.102";
 	}
 	
@@ -63,12 +62,6 @@ public class GameSync extends Thread implements Client {
 	private void sendData() {
 		try {
 			DatagramSocket serverSocket = new DatagramSocket();
-//			byte[] sendData = new byte[MESSAGE_LENGTH];
-
-//			String valueString = Arrays.toString(game.getMyPlayer().movingPosition.getValues());
-//			String capitalizedSentence = valueString.substring(1, valueString.length()-1);
-			
-//			sendData = capitalizedSentence.getBytes();
 			InetAddress IPAddress = InetAddress.getByName(this.url);
 			
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -76,7 +69,6 @@ public class GameSync extends Thread implements Client {
 			objectOutputStream.writeObject(game.getMyPlayer());
 			byte[] data = outputStream.toByteArray();
 			
-			//DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,IPAddress , (server)?this.clientPort:this.serverPort);
 			DatagramPacket sendPacket = new DatagramPacket(data, data.length,IPAddress , (server)?this.clientPort:this.serverPort);
 			serverSocket.send(sendPacket);
 			serverSocket.close();
@@ -105,15 +97,6 @@ public class GameSync extends Thread implements Client {
 			ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 			Player receivedPlayer = (Player)objectInputStream.readObject();
 			syncPlayerInfo(receivedPlayer);
-//			String sentence = new String(receivePacket.getData());
-
-			
-//			String[] stringValues = sentence.split(",");
-//			float[] values = new float[6];
-//			for(int i=0;i<stringValues.length;i++){
-//				values[i] = Float.parseFloat(stringValues[i]);
-//			}
-//			syncPlayerInfo((server)?0:1, values);
 			serverSocket.close();
 		}catch(SocketTimeoutException e){
 			
