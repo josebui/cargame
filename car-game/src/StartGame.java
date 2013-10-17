@@ -5,6 +5,7 @@ import java.io.IOException;
 public class StartGame extends Thread{
 	private String IP;
 	private int port;
+	private StartGameOutput window;
 	public StartGame(String ip, int port) throws IOException{
 		this.IP = ip;
 		this.port = port;
@@ -12,11 +13,12 @@ public class StartGame extends Thread{
 	
 	public void run(){
 		TrackerClient trackerClient;
-		
-		try {
-			trackerClient = new TrackerClient(IP, port);
+		try{
+			window = new StartGameOutput();
+			trackerClient = new TrackerClient(IP, port, window);
 			trackerClient.start();
 			trackerClient.join();
+			window.closeWindow();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -4,4 +4,13 @@
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.net.SocketTimeoutException"/>
 <fullyQualifiedTypeName name="java.util.ResourceBundle.Control"/>
+<fullyQualifiedTypeName name="com.sun.java.util.jar.pack.Package.File"/>
+<fullyQualifiedTypeName name="java.awt.Image"/>
+<fullyQualifiedTypeName name="java.awt.Graphics"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="java.util.regex.Pattern"/>
+<fullyQualifiedTypeName name="java.util.regex.Matcher"/>
+<fullyQualifiedTypeName name="java.awt.Toolkit"/>
+<fullyQualifiedTypeName name="TrackerClient"/>
+<fullyQualifiedTypeName name="StartGame"/>
 </qualifiedTypeNameHistroy>

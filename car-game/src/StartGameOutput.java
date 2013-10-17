@@ -1,4 +1,5 @@
 import java.awt.EventQueue;
+import java.awt.TextArea;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -7,8 +8,8 @@ import javax.swing.JTextArea;
 
 public class StartGameOutput {
 
-	public JFrame frame;
-
+	private JFrame frame;
+	private JTextArea textArea;
 	/**
 	 * Launch the application.
 	 */
@@ -30,6 +31,7 @@ public class StartGameOutput {
 	 */
 	public StartGameOutput() {
 		initialize();
+		frame.setVisible(true);
 	}
 
 	/**
@@ -42,11 +44,18 @@ public class StartGameOutput {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JTextArea textArea = new JTextArea();
+		textArea = new JTextArea();
 		JScrollPane scrollPane = new JScrollPane( textArea );
 		textArea.setEditable(false);
 		scrollPane.setBounds(10, 11, 420, 184);
-		Console.redirectOutput( textArea );
 		frame.getContentPane().add(scrollPane);
+	}
+	
+	public void writeOutput(String msg){
+		textArea.append(msg+"\n");
+	}
+	
+	public void closeWindow(){
+		frame.setVisible(false);
 	}
 }

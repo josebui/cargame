@@ -28,7 +28,7 @@ public class CarGameUI {
 	private JTextField ipTextField;
 	private JTextField portTextField;
 	private final Action startProcess = new SwingAction();
-
+	private StartGame startGame = null;
 	/**
 	 * Launch the application.
 	 */
@@ -158,12 +158,11 @@ public class CarGameUI {
 		}
 		public void actionPerformed(ActionEvent e) {			
 			try {
-				StartGame startGame = new StartGame(ipTextField.getText(), Integer.parseInt(portTextField.getText()));
+				if(startGame == null || !startGame.isAlive()){
+				startGame = new StartGame(ipTextField.getText(), Integer.parseInt(portTextField.getText()));
 				startGame.start();
+				}
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
