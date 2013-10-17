@@ -10,6 +10,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class GameSync extends Thread implements Client {
 
 	private static final int MESSAGE_LENGTH = 500;
 	
-	private String url;
+	private InetAddress peerAddress;
 	private int serverPort;
 	private int clientPort;
 	
@@ -31,16 +32,25 @@ public class GameSync extends Thread implements Client {
 	private boolean running;
 	private boolean server;
 
-	public GameSync(CarGame game,boolean server) {
+	public GameSync(CarGame game,boolean server,String serverIp) {
 		super();
 		this.game = game;
 		this.server = server;
 		this.running = true; 
 		this.serverPort = 12343;
 		this.clientPort = 12353;
-		this.url = "localhost";
+		this.peerAddress = getInetAddress((serverIp == null)?"localhost":serverIp);
 //		this.url = "10.9.193.134";
 //		this.url = "192.168.0.102";
+	}
+	
+	private InetAddress getInetAddress(String url){
+		try {
+			return InetAddress.getByName(url);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@Override
@@ -62,14 +72,14 @@ public class GameSync extends Thread implements Client {
 	private void sendData() {
 		try {
 			DatagramSocket serverSocket = new DatagramSocket();
-			InetAddress IPAddress = InetAddress.getByName(this.url);
+//			InetAddress IPAddress = InetAddress.getByName(this.url);
 			
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
 			objectOutputStream.writeObject(game.getMyPlayer());
 			byte[] data = outputStream.toByteArray();
 			
-			DatagramPacket sendPacket = new DatagramPacket(data, data.length,IPAddress , (server)?this.clientPort:this.serverPort);
+			DatagramPacket sendPacket = new DatagramPacket(data, data.length,this.peerAddress , (server)?this.clientPort:this.serverPort);
 			serverSocket.send(sendPacket);
 			serverSocket.close();
 		} catch (SocketException e) {
@@ -92,7 +102,9 @@ public class GameSync extends Thread implements Client {
 			serverSocket.receive(receivePacket);
 			
 			byte[] data = receivePacket.getData();
-			
+			if(this.server){
+				this.peerAddress = receivePacket.getAddress();
+			}
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
 			ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 			Player receivedPlayer = (Player)objectInputStream.readObject();
@@ -162,11 +174,4 @@ public class GameSync extends Thread implements Client {
 		Map<Integer, Player> playerList = game.getPlayers();
 		playerList.put(player.id, player);
 	}
-
-	@Override
-	public void startGame() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }
