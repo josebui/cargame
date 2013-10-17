@@ -1,0 +1,52 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+
+public class StartGameOutput {
+
+	private JFrame frame;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					StartGameOutput window = new StartGameOutput();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public StartGameOutput() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setResizable(false);
+		frame.setBounds(100, 100, 446, 235);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		JTextArea textArea = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane( textArea );
+		textArea.setEditable(false);
+		scrollPane.setBounds(10, 11, 420, 184);
+		Console.redirectOutput( textArea );
+		frame.getContentPane().add(scrollPane);
+	}
+}

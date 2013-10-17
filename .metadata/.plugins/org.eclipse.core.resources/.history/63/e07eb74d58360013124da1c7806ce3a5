@@ -1,0 +1,14 @@
+import java.io.IOException;
+
+
+public class StartGame extends Thread{
+	private String IP;
+	private int port;
+	public void startTrackerClient(ip, port) throws IOException{
+		this.IP = ip;
+		this.port = port;
+		TrackerClient trackerClient = new TrackerClient();
+		trackerClient.start();
+	}
+
+}
