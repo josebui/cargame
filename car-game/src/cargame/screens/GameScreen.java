@@ -85,8 +85,8 @@ public class GameScreen extends ScreenAdapter {
 		
 		Gdx.graphics.setDisplayMode(1200, 800, false);
 //		Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-//		camera = new OrthographicCamera(276,205);
-		camera = new OrthographicCamera(226,165);
+		camera = new OrthographicCamera(276,205);
+//		camera = new OrthographicCamera(226,165);
 		fixedCamera = new OrthographicCamera(276,205);
 //		camera = new OrthographicCamera(200,150);
         camera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
@@ -164,6 +164,7 @@ public class GameScreen extends ScreenAdapter {
 		float cameraX = playerCar.getBody().getPosition().x;
 		float cameraY = playerCar.getBody().getPosition().y;
 		
+		// Camera boundaries
 		if(cameraX - camera.viewportWidth/2.0 < 0 ){
 			cameraX = (float) (camera.viewportWidth/2.0);
 		}
