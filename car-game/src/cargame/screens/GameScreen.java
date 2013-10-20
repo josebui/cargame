@@ -39,6 +39,7 @@ public class GameScreen extends ScreenAdapter {
 	private World world;
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
+	private OrthographicCamera fixedCamera;
 	private SpriteBatch batch;
 	
 	private List<Element> elements;
@@ -50,6 +51,9 @@ public class GameScreen extends ScreenAdapter {
 	
 	private Car playerCar;
 	private Map<Integer,Car> otherPlayersCars;
+	
+	private float trackWidth;
+	private float trackHeight;
 	
 	static {
 		GdxNativesLoader.load();
@@ -81,10 +85,15 @@ public class GameScreen extends ScreenAdapter {
 		
 		Gdx.graphics.setDisplayMode(1200, 800, false);
 //		Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-		camera = new OrthographicCamera(276,205);
+//		camera = new OrthographicCamera(276,205);
+		camera = new OrthographicCamera(226,165);
+		fixedCamera = new OrthographicCamera(276,205);
 //		camera = new OrthographicCamera(200,150);
         camera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
         camera.update();
+        
+        fixedCamera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
+        fixedCamera.update();
         
         batch = new SpriteBatch();
         
@@ -101,7 +110,7 @@ public class GameScreen extends ScreenAdapter {
         // Load track
         loadTrack("track1");
         
-        debugRenderer = new Box2DDebugRenderer(true,false,false,true,false,false);  
+        debugRenderer = new Box2DDebugRenderer(false,false,false,false,false,false);  
 	}
 	
 	private void loadTrack(String trackName) {
@@ -119,10 +128,14 @@ public class GameScreen extends ScreenAdapter {
 		fd.restitution = 0.3f;
 
 		Body body = world.createBody(bd);
-
+		
 		// Creates the box2D object with the name in the Physics body editor
 		// bodies list
 		loader.attachFixture(body, trackName, fd, 280);
+		
+		// Set track dimensions
+		this.trackWidth = 195;
+		this.trackHeight = 125;
 		
 		// Track contact listener
 		TrackContactListener sensor = new TrackContactListener(this);
@@ -148,8 +161,30 @@ public class GameScreen extends ScreenAdapter {
 			return;
 		}
 		
-//		camera.position.set(playerCar.getBody().getPosition().x, playerCar.getBody().getPosition().y, 0);
-//		camera.update();
+		float cameraX = playerCar.getBody().getPosition().x;
+		float cameraY = playerCar.getBody().getPosition().y;
+		
+		if(cameraX - camera.viewportWidth/2.0 < 0 ){
+			cameraX = (float) (camera.viewportWidth/2.0);
+		}
+		
+		if(cameraY - camera.viewportHeight /2.0 < 0 ){
+			cameraY = (float) (camera.viewportHeight/2.0);
+		}
+		
+		if(cameraX > trackWidth ){
+			cameraX = (float) (trackWidth);
+		}
+		
+		if(cameraY > trackHeight ){
+			cameraY = (float) (trackHeight);
+		}
+		
+//		System.out.println(cameraX+" | "+trackWidth);
+//		System.out.println(cameraY+" | "+trackHeight);
+		
+		camera.position.set(cameraX, cameraY, 0);
+		camera.update();
 		
 		// Key listeners
 		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
@@ -201,8 +236,7 @@ public class GameScreen extends ScreenAdapter {
 			sprite.draw(batch);
 		}
 		
-		// Hud
-		playerHud.render(batch);
+		
 		
 		for(Element element : elements){
 			Body body = element.getBody();
@@ -221,12 +255,12 @@ public class GameScreen extends ScreenAdapter {
 		}
 		batch.end();
 		
+		// Hud
+		playerHud.render();
+		
 		if(playerCar.getLaps() > 5){
 			gameOver = true;
 		}
-		
-//		debugRenderer.render(world, camera.combined);
-
 	}
 
 	public World getWorld() {
@@ -239,6 +273,10 @@ public class GameScreen extends ScreenAdapter {
 
 	public OrthographicCamera getCamera() {
 		return camera;
+	}
+	
+	public OrthographicCamera getFixedCamera() {
+		return fixedCamera;
 	}
 
 	public Car getPlayerCar() {

@@ -56,6 +56,7 @@ public class GameSync extends Thread implements Client {
 	@Override
 	public void run(){
 		while(running){
+			
 			receiveData();
 			sendData();
 		}
