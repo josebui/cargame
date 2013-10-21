@@ -31,6 +31,8 @@ public class GameSync extends Thread implements Client {
 	private CarGame game;
 	private boolean running;
 	private boolean server;
+	
+	private long lastReceivedPlayerTime;
 
 	public GameSync(CarGame game,boolean server,String serverIp) {
 		super();
@@ -40,6 +42,7 @@ public class GameSync extends Thread implements Client {
 		this.serverPort = 12343;
 		this.clientPort = 12353;
 		this.peerAddress = getInetAddress((serverIp == null)?"localhost":serverIp);
+		this.lastReceivedPlayerTime = Long.MIN_VALUE;
 //		this.url = "10.9.193.134";
 //		this.url = "192.168.0.102";
 	}
@@ -77,7 +80,9 @@ public class GameSync extends Thread implements Client {
 			
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-			objectOutputStream.writeObject(game.getMyPlayer());
+			Player playerInfo = game.getMyPlayer();
+			playerInfo.time = System.currentTimeMillis();
+			objectOutputStream.writeObject(playerInfo);
 			byte[] data = outputStream.toByteArray();
 			
 			DatagramPacket sendPacket = new DatagramPacket(data, data.length,this.peerAddress , (server)?this.clientPort:this.serverPort);
@@ -101,7 +106,6 @@ public class GameSync extends Thread implements Client {
 
 			DatagramPacket receivePacket = new DatagramPacket(receiveData,	receiveData.length);
 			serverSocket.receive(receivePacket);
-			
 			byte[] data = receivePacket.getData();
 			if(this.server){
 				this.peerAddress = receivePacket.getAddress();
@@ -109,6 +113,12 @@ public class GameSync extends Thread implements Client {
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
 			ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 			Player receivedPlayer = (Player)objectInputStream.readObject();
+			
+			if(receivedPlayer.time <= this.lastReceivedPlayerTime){
+				// Ignore old packet
+				return;
+			}
+			
 			syncPlayerInfo(receivedPlayer);
 			serverSocket.close();
 		}catch(SocketTimeoutException e){

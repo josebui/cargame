@@ -24,21 +24,42 @@ public class Car implements Element{
 	public static final String SPRITE_3 = "img\\car4.png";
 	public static final String SPRITE_4 = "img\\coche.png";
 	
+	public static final int TYPE_1 = 0;
+	public static final int TYPE_2 = 1;
+	public static final int TYPE_3 = 2;
+	public static final int TYPE_4 = 3;
+	
+	
 	private GameScreen game;
 	
 	private Body body;
 	
 	private String spritePath; 
 	
-	private int laps;
-	
 	private Player player;
 	
-	public Car(Player player,GameScreen game,String spritePath) {
+	private boolean wrongDirection;
+	
+	public Car(Player player,GameScreen game,int carType) {
 		this.game = game;
-		this.spritePath = spritePath;
-		this.laps = 0;
+		
 		this.player =player;
+		this.wrongDirection = false;
+		
+		switch(carType){
+			case TYPE_1:
+				this.spritePath = SPRITE_1;
+			break;
+			case TYPE_2:
+				this.spritePath = SPRITE_2;
+			break;
+			case TYPE_3:
+				this.spritePath = SPRITE_3;
+			break;
+			case TYPE_4:
+				this.spritePath = SPRITE_4;
+			break;
+		}
 	}
 	
 	public void setEngineSpeed(float engineSpeed){
@@ -76,17 +97,12 @@ public class Car implements Element{
 	}
 	
 	public void addLap(){
-		this.laps++;
-		System.out.println("Laps "+this.toString()+":"+this.laps);
+		this.player.addLap();
+		System.out.println("Laps "+this.toString()+":"+this.player.getLaps());
 	}
 	
-	public void removeLap(){
-		this.laps--;
-		System.out.println("Laps "+this.toString()+":"+this.laps);
-	}
-
 	public int getLaps() {
-		return laps;
+		return this.player.getLaps();
 	}
 
 	public float getSpeed(){
@@ -105,7 +121,7 @@ public class Car implements Element{
 	}
 
 	public void setPlayer(Player player) {
-		if(player.time <= this.player.time) return;
+//		if(player.time <= this.player.time) return;
 		this.player = player;
 		this.setPosition(player.movingPosition);
 	}
@@ -121,6 +137,14 @@ public class Car implements Element{
 		player.movingPosition.linearSpeedX = getBody().getLinearVelocity().x;
 		player.movingPosition.linearSpeedY = getBody().getLinearVelocity().y;
 		player.movingPosition.angularSpeed = getBody().getAngularVelocity();
+	}
+
+	public void setWrongDirection(boolean wrongDirection) {
+		this.wrongDirection = wrongDirection;
+	}
+
+	public boolean isWrongDirection() {
+		return wrongDirection;
 	}
 	
 }

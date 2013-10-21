@@ -60,6 +60,7 @@ public class TrackContactListener implements ContactListener {
         	if(passedSensor2.containsKey(car) && passedSensor2.get(car)){
         		if(!wrongDirection.containsKey(car) || !wrongDirection.get(car)){
         			wrongDirection.put(car,true); 
+        			car.setWrongDirection(true);
         		}
         		
         		passedSensor2.put(car, false);
@@ -73,6 +74,7 @@ public class TrackContactListener implements ContactListener {
         	if(passedSensor1.containsKey(car) && passedSensor1.get(car)){
         		if(wrongDirection.containsKey(car) && wrongDirection.get(car)){
         			wrongDirection.put(car, false);
+        			car.setWrongDirection(false);
         		}else{
         			car.addLap();
         		}

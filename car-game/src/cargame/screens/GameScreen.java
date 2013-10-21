@@ -38,8 +38,11 @@ public class GameScreen extends ScreenAdapter {
 	
 	private World world;
 	private Box2DDebugRenderer debugRenderer;
+	
 	private OrthographicCamera camera;
 	private OrthographicCamera fixedCamera;
+	private OrthographicCamera previewCamera;
+	
 	private SpriteBatch batch;
 	
 	private List<Element> elements;
@@ -55,16 +58,19 @@ public class GameScreen extends ScreenAdapter {
 	private float trackWidth;
 	private float trackHeight;
 	
+	private int lapsNumber;
+	
 	static {
 		GdxNativesLoader.load();
 	}
 	
-	public GameScreen(Player clientPlayer) {
+	public GameScreen(Player clientPlayer,int lapsNumber) {
 		super();
 		world = new World(new Vector2(0, 0), true);
 		gameOver = false;
-		playerCar = new Car(clientPlayer, this, Car.SPRITE_2);
+		playerCar = new Car(clientPlayer, this, clientPlayer.car_id);
 		otherPlayersCars = new HashMap<Integer, Car>();
+		this.lapsNumber = lapsNumber;
 	}
 	
 	@Override
@@ -86,11 +92,15 @@ public class GameScreen extends ScreenAdapter {
 		Gdx.graphics.setDisplayMode(1200, 800, false);
 //		Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 		camera = new OrthographicCamera(276,205);
+		previewCamera = new OrthographicCamera(1200,891);
 //		camera = new OrthographicCamera(226,165);
 		fixedCamera = new OrthographicCamera(276,205);
 //		camera = new OrthographicCamera(200,150);
         camera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
         camera.update();
+        
+        previewCamera.position.set(previewCamera.viewportWidth * 0.5f, previewCamera.viewportHeight * 0.5f, 0f);  
+        previewCamera.update();
         
         fixedCamera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
         fixedCamera.update();
@@ -110,7 +120,7 @@ public class GameScreen extends ScreenAdapter {
         // Load track
         loadTrack("track1");
         
-        debugRenderer = new Box2DDebugRenderer(false,false,false,false,false,false);  
+        debugRenderer = new Box2DDebugRenderer(true,false,false,true,false,false);  
 	}
 	
 	private void loadTrack(String trackName) {
@@ -156,10 +166,6 @@ public class GameScreen extends ScreenAdapter {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		world.step(BOX_STEP, BOX_VELOCITY_ITERATIONS, BOX_POSITION_ITERATIONS);
 		
-		if(gameOver){
-			CarGame.getInstance().switchScreen(CarGame.GAMEOVER_SCREEN);
-			return;
-		}
 		
 		float cameraX = playerCar.getBody().getPosition().x;
 		float cameraY = playerCar.getBody().getPosition().y;
@@ -188,17 +194,24 @@ public class GameScreen extends ScreenAdapter {
 		camera.update();
 		
 		// Key listeners
-		if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
-			playerCar.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
-		}
-		if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)){
-			playerCar.setSteeringAngle((float)-Car.MAX_STEER_ANGLE);
-		}
-		if (Gdx.input.isKeyPressed(Keys.DPAD_UP)){
-			playerCar.setEngineSpeed(Car.HORSEPOWERS);
-		}
-		if (Gdx.input.isKeyPressed(Keys.DPAD_DOWN)){
-			playerCar.setEngineSpeed(-Car.HORSEPOWERS);
+		if(!gameOver){
+			if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
+				playerCar.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
+			}
+			if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)){
+				playerCar.setSteeringAngle((float)-Car.MAX_STEER_ANGLE);
+			}
+			if (Gdx.input.isKeyPressed(Keys.DPAD_UP)){
+				playerCar.setEngineSpeed(Car.HORSEPOWERS);
+			}
+			if (Gdx.input.isKeyPressed(Keys.DPAD_DOWN)){
+				playerCar.setEngineSpeed(-Car.HORSEPOWERS);
+			}
+			
+			playerHud.hideLeaderBoard();
+			if (Gdx.input.isKeyPressed(Keys.TAB)){
+				playerHud.showLeaderBoard();
+			}
 		}
 		
 		playerCar.updatePosition();
@@ -212,7 +225,7 @@ public class GameScreen extends ScreenAdapter {
         		}else{
         			// Create new player
         			Player otherPlayer = CarGame.getInstance().getPlayers().get(playerId);
-        			Car otherCar = new Car(otherPlayer, this, Car.SPRITE_3 );
+        			Car otherCar = new Car(otherPlayer, this, otherPlayer.car_id);
         			elements.add(otherCar);
         			otherCar.createCarObject();
         			otherPlayersCars.put(otherPlayer.id, otherCar);
@@ -221,12 +234,8 @@ public class GameScreen extends ScreenAdapter {
         	}
         }
 		
-		if (Gdx.input.isKeyPressed(Keys.Q)){
-			CarGame.getInstance().switchScreen(CarGame.GAMEOVER_SCREEN);
-		}
-		
 		// Box2d Render
-		debugRenderer.render(world, camera.combined);
+//		debugRenderer.render(world, camera.combined);
 		
 		// Set object images
 		batch.setProjectionMatrix(camera.combined);
@@ -236,8 +245,6 @@ public class GameScreen extends ScreenAdapter {
 		for(Sprite sprite: staticSprites){
 			sprite.draw(batch);
 		}
-		
-		
 		
 		for(Element element : elements){
 			Body body = element.getBody();
@@ -257,10 +264,17 @@ public class GameScreen extends ScreenAdapter {
 		batch.end();
 		
 		// Hud
-		playerHud.render();
+		playerHud.render(delta);
 		
-		if(playerCar.getLaps() > 5){
+		debugRenderer.render(world, previewCamera.combined);
+		
+		if(playerCar.getLaps() >= this.lapsNumber){
 			gameOver = true;
+		}
+		
+		// Game over
+		if(gameOver){
+			playerHud.showLeaderBoard();
 		}
 	}
 
@@ -282,6 +296,12 @@ public class GameScreen extends ScreenAdapter {
 
 	public Car getPlayerCar() {
 		return playerCar;
+	}
+	
+	public Map<Integer,Car> getAllPlayersCars(){
+		Map<Integer,Car> allCars = new HashMap<Integer, Car>(this.otherPlayersCars); 
+		allCars.put(this.playerCar.getPlayer().id, this.playerCar);
+		return allCars;
 	}
 	
 }

@@ -19,8 +19,8 @@ public class CarGame extends Game{
 		return instance;
 	}
 	
-	public static CarGame createInstance(boolean server,String serverIp){
-		instance = new CarGame(server,serverIp);
+	public static CarGame createInstance(boolean server,String serverIp, int lapsNumber,int carType){
+		instance = new CarGame(server,serverIp,lapsNumber,carType);
 		return instance;
 	}
 	
@@ -39,7 +39,7 @@ public class CarGame extends Game{
 	
 	private GameSync gameSync;
 	
-	private CarGame(boolean server,String serverIp) {
+	private CarGame(boolean server,String serverIp, int lapsNumber,int carType) {
 		super();
 		
 		gameSync = new GameSync(this,server,serverIp);
@@ -49,8 +49,9 @@ public class CarGame extends Game{
 //		}
 		myPlayer = new Player();
 		myPlayer.id = (server)?1:0;
+		myPlayer.car_id = carType;
 		
-		gameScreen = new GameScreen(myPlayer);
+		gameScreen = new GameScreen(myPlayer,lapsNumber);
 		gameOverScreen = new GameOver();
 		
 	}
