@@ -25,8 +25,12 @@ public class TrackContactListener implements ContactListener {
 	private Map<Car,Boolean> passedSensor1;
 	private Map<Car,Boolean> passedSensor2;
 	
+	private long initialLapTime;
+	
 	public TrackContactListener(GameScreen game) {
 		super();
+		
+		initialLapTime = System.currentTimeMillis();
 		
 		this.game = game;
 		
@@ -44,7 +48,7 @@ public class TrackContactListener implements ContactListener {
 			Car car = (Car) game.getElements().get(i);
 			if(car != null){
 				wrongDirection.put(car, true);
-				car.getBody().setTransform(sensor1.getPosition().x+10, sensor1.getPosition().y, (float)( sensor1.getAngle()-Math.PI/2.0));
+				car.getBody().setTransform(sensor1.getPosition().x+20, sensor1.getPosition().y +6 -this.game.getPlayerCar().getPlayer().id*10, (float)( sensor1.getAngle()-Math.PI/2.0));
 			}
 			
 		}
@@ -76,7 +80,8 @@ public class TrackContactListener implements ContactListener {
         			wrongDirection.put(car, false);
         			car.setWrongDirection(false);
         		}else{
-        			car.addLap();
+        			car.addLap(System.currentTimeMillis() - initialLapTime);
+        			initialLapTime = System.currentTimeMillis();
         		}
         		passedSensor1.put(car, false);
         		passedSensor2.put(car, false);

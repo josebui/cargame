@@ -29,9 +29,9 @@ public class CarGame extends Game{
 	public static final int INTRO_SCREEN = 2;
 	public static final int GAMEOVER_SCREEN = 3;
 	
-	private Screen splashScreen;
+//	private Screen splashScreen;
 	private Screen gameScreen;
-	private Screen introScreen;
+//	private Screen introScreen;
 	private Screen gameOverScreen;
 	
 	private Map<Integer,Player> players;

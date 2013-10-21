@@ -1,6 +1,7 @@
 package cargame.core;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 public class Player implements Serializable{
 	private static final long serialVersionUID = -6679980973245591900L;
@@ -13,17 +14,45 @@ public class Player implements Serializable{
 	public NetworkHealthStatus networkHealthStatus;
 	public long time;
 	
+	private long bestLapTime;
+	public long trackTime;
+
 	private int laps;
+	
+	private transient DecimalFormat df;
 	
 	public Player() {
 		this.laps = 0;
+		this.bestLapTime = Long.MAX_VALUE;
 	}
 
-	public void addLap() {
+	public void addLap(long time) {
 		this.laps++;
+		if(time < bestLapTime){
+			this.bestLapTime = time;
+		}
 	}
 	
 	public int getLaps(){
 		return this.laps;
+	}
+	
+	private DecimalFormat getNumberFormatter(){
+		if(df == null){
+			df = new DecimalFormat("#.##");
+		}
+		return df;
+	}
+	
+	public String getTrackTime(){
+        return getNumberFormatter().format(trackTime/1000.0);
+	}
+	
+	public String getBestLap(){
+		if(this.bestLapTime == Long.MAX_VALUE){
+			return "--";
+		}
+		Double best = bestLapTime/1000.0;
+        return getNumberFormatter().format(best);
 	}
 }

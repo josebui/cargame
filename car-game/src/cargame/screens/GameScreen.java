@@ -60,6 +60,8 @@ public class GameScreen extends ScreenAdapter {
 	
 	private int lapsNumber;
 	
+	private long initialTrackTime;
+	
 	static {
 		GdxNativesLoader.load();
 	}
@@ -71,6 +73,7 @@ public class GameScreen extends ScreenAdapter {
 		playerCar = new Car(clientPlayer, this, clientPlayer.car_id);
 		otherPlayersCars = new HashMap<Integer, Car>();
 		this.lapsNumber = lapsNumber;
+		this.initialTrackTime = System.currentTimeMillis();
 	}
 	
 	@Override
@@ -92,14 +95,14 @@ public class GameScreen extends ScreenAdapter {
 		Gdx.graphics.setDisplayMode(1200, 800, false);
 //		Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 		camera = new OrthographicCamera(276,205);
-		previewCamera = new OrthographicCamera(1200,891);
+		previewCamera = new OrthographicCamera(2000,1486);
 //		camera = new OrthographicCamera(226,165);
 		fixedCamera = new OrthographicCamera(276,205);
 //		camera = new OrthographicCamera(200,150);
         camera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
         camera.update();
         
-        previewCamera.position.set(previewCamera.viewportWidth * 0.5f, previewCamera.viewportHeight * 0.5f, 0f);  
+        previewCamera.position.set(previewCamera.viewportWidth - 2700, previewCamera.viewportHeight - 2000, 0f);  
         previewCamera.update();
         
         fixedCamera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
@@ -268,7 +271,10 @@ public class GameScreen extends ScreenAdapter {
 		
 		debugRenderer.render(world, previewCamera.combined);
 		
-		if(playerCar.getLaps() >= this.lapsNumber){
+		if(!gameOver){
+			playerCar.getPlayer().trackTime = System.currentTimeMillis() - initialTrackTime;
+		}
+		if(playerCar.getPlayer().getLaps() >= this.lapsNumber){
 			gameOver = true;
 		}
 		

@@ -16,8 +16,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
 
 public class Hud {
 
@@ -80,7 +78,7 @@ public class Hud {
 		ShapeRenderer shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(this.game.getFixedCamera().combined);
 		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.rect(0, this.game.getFixedCamera().viewportHeight-15, this.game.getFixedCamera().viewportWidth, 15, backgroundColor, backgroundColor, backgroundColor, backgroundColor);
+		shapeRenderer.rect(0, this.game.getFixedCamera().viewportHeight-35, this.game.getFixedCamera().viewportWidth, 35, backgroundColor, backgroundColor, backgroundColor, backgroundColor);
 	    shapeRenderer.end();
 	    
 	    float boxWidth = 100;
@@ -118,35 +116,42 @@ public class Hud {
 	}
 	
 	private void renderStats(SpriteBatch batch){
-		font.setScale(0.04f, 0.04f);
+		font.setScale(0.03f, 0.03f);
 		font.setColor(new Color(1f, 1f, 1f, 1));
 		font.draw(batch, "Speed: ", 3,this.game.getFixedCamera().viewportHeight-3);
-		font.draw(batch, "Lap: ", 200, this.game.getFixedCamera().viewportHeight-3);
+		font.draw(batch, "Lap: ", 14, this.game.getFixedCamera().viewportHeight-15);
+		font.draw(batch, "Time: ", 12, this.game.getFixedCamera().viewportHeight-27);
+		font.draw(batch, "Best lap: ", 100, this.game.getFixedCamera().viewportHeight-3);
 		float speed = game.getPlayerCar().getSpeed();
 		Color color = new Color(1, 1-speed/250.0f, 0, speed/160.0f+0.7f);
 		font.setColor(color);
 		font.draw(batch, Math.round(speed)+" km/h", 48,this.game.getFixedCamera().viewportHeight-3);
-		font.setColor(new Color(1, 1, 1, 1));
-		font.draw(batch, game.getPlayerCar().getLaps()+"", 230, this.game.getFixedCamera().viewportHeight-3);
+		font.setColor(new Color(0.7f, 0.7f, 0.7f, 1));
+		font.draw(batch, game.getPlayerCar().getPlayer().getLaps()+"", 48, this.game.getFixedCamera().viewportHeight-15);
+		font.draw(batch, game.getPlayerCar().getPlayer().getTrackTime(), 48, this.game.getFixedCamera().viewportHeight-27);
+		font.draw(batch, game.getPlayerCar().getPlayer().getBestLap(), 148, this.game.getFixedCamera().viewportHeight-3);
 	}
 	
 	private void renderLeaderBoard(float leaderBoardX, float leaderBoardY,SpriteBatch batch){
 		
 		float y= leaderBoardY-1;
 		float x = leaderBoardX+1;
-		font.setScale(0.03f);
+		font.setScale(0.025f,0.025f);
 		// header
 		font.setColor(new Color(1f, 1f, 1f, 1));
 		font.draw(batch, "Player", x,y);
-		font.draw(batch, "Laps", x+50,y);
+		font.draw(batch, "Laps", x+30,y);
+		font.draw(batch, "Best", x+60,y);
 		y-= 10;
 		
 		
 		Map<Integer,Car> allCars = game.getAllPlayersCars();
 		for(Car car : allCars.values()){
+			
 			font.setColor(new Color(0.8f, 0.8f, 0.8f, 1));
-			font.draw(batch, car.getPlayer().id+"", x,y);
-			font.draw(batch, car.getPlayer().getLaps()+"",x + 50,y);
+			font.draw(batch, car.getPlayer().id+((car == game.getPlayerCar())?"(me)":""), x,y);
+			font.draw(batch, car.getPlayer().getLaps()+"",x + 30,y);
+			font.draw(batch, car.getPlayer().getBestLap(),x + 60,y);
 			y-=10;
 		}
 		

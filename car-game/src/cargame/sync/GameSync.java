@@ -11,18 +11,16 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.Map;
 
 import cargame.CarGame;
 import cargame.core.Client;
 import cargame.core.GameInfo;
-import cargame.core.MovingPosition;
 import cargame.core.Player;
 
 public class GameSync extends Thread implements Client {
 
-	private static final int MESSAGE_LENGTH = 500;
+	private static final int MESSAGE_LENGTH = 1024;
 	
 	private InetAddress peerAddress;
 	private int serverPort;
@@ -155,31 +153,31 @@ public class GameSync extends Thread implements Client {
 
 	}
 	
-	private void syncPlayersInfo(Map<Integer, Player> newPlayerList){
-		Map<Integer, Player> playerList = game.getPlayers();
-		for(Integer playerId : newPlayerList.keySet()){
-			Player newPlayerInfo = newPlayerList.get(playerId);
-			Player actualPlayerInfo = playerList.put(playerId, newPlayerInfo);
-			if(actualPlayerInfo != null){
-				if(newPlayerInfo.time <= actualPlayerInfo.time){
-					playerList.put(playerId, actualPlayerInfo);
-				}
-			}
-		}
-	}
-	
-	private void syncPlayerInfo(int playerId, float[] values){
-		Map<Integer, Player> playerList = game.getPlayers();
-		if(!playerList.containsKey(playerId)){
-			Player newPlayer = new Player();
-			newPlayer.id = playerId;
-			newPlayer.movingPosition = new MovingPosition();
-			playerList.put(playerId, newPlayer);
-		}
-		Player player = playerList.get(playerId);
-		player.time = (new Date()).getTime();
-		player.movingPosition.setValues(values);
-	}
+//	private void syncPlayersInfo(Map<Integer, Player> newPlayerList){
+//		Map<Integer, Player> playerList = game.getPlayers();
+//		for(Integer playerId : newPlayerList.keySet()){
+//			Player newPlayerInfo = newPlayerList.get(playerId);
+//			Player actualPlayerInfo = playerList.put(playerId, newPlayerInfo);
+//			if(actualPlayerInfo != null){
+//				if(newPlayerInfo.time <= actualPlayerInfo.time){
+//					playerList.put(playerId, actualPlayerInfo);
+//				}
+//			}
+//		}
+//	}
+//	
+//	private void syncPlayerInfo(int playerId, float[] values){
+//		Map<Integer, Player> playerList = game.getPlayers();
+//		if(!playerList.containsKey(playerId)){
+//			Player newPlayer = new Player();
+//			newPlayer.id = playerId;
+//			newPlayer.movingPosition = new MovingPosition();
+//			playerList.put(playerId, newPlayer);
+//		}
+//		Player player = playerList.get(playerId);
+//		player.time = (new Date()).getTime();
+//		player.movingPosition.setValues(values);
+//	}
 	
 	private void syncPlayerInfo(Player player){
 		Map<Integer, Player> playerList = game.getPlayers();

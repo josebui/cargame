@@ -42,7 +42,7 @@ public class Car implements Element{
 	
 	public Car(Player player,GameScreen game,int carType) {
 		this.game = game;
-		
+		player.trackTime = 0;
 		this.player =player;
 		this.wrongDirection = false;
 		
@@ -96,15 +96,11 @@ public class Car implements Element{
 		return body;
 	}
 	
-	public void addLap(){
-		this.player.addLap();
+	public void addLap(long time){
+		this.player.addLap(time);
 		System.out.println("Laps "+this.toString()+":"+this.player.getLaps());
 	}
 	
-	public int getLaps() {
-		return this.player.getLaps();
-	}
-
 	public float getSpeed(){
 		return getBody().getLinearVelocity().len()*1.5f;
 	}
