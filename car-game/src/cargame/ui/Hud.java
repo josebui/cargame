@@ -86,7 +86,7 @@ public class Hud {
 		shapeRenderer.rect(0, this.game.getFixedCamera().viewportHeight-140, this.game.getFixedCamera().viewportWidth, 140, backgroundColor, backgroundColor, backgroundColor, backgroundColor);
 	    shapeRenderer.end();
 	    
-	    float boxWidth = 500;
+	    float boxWidth = 600;
 		float boxHeight = 500;
 	    float leaderBoardX = 0;
 	    float leaderBoardY = 0;
@@ -159,10 +159,11 @@ public class Hud {
 		// header
 		
 		font.setColor(new Color(1f, 1f, 1f, 1));
-		font.draw(batch, "Player", x,y);
-		font.draw(batch, "Laps", x+colspan,y);
-		font.draw(batch, "Best", x+colspan*2,y);
-		font.draw(batch, "Time", x+colspan*3,y);
+		font.draw(batch, "Pos", x,y);
+		font.draw(batch, "Player", x+colspan,y);
+		font.draw(batch, "Laps", x+colspan*2,y);
+		font.draw(batch, "Best", x+colspan*3,y);
+		font.draw(batch, "Time", x+colspan*4,y);
 		y-= rowspan;
 		
 		
@@ -180,10 +181,17 @@ public class Hud {
 		}
 		for(Car car : cars){
 			font.setColor(new Color(0.8f, 0.8f, 0.8f, 1));
-			font.draw(batch, car.getPlayer().id+((car == game.getPlayerCar())?" (me)":""), x,y);
-			font.draw(batch, car.getPlayer().getLaps()+"",x + colspan,y);
-			font.draw(batch, car.getPlayer().getBestLapTxt(),x + colspan*2,y);
-			font.draw(batch, car.getPlayer().getTrackTimeTxt(),x + colspan*3,y);
+			if(game.isGameOver()){
+				font.draw(batch, cars.indexOf(car)+1+"",x,y);
+			}else{
+				font.draw(batch, "--",x,y);
+			}
+			font.draw(batch, (car.getPlayer().id+1)+((car == game.getPlayerCar())?" ( me )":""), x+ colspan,y);
+			font.draw(batch, car.getPlayer().getLaps()+"",x + colspan*2,y);
+			font.draw(batch, car.getPlayer().getBestLapTxt(),x + colspan*3,y);
+			if(game.isGameOver()){
+				font.draw(batch, car.getPlayer().getTrackTimeTxt(),x + colspan*4,y);
+			}
 			y-=rowspan;
 		}
 		
