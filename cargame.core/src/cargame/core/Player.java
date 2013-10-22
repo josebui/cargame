@@ -12,7 +12,6 @@ public class Player implements Serializable{
 	public int lapCount;
 	public MovingPosition movingPosition;
 	public NetworkHealthStatus networkHealthStatus;
-	public long time;
 	
 	private long bestLapTime;
 	public long trackTime;
@@ -44,15 +43,25 @@ public class Player implements Serializable{
 		return df;
 	}
 	
-	public String getTrackTime(){
+	public String getTrackTimeTxt(){
         return getNumberFormatter().format(trackTime/1000.0);
 	}
 	
-	public String getBestLap(){
+	public String getBestLapTxt(){
 		if(this.bestLapTime == Long.MAX_VALUE){
 			return "--";
 		}
 		Double best = bestLapTime/1000.0;
         return getNumberFormatter().format(best);
 	}
+
+	public long getBestLapTime() {
+		return bestLapTime;
+	}
+
+	public long getTrackTime() {
+		return trackTime;
+	}
+	
+	
 }

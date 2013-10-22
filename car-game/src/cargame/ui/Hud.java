@@ -1,5 +1,9 @@
 package cargame.ui;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import aurelienribon.tweenengine.Tween;
@@ -25,11 +29,12 @@ public class Hud {
 	
 	private SpriteBatch batch;
 	
-	
 	private BitmapFont msgFont;
 	private TweenManager msgTweenManager;
 	
 	private boolean showLeaderBoard;
+
+	private String message;
 	
 	public Hud(GameScreen game) {
 		this.game = game;
@@ -37,6 +42,7 @@ public class Hud {
 		font = new BitmapFont(Gdx.files.internal("fonts/font2.fnt"));
 		batch = new SpriteBatch();
 		
+		message = null;
 		msgFont = new BitmapFont(Gdx.files.internal("fonts/font1.fnt"));
 		msgFont.setColor(1f, 1f, 0f, 1);
 	}
@@ -107,6 +113,11 @@ public class Hud {
 			showMessage(delta,"Wrong Direction");
 		}
 		
+		if(message != null){
+			showMessage(delta,message);
+			message = null;
+		}
+		
 		if(showLeaderBoard){
 			renderLeaderBoard(leaderBoardX,leaderBoardY + boxHeight,batch);
 		}
@@ -128,8 +139,8 @@ public class Hud {
 		font.draw(batch, Math.round(speed)+" km/h", 100,this.game.getFixedCamera().viewportHeight-10);
 		font.setColor(new Color(0.7f, 0.7f, 0.7f, 1));
 		font.draw(batch, game.getPlayerCar().getPlayer().getLaps()+"", 100, this.game.getFixedCamera().viewportHeight-45);
-		font.draw(batch, game.getPlayerCar().getPlayer().getTrackTime(), 100, this.game.getFixedCamera().viewportHeight-87);
-		font.draw(batch, game.getPlayerCar().getPlayer().getBestLap(), 623, this.game.getFixedCamera().viewportHeight-10);
+		font.draw(batch, game.getPlayerCar().getPlayer().getTrackTimeTxt(), 100, this.game.getFixedCamera().viewportHeight-87);
+		font.draw(batch, game.getPlayerCar().getPlayer().getBestLapTxt(), 623, this.game.getFixedCamera().viewportHeight-10);
 	}
 	
 	private void renderLeaderBoard(float leaderBoardX, float leaderBoardY,SpriteBatch batch){
@@ -156,13 +167,23 @@ public class Hud {
 		
 		
 		Map<Integer,Car> allCars = game.getAllPlayersCars();
-		for(Car car : allCars.values()){
-			
+		List<Car> cars = new ArrayList<Car>(allCars.values()); 
+		if(game.isGameOver()){
+			Collections.sort(cars,new Comparator<Car>() {
+				@Override
+				public int compare(Car o1, Car o2) {
+					return Long.compare(o1.getPlayer().getTrackTime(), o2.getPlayer().getTrackTime());
+				}
+			});
+		}else{
+			Collections.sort(cars);
+		}
+		for(Car car : cars){
 			font.setColor(new Color(0.8f, 0.8f, 0.8f, 1));
 			font.draw(batch, car.getPlayer().id+((car == game.getPlayerCar())?" (me)":""), x,y);
 			font.draw(batch, car.getPlayer().getLaps()+"",x + colspan,y);
-			font.draw(batch, car.getPlayer().getBestLap(),x + colspan*2,y);
-			font.draw(batch, car.getPlayer().getTrackTime(),x + colspan*3,y);
+			font.draw(batch, car.getPlayer().getBestLapTxt(),x + colspan*2,y);
+			font.draw(batch, car.getPlayer().getTrackTimeTxt(),x + colspan*3,y);
 			y-=rowspan;
 		}
 		
@@ -178,6 +199,10 @@ public class Hud {
 	}
 	public void showLeaderBoard() {
 		this.showLeaderBoard = true;
+	}
+
+	public void showMessage(String msg) {
+		this.message = msg;
 	}
 	
 }

@@ -62,12 +62,15 @@ public class GameScreen extends ScreenAdapter {
 	
 	private long initialTrackTime;
 	
+	public boolean waiting;
+	
 	static {
 		GdxNativesLoader.load();
 	}
 	
 	public GameScreen(Player clientPlayer,int lapsNumber) {
 		super();
+		waiting = true;
 		world = new World(new Vector2(0, 0), true);
 		gameOver = false;
 		playerCar = new Car(clientPlayer, this, clientPlayer.car_id);
@@ -198,7 +201,7 @@ public class GameScreen extends ScreenAdapter {
 		camera.update();
 		
 		// Key listeners
-		if(!gameOver){
+		if(!gameOver && !waiting){
 			if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
 				playerCar.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
 			}
@@ -272,16 +275,27 @@ public class GameScreen extends ScreenAdapter {
 		
 		debugRenderer.render(world, previewCamera.combined);
 		
-		if(!gameOver){
+		if(!gameOver && !waiting){
 			playerCar.getPlayer().trackTime = System.currentTimeMillis() - initialTrackTime;
 		}
+		
 		if(playerCar.getPlayer().getLaps() >= this.lapsNumber){
 			gameOver = true;
+		}
+		
+		// Waiting
+		if(waiting){
+			playerHud.showMessage("Waiting...");
+			if(otherPlayersCars.size() > 0){
+				this.waiting = false;
+				initialTrackTime = System.currentTimeMillis();
+			}
 		}
 		
 		// Game over
 		if(gameOver){
 			playerHud.showLeaderBoard();
+			
 		}
 	}
 

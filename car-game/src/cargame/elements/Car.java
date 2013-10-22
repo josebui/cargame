@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
-public class Car implements Element{
+public class Car implements Element,Comparable<Car>{
 	
 	public static final double MAX_STEER_ANGLE = Math.PI*2.5;
 	public static final float HORSEPOWERS = 1800;
@@ -65,19 +65,11 @@ public class Car implements Element{
 	public void setEngineSpeed(float engineSpeed){
 		Vector2 vector = (new Vector2(engineSpeed,engineSpeed)); 
 		body.applyForce(Box2DUtils.rotateVector(vector,body.getAngle()), body.getPosition(),true);
-		updateTime();
 	}
 	
 	public void setSteeringAngle(float steeringAngle){
 		if(body.getLinearVelocity().len() < 20) return;
 		body.setAngularVelocity(steeringAngle);
-		updateTime();
-	}
-	
-	private void updateTime(){
-		if(player != null){
-			player.time = (new Date()).getTime();
-		}
 	}
 	
 	public void createCarObject(){
@@ -88,8 +80,6 @@ public class Car implements Element{
 		sprite.setSize(15f, 15f);
 		sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
 		body.setUserData(sprite);
-		
-		updateTime();
 	}
 
 	public Body getBody(){
@@ -141,6 +131,20 @@ public class Car implements Element{
 
 	public boolean isWrongDirection() {
 		return wrongDirection;
+	}
+
+	@Override
+	public int compareTo(Car o) {
+		if(o.getPlayer().getLaps() == this.getPlayer().getLaps() && o.getPlayer().getBestLapTime() == this.getPlayer().getBestLapTime()){
+			return 0;
+		}
+		if(o.getPlayer().getLaps() > this.getPlayer().getLaps()){
+			return 1;
+		}else if(o.getPlayer().getBestLapTime() < this.getPlayer().getBestLapTime()){
+			return 1;
+		}else{
+			return -1;
+		}
 	}
 	
 }

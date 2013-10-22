@@ -29,6 +29,9 @@ public class CarGame extends Game{
 	public static final int INTRO_SCREEN = 2;
 	public static final int GAMEOVER_SCREEN = 3;
 	
+	public static final int STATUS_WAITING = 0;
+	public static final int STATUS_PLAYING = 1;
+	
 //	private Screen splashScreen;
 	private Screen gameScreen;
 //	private Screen introScreen;
@@ -39,9 +42,11 @@ public class CarGame extends Game{
 	
 	private GameSync gameSync;
 	
+	private int status;
+	
 	private CarGame(boolean server,String serverIp, int lapsNumber,int carType) {
 		super();
-		
+		this.status = STATUS_PLAYING;
 		gameSync = new GameSync(this,server,serverIp);
 //		Integer playerId = gameSync.getPlayerId();
 //		if(playerId == null){
@@ -96,6 +101,13 @@ public class CarGame extends Game{
 	public void setMyPlayer(Player myPlayer) {
 		this.myPlayer = myPlayer;
 	}
-	
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
 	
 }

@@ -1,22 +1,16 @@
 package cargame.sync;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.TimeZone;
 
 import cargame.CarGame;
 import cargame.core.Client;
 import cargame.core.GameInfo;
 import cargame.core.Player;
+import cargame.core.messaging.UdpMessage;
+import cargame.core.messaging.utils.UdpMessageUtils;
 
 public class GameSync extends Thread implements Client {
 
@@ -57,9 +51,13 @@ public class GameSync extends Thread implements Client {
 	@Override
 	public void run(){
 		while(running){
-			
-			receiveData();
-			sendData();
+			if(game.getStatus() == CarGame.STATUS_WAITING){
+				long latency = getLatency();
+				System.out.println("Latency:"+latency);
+			}else{
+				receiveData();
+				sendData();
+			}
 		}
 	}
 
@@ -72,61 +70,115 @@ public class GameSync extends Thread implements Client {
 	}
 	
 	private void sendData() {
-		try {
-			DatagramSocket serverSocket = new DatagramSocket();
-//			InetAddress IPAddress = InetAddress.getByName(this.url);
-			
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-			Player playerInfo = game.getMyPlayer();
-			playerInfo.time = System.currentTimeMillis();
-			objectOutputStream.writeObject(playerInfo);
-			byte[] data = outputStream.toByteArray();
-			
-			DatagramPacket sendPacket = new DatagramPacket(data, data.length,this.peerAddress , (server)?this.clientPort:this.serverPort);
-			serverSocket.send(sendPacket);
-			serverSocket.close();
-		} catch (SocketException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		UdpMessage outMessage = new UdpMessage(UdpMessage.TYPE_PLAYER_DATA, game.getMyPlayer(), System.currentTimeMillis());
+		outMessage.setAddress(this.peerAddress);
+		UdpMessageUtils.sendMessage(outMessage, (server)?this.clientPort:this.serverPort);
+//		try {
+//			DatagramSocket serverSocket = new DatagramSocket();
+////			InetAddress IPAddress = InetAddress.getByName(this.url);
+//			
+//			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//			ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+//			Player playerInfo = game.getMyPlayer();
+//			playerInfo.time = System.currentTimeMillis();
+//			objectOutputStream.writeObject(playerInfo);
+//			byte[] data = outputStream.toByteArray();
+//			
+//			DatagramPacket sendPacket = new DatagramPacket(data, data.length,this.peerAddress , (server)?this.clientPort:this.serverPort);
+//			serverSocket.send(sendPacket);
+//			serverSocket.close();
+//		} catch (SocketException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	private void receiveData(){
-		DatagramSocket serverSocket = null;
-		try {
-			serverSocket = new DatagramSocket((server)?this.serverPort:this.clientPort);
-			serverSocket.setSoTimeout(20);
-			byte[] receiveData = new byte[MESSAGE_LENGTH];
-
-			DatagramPacket receivePacket = new DatagramPacket(receiveData,	receiveData.length);
-			serverSocket.receive(receivePacket);
-			byte[] data = receivePacket.getData();
-			if(this.server){
-				this.peerAddress = receivePacket.getAddress();
-			}
-			ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-			ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-			Player receivedPlayer = (Player)objectInputStream.readObject();
-			
-			if(receivedPlayer.time <= this.lastReceivedPlayerTime){
-				// Ignore old packet
-				return;
-			}
-			
-			syncPlayerInfo(receivedPlayer);
-			serverSocket.close();
-		}catch(SocketTimeoutException e){
-			
-		}catch (Exception e) {
-			e.printStackTrace();
-		} 
-		if(serverSocket!=null && !serverSocket.isClosed()){
-			serverSocket.close();
+		UdpMessage inMessage = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 20);
+		
+		if(inMessage == null) return; // No new message
+		if(inMessage.getTime() <= this.lastReceivedPlayerTime) return; // Ignore old packet
+		this.lastReceivedPlayerTime = inMessage.getTime(); 
+		
+		if(this.server){
+			this.peerAddress = inMessage.getAddress();
 		}
+		
+		switch(inMessage.getType()){
+			case UdpMessage.TYPE_PLAYER_DATA:
+				Player receivedPlayer = (Player)inMessage.getData();
+				syncPlayerInfo(receivedPlayer);
+			break;
+		}
+		
+		
+//		DatagramSocket serverSocket = null;
+//		try {
+//			serverSocket = new DatagramSocket((server)?this.serverPort:this.clientPort);
+//			serverSocket.setSoTimeout(20);
+//			byte[] receiveData = new byte[MESSAGE_LENGTH];
+//
+//			DatagramPacket receivePacket = new DatagramPacket(receiveData,	receiveData.length);
+//			serverSocket.receive(receivePacket);
+//			byte[] data = receivePacket.getData();
+//			if(this.server){
+//				this.peerAddress = receivePacket.getAddress();
+//			}
+//			ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+//			ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+//			Player receivedPlayer = (Player)objectInputStream.readObject();
+//			
+//			if(receivedPlayer.time <= this.lastReceivedPlayerTime){
+//				// Ignore old packet
+//				return;
+//			}
+//			
+//			syncPlayerInfo(receivedPlayer);
+//			serverSocket.close();
+//		}catch(SocketTimeoutException e){
+//			
+//		}catch (Exception e) {
+//			e.printStackTrace();
+//		} 
+//		if(serverSocket!=null && !serverSocket.isClosed()){
+//			serverSocket.close();
+//		}
 	}
 	
+	private long getLatency(){
+		long latency = 0l;
+		if(this.server){
+			UdpMessage inMsg = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 0);
+			String timeZone = (String) inMsg.getData();
+			if(inMsg.getType() == UdpMessage.TYPE_SYNC_MESSAGE){
+				latency = System.currentTimeMillis();
+				UdpMessage outMsg = new UdpMessage(UdpMessage.TYPE_SYNC_MESSAGE, TimeZone.getDefault().getDisplayName(), System.currentTimeMillis());
+				while(outMsg != null){
+					outMsg.setAddress(this.peerAddress);
+					UdpMessageUtils.sendMessage(outMsg, (server)?this.clientPort:this.serverPort);
+					inMsg = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 0);
+					if(inMsg != null){
+						latency = System.currentTimeMillis() - latency;
+						System.out.println("Latency:"+latency);
+					}
+				}
+			}
+		}else{
+			UdpMessage outMsg = new UdpMessage(UdpMessage.TYPE_SYNC_MESSAGE, TimeZone.getDefault().getDisplayName(), System.currentTimeMillis());
+			while(outMsg != null){
+				outMsg.setAddress(this.peerAddress);
+				latency = System.currentTimeMillis();
+				UdpMessageUtils.sendMessage(outMsg, (server)?this.clientPort:this.serverPort);
+				UdpMessage inMsg = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 0);
+				if(inMsg != null){
+					latency = System.currentTimeMillis() - latency;
+					System.out.println("Latency:"+latency);
+				}
+			}
+		}
+		return latency;
+	}
 	
 	@Override
 	public cargame.core.ServerStatus ServerStatus() {
