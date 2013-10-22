@@ -97,7 +97,8 @@ public class GameScreen extends ScreenAdapter {
 		camera = new OrthographicCamera(276,205);
 		previewCamera = new OrthographicCamera(2000,1486);
 //		camera = new OrthographicCamera(226,165);
-		fixedCamera = new OrthographicCamera(276,205);
+//		fixedCamera = new OrthographicCamera(276,205);
+		fixedCamera = new OrthographicCamera(1200,800);
 //		camera = new OrthographicCamera(200,150);
         camera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
         camera.update();
@@ -105,7 +106,7 @@ public class GameScreen extends ScreenAdapter {
         previewCamera.position.set(previewCamera.viewportWidth - 2700, previewCamera.viewportHeight - 2000, 0f);  
         previewCamera.update();
         
-        fixedCamera.position.set(camera.viewportWidth * 0.5f, camera.viewportHeight * 0.5f, 0f);  
+        fixedCamera.position.set(fixedCamera.viewportWidth * 0.5f, fixedCamera.viewportHeight * 0.5f, 0f);  
         fixedCamera.update();
         
         batch = new SpriteBatch();
@@ -308,6 +309,10 @@ public class GameScreen extends ScreenAdapter {
 		Map<Integer,Car> allCars = new HashMap<Integer, Car>(this.otherPlayersCars); 
 		allCars.put(this.playerCar.getPlayer().id, this.playerCar);
 		return allCars;
+	}
+
+	public boolean isGameOver() {
+		return gameOver;
 	}
 	
 }

@@ -87,10 +87,8 @@ public class GameSync extends Thread implements Client {
 			serverSocket.send(sendPacket);
 			serverSocket.close();
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
