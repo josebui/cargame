@@ -69,8 +69,9 @@ public class Hud {
 			if(msgTweenManager == null){
 				msgTweenManager =new TweenManager();
 			}
-			Tween tweenIn = Tween.to(msgFont, 0 , 2f).target(0.5f).ease(TweenEquations.easeInExpo);//.start(msgTweenManager);
-			Tween tweenOut = Tween.to(msgFont, 0 , 2f).target(1).ease(TweenEquations.easeOutExpo);//.start(msgTweenManager);
+			msgFont.getColor().set(msgFont.getColor().r, msgFont.getColor().g, msgFont.getColor().b, 0);
+			Tween tweenIn = Tween.to(msgFont, 0 , 0.7f).target(1f).ease(TweenEquations.easeInExpo);//.start(msgTweenManager);
+			Tween tweenOut = Tween.to(msgFont, 0 , 0.3f).target(0f).ease(TweenEquations.easeOutExpo);//.start(msgTweenManager);
 			Timeline.createSequence().push(tweenIn).push(tweenOut).start(msgTweenManager);
 		}else if(msgTweenManager.size() != 0){
 			msgTweenManager.update(delta);
@@ -219,5 +220,6 @@ public class Hud {
 	public void showMessage(String msg,Color color) {
 		this.message = msg;
 		msgFont.setColor(color);
+		msgTweenManager = null;
 	}
 }
