@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cargame.core.Player;
-import cargame.screens.GameOver;
 import cargame.screens.GameScreen;
 import cargame.sync.GameSync;
 
@@ -32,10 +31,7 @@ public class CarGame extends Game{
 	public static final int STATUS_WAITING = 0;
 	public static final int STATUS_PLAYING = 1;
 	
-//	private Screen splashScreen;
 	private Screen gameScreen;
-//	private Screen introScreen;
-	private Screen gameOverScreen;
 	
 	private Map<Integer,Player> players;
 	private Player myPlayer;
@@ -57,8 +53,6 @@ public class CarGame extends Game{
 		myPlayer.car_id = carType;
 		
 		gameScreen = new GameScreen(myPlayer,lapsNumber);
-		gameOverScreen = new GameOver();
-		
 	}
 	
 	@Override
@@ -72,9 +66,6 @@ public class CarGame extends Game{
 		switch(screen){
 			case GAME_SCREEN:
 				nextScreen = gameScreen;
-			break;
-			case GAMEOVER_SCREEN:
-				nextScreen = gameOverScreen;
 			break;
 		}
 		if(!this.getScreen().equals(nextScreen)){
