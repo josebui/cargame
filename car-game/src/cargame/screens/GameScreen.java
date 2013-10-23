@@ -12,9 +12,11 @@ import cargame.elements.Element;
 import cargame.elements.TrackContactListener;
 import cargame.ui.Hud;
 import cargame.utils.BodyEditorLoader;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -38,6 +40,7 @@ public class GameScreen extends ScreenAdapter {
 	
 	private World world;
 	private Box2DDebugRenderer debugRenderer;
+	private TrackContactListener contactListener;
 	
 	private OrthographicCamera camera;
 	private OrthographicCamera fixedCamera;
@@ -62,7 +65,9 @@ public class GameScreen extends ScreenAdapter {
 	
 	private long initialTrackTime;
 	
-	public boolean waiting;
+	private boolean waiting;
+	
+	private int countDown;
 	
 	static {
 		GdxNativesLoader.load();
@@ -77,6 +82,7 @@ public class GameScreen extends ScreenAdapter {
 		otherPlayersCars = new HashMap<Integer, Car>();
 		this.lapsNumber = lapsNumber;
 		this.initialTrackTime = System.currentTimeMillis();
+		this.countDown = 11;
 	}
 	
 	@Override
@@ -155,8 +161,8 @@ public class GameScreen extends ScreenAdapter {
 		this.trackHeight = 125;
 		
 		// Track contact listener
-		TrackContactListener sensor = new TrackContactListener(this);
-		world.setContactListener(sensor);
+		contactListener = new TrackContactListener(this);
+		world.setContactListener(contactListener);
 		
 	}
 
@@ -285,10 +291,26 @@ public class GameScreen extends ScreenAdapter {
 		
 		// Waiting
 		if(waiting){
-			playerHud.showMessage("Waiting...");
+			
 			if(otherPlayersCars.size() > 0){
-				this.waiting = false;
-				initialTrackTime = System.currentTimeMillis();
+				if(countDown <= 0){
+					// Start race
+					playerHud.showMessage("GO",new Color(0.5f, 1f, 0f, 1f));
+					this.waiting = false;
+					initialTrackTime = System.currentTimeMillis();
+					
+					contactListener.startLapCounter();
+					
+				}else if(countDown == 11){
+					initialTrackTime = System.currentTimeMillis();
+					countDown--;
+				}else{
+					int count = (int)((System.currentTimeMillis() - initialTrackTime)/1000.0);
+					countDown = 10 - count;
+					playerHud.showMessage(countDown+"",new Color(1f, 0f, 0f, 1f));
+				}
+			}else{
+				playerHud.showMessage("Waiting...",new Color(1f, 1f, 0f, 1f));
 			}
 		}
 		

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenAccessor;
 import aurelienribon.tweenengine.TweenEquations;
@@ -43,35 +44,41 @@ public class Hud {
 		batch = new SpriteBatch();
 		
 		message = null;
+		
 		msgFont = new BitmapFont(Gdx.files.internal("fonts/font1.fnt"));
-		msgFont.setColor(1f, 1f, 0f, 1);
+		msgFont.setColor(new Color(1f, 1f, 0f, 1));
+		
+		Tween.registerAccessor(BitmapFont.class, new TweenAccessor<BitmapFont>() {
+			@Override
+			public int getValues(BitmapFont target, int arg1, float[] returnValues) {
+				returnValues[0] = target.getColor().a;
+				return 1;
+			}
+			@Override
+			public void setValues(BitmapFont target, int arg1, float[] newValues) {
+				target.setColor(target.getColor().r,target.getColor().g,target.getColor().b,newValues[0]);
+			}
+		});
 	}
 	
 	private void showMessage(float delta, String msg){
-		if(msgTweenManager == null){
-			
-			Tween.registerAccessor(BitmapFont.class, new TweenAccessor<BitmapFont>() {
-				@Override
-				public int getValues(BitmapFont target, int arg1, float[] returnValues) {
-					returnValues[0] = target.getColor().a;
-					return 1;
-				}
-				@Override
-				public void setValues(BitmapFont target, int arg1, float[] newValues) {
-					target.setColor(target.getColor().r,target.getColor().g,target.getColor().b,newValues[0]);
-				}
-			});
-			
-			msgTweenManager =new TweenManager();
-			Tween.to(msgFont, 0 , 2.5f).target(0).ease(TweenEquations.easeInOutSine).start(msgTweenManager);
+		if(msgTweenManager != null && msgTweenManager.size() == 0){
+			this.message = null;
+		}
+		if(msgTweenManager == null || msgTweenManager.size() == 0){
+			if(msgTweenManager == null){
+				msgTweenManager =new TweenManager();
+			}
+			Tween tweenIn = Tween.to(msgFont, 0 , 2f).target(0.5f).ease(TweenEquations.easeInExpo);//.start(msgTweenManager);
+			Tween tweenOut = Tween.to(msgFont, 0 , 2f).target(1).ease(TweenEquations.easeOutExpo);//.start(msgTweenManager);
+			Timeline.createSequence().push(tweenIn).push(tweenOut).start(msgTweenManager);
 		}else if(msgTweenManager.size() != 0){
 			msgTweenManager.update(delta);
-			msgFont.draw(batch, msg, this.game.getFixedCamera().viewportWidth /2.0f-200,this.game.getFixedCamera().viewportHeight/2.0f);
-		}else{
-			msgTweenManager.killAll();
-			msgTweenManager = null;
-			msgFont.setColor(1f, 1f, 0f, 1);
 		}
+		float msgX = this.game.getFixedCamera().viewportWidth /2.0f;
+		msgX -= ((msg.length()*20)/2.0); 
+		float msgY = this.game.getFixedCamera().viewportHeight/2.0f;
+		msgFont.draw(batch, msg, msgX,msgY);
 	}
 	
 	public void render(float delta){
@@ -115,7 +122,7 @@ public class Hud {
 		
 		if(message != null){
 			showMessage(delta,message);
-			message = null;
+//			message = null;
 		}
 		
 		if(showLeaderBoard){
@@ -209,8 +216,8 @@ public class Hud {
 		this.showLeaderBoard = true;
 	}
 
-	public void showMessage(String msg) {
+	public void showMessage(String msg,Color color) {
 		this.message = msg;
+		msgFont.setColor(color);
 	}
-	
 }

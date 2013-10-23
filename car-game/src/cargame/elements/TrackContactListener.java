@@ -30,8 +30,6 @@ public class TrackContactListener implements ContactListener {
 	public TrackContactListener(GameScreen game) {
 		super();
 		
-		initialLapTime = System.currentTimeMillis();
-		
 		this.game = game;
 		
 		// Finish line sensors
@@ -53,13 +51,17 @@ public class TrackContactListener implements ContactListener {
 			
 		}
 	}
+	
+	public void startLapCounter(){
+		initialLapTime = System.currentTimeMillis();
+	}
 
 	@Override
 	public void endContact(Contact contact) {
 
 		// Finish line sensors
 		Car car = getCarCollision(contact,sensor1);
-        if(car != null){
+        if(car != null && car == game.getPlayerCar()){
         	passedSensor1.put(car, true);
         	if(passedSensor2.containsKey(car) && passedSensor2.get(car)){
         		if(!wrongDirection.containsKey(car) || !wrongDirection.get(car)){
@@ -73,7 +75,7 @@ public class TrackContactListener implements ContactListener {
         }
         
         car = getCarCollision(contact,sensor2);
-        if(car != null){
+        if(car != null && car == game.getPlayerCar()){
         	passedSensor2.put(car, true);
         	if(passedSensor1.containsKey(car) && passedSensor1.get(car)){
         		if(wrongDirection.containsKey(car) && wrongDirection.get(car)){

@@ -1,7 +1,5 @@
 package cargame.elements;
 
-import java.util.Date;
-
 import cargame.core.MovingPosition;
 import cargame.core.Player;
 import cargame.screens.GameScreen;
@@ -88,7 +86,6 @@ public class Car implements Element,Comparable<Car>{
 	
 	public void addLap(long time){
 		this.player.addLap(time);
-		System.out.println("Laps "+this.toString()+":"+this.player.getLaps());
 	}
 	
 	public float getSpeed(){

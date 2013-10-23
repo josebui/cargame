@@ -73,29 +73,11 @@ public class GameSync extends Thread implements Client {
 		UdpMessage outMessage = new UdpMessage(UdpMessage.TYPE_PLAYER_DATA, game.getMyPlayer(), System.currentTimeMillis());
 		outMessage.setAddress(this.peerAddress);
 		UdpMessageUtils.sendMessage(outMessage, (server)?this.clientPort:this.serverPort);
-//		try {
-//			DatagramSocket serverSocket = new DatagramSocket();
-////			InetAddress IPAddress = InetAddress.getByName(this.url);
-//			
-//			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//			ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-//			Player playerInfo = game.getMyPlayer();
-//			playerInfo.time = System.currentTimeMillis();
-//			objectOutputStream.writeObject(playerInfo);
-//			byte[] data = outputStream.toByteArray();
-//			
-//			DatagramPacket sendPacket = new DatagramPacket(data, data.length,this.peerAddress , (server)?this.clientPort:this.serverPort);
-//			serverSocket.send(sendPacket);
-//			serverSocket.close();
-//		} catch (SocketException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+
 	}
 	
 	private void receiveData(){
-		UdpMessage inMessage = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 20);
+		UdpMessage inMessage = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 1);
 		
 		if(inMessage == null) return; // No new message
 		if(inMessage.getTime() <= this.lastReceivedPlayerTime) return; // Ignore old packet
@@ -111,46 +93,13 @@ public class GameSync extends Thread implements Client {
 				syncPlayerInfo(receivedPlayer);
 			break;
 		}
-		
-		
-//		DatagramSocket serverSocket = null;
-//		try {
-//			serverSocket = new DatagramSocket((server)?this.serverPort:this.clientPort);
-//			serverSocket.setSoTimeout(20);
-//			byte[] receiveData = new byte[MESSAGE_LENGTH];
-//
-//			DatagramPacket receivePacket = new DatagramPacket(receiveData,	receiveData.length);
-//			serverSocket.receive(receivePacket);
-//			byte[] data = receivePacket.getData();
-//			if(this.server){
-//				this.peerAddress = receivePacket.getAddress();
-//			}
-//			ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-//			ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-//			Player receivedPlayer = (Player)objectInputStream.readObject();
-//			
-//			if(receivedPlayer.time <= this.lastReceivedPlayerTime){
-//				// Ignore old packet
-//				return;
-//			}
-//			
-//			syncPlayerInfo(receivedPlayer);
-//			serverSocket.close();
-//		}catch(SocketTimeoutException e){
-//			
-//		}catch (Exception e) {
-//			e.printStackTrace();
-//		} 
-//		if(serverSocket!=null && !serverSocket.isClosed()){
-//			serverSocket.close();
-//		}
 	}
 	
 	private long getLatency(){
 		long latency = 0l;
 		if(this.server){
 			UdpMessage inMsg = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 0);
-			String timeZone = (String) inMsg.getData();
+//			String timeZone = (String) inMsg.getData();
 			if(inMsg.getType() == UdpMessage.TYPE_SYNC_MESSAGE){
 				latency = System.currentTimeMillis();
 				UdpMessage outMsg = new UdpMessage(UdpMessage.TYPE_SYNC_MESSAGE, TimeZone.getDefault().getDisplayName(), System.currentTimeMillis());
