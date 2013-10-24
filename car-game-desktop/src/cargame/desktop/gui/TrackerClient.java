@@ -52,7 +52,7 @@ public class TrackerClient extends Thread {
 			socket = new DatagramSocket();
 			socket.setSoTimeout(TIME_BETWEEN_TRIES);
 			// -------Preparing the Send Packet----------------
-			String dString = "Alive!____________________________________";
+			String dString = "Alive____________!"+ip;
 			buf = dString.getBytes();
 			serverAddress = InetAddress.getByName(this.ip);
 			sendPacket = new DatagramPacket(buf, buf.length, serverAddress,

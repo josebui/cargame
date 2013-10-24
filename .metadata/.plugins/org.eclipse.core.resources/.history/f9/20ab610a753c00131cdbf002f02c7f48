@@ -1,5 +1,4 @@
-import java.awt.Toolkit;
-import java.io.IOException;
+package cargame.desktop.gui;
 import java.io.InputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -7,20 +6,27 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 public class TrackerClient extends Thread {
 
 	private int TIME_BETWEEN_TRIES = 1000;
+	//Tracker Server Address and port
 	private String ip;
 	private int port;
-	private StartGameOutput guiOutput;
-	public TrackerClient(String ip, int port, StartGameOutput guiOutput) throws IOException {
+	private GUILogOutput guiLogOutput;
+	private boolean ifGotAnswerFromTracker = false;
+	public boolean isServer;
+	public String toConnectIP;
+	public boolean stopClient = false;
+	
+	public TrackerClient(String ip, int port, GUILogOutput guiLogOutput){
 		super("MulticastServerThread");
 		this.ip = ip;
 		this.port = port;
-		this.guiOutput = guiOutput;
+		this.guiLogOutput = guiLogOutput;
+	}
+	
+	public boolean ifGotAnswerFromTracker(){
+		return ifGotAnswerFromTracker;
 	}
 
 	public void run() {
@@ -28,18 +34,8 @@ public class TrackerClient extends Thread {
 			queryTheTracker();
 		} catch (UnreachableTracker e) {
 			// TODO Auto-generated catch block
-			guiOutput.writeOutput("Tracker is Unreachable");
-			JOptionPane.showMessageDialog(new JFrame(),
-        		    "The tracker is unreachable",
-        		    "Unreachable Tracker",
-        		    JOptionPane.ERROR_MESSAGE);
-            Toolkit.getDefaultToolkit().beep();
-            try {
-				this.sleep(100);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			guiLogOutput.writeOutput("Tracker is Unreachable");
+			ShootError.shoot("Unreachable Tracker", "Tracker is Unreachable!");            
 		}
 	}
 	
@@ -74,7 +70,7 @@ public class TrackerClient extends Thread {
 			System.out.println("Hi Exception Happened!");
 		}
 		int tries = 0;
-		while (tries < 5) {
+		while (tries < 5 && !stopClient) {
 			try {
 				//It sends the request and wait for TIME_BETWEEN_TRIES ms
 				socket.send(sendPacket);
@@ -83,17 +79,31 @@ public class TrackerClient extends Thread {
 				String receivedMSG = new String(recPacket.getData(), 0,
 						recPacket.getLength());
 				System.out.println(receivedMSG);
+				ifGotAnswerFromTracker = true;
+				parseDataRecieved(receivedMSG);
+				
 				break;
 
 			} catch (SocketTimeoutException e) {
 				tries++;
-				guiOutput.writeOutput("Couldn't reach the tracker("+this.ip+":"+this.port+"), try #"+tries);
+				guiLogOutput.writeOutput("Couldn't reach the tracker("+this.ip+":"+this.port+"), try #"+tries);
 				if(tries == 5)
 					throw new UnreachableTracker();
 			} catch (Exception e){
-				guiOutput.writeOutput("System error, please contact the developers!");
+				guiLogOutput.writeOutput("System error, please contact the developers!");
 			}
 		}
 		
+	}
+	
+	private void parseDataRecieved(String receivedMSG){
+		String [] splittedMessage = receivedMSG.split("!");
+		
+		if(splittedMessage[0].equalsIgnoreCase("true"))
+			isServer = true;
+		else
+			isServer = false;
+		
+		toConnectIP = splittedMessage[1];
 	}
 }

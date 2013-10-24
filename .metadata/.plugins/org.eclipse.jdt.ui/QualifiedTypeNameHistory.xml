@@ -14,4 +14,5 @@
 <fullyQualifiedTypeName name="TrackerClient"/>
 <fullyQualifiedTypeName name="StartGame"/>
 <fullyQualifiedTypeName name="cargame.Main"/>
+<fullyQualifiedTypeName name="ShootError"/>
 </qualifiedTypeNameHistroy>

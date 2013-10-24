@@ -1,13 +1,16 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Tracker extends Thread {
 	private static List<WaitingPeer> serverPeers = new ArrayList<WaitingPeer>();
+	private static String myAddressAsClientSees;
 	private static int port;
 	private static DatagramSocket socket;
 	private static byte[] buf = new byte[1000];
@@ -33,13 +36,12 @@ public class Tracker extends Thread {
 	}
 	
 	private static void sendBack(boolean isServer, WaitingPeer wp) throws IOException{
-		String dString = isServer+"!"+wp.address;
+		String dString = isServer+"!"+((wp.address.equals("127.0.0.1")) ? myAddressAsClientSees : wp.address);
         buf = dString.getBytes();
         
 		packet = new DatagramPacket(buf, buf.length, packet.getAddress(), packet.getPort());
         socket.send(packet);
-        String receivedMSG = new String(packet.getData(), 0,
-				packet.getLength());
+
         System.out.println("   Assigned : "+(isServer?"Server":"Client"));
 	}
 	
@@ -50,6 +52,12 @@ public class Tracker extends Thread {
 	
 	public void run() {
 		System.out.println("Start listenning on port "+port+"...");
+		try {
+			System.out.println(InetAddress.getLocalHost());
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		notStopped = true;
 		try {
 			socket = new DatagramSocket(port);
@@ -61,9 +69,11 @@ public class Tracker extends Thread {
 			socket.receive(packet);
 			String receivedMSG = new String(packet.getData(), 0,
 					packet.getLength());
-		
+			myAddressAsClientSees = receivedMSG.split("!")[1];
+			System.out.println(myAddressAsClientSees);
 			WaitingPeer wp = new WaitingPeer();
 			wp.address = packet.getAddress().getHostAddress();
+			System.out.println(packet.getData());
 			System.out.println("Request from "+wp.address);
 			
 			if(serverPeers.size() != 0){
