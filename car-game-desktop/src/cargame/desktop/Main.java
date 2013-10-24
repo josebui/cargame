@@ -11,14 +11,15 @@ public class Main{
 	public static LwjglApplication startCarGameDesktop(boolean server, String serverIp, int lapsNumber, int carType){
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "car-game";
-		cfg.useGL20 = false;
+		cfg.useGL20 = true;
 		cfg.width = 1024;
 		cfg.height = 768;
-		cfg.forceExit = false;
+//		cfg.forceExit = false;
+		cfg.resizable = false;
 		
 		CarGame game = CarGame.createInstance(server,serverIp,lapsNumber,carType);
 		LwjglApplication app = new LwjglApplication(game, cfg);
-		game.setCycleListener(new DesktopGameListener(app));
+		game.setCycleListener(new DesktopGameListener());
 		return app;
 	}
 	

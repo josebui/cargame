@@ -92,7 +92,7 @@ public class GameScreen extends ScreenAdapter {
 		staticSprites = new ArrayList<Sprite>();
 		
 		// Background
-		Sprite spriteBackground = new Sprite(new Texture("img/racetrack.png"));
+		Sprite spriteBackground = new Sprite(new Texture("img/track4.png"));
 		spriteBackground.setScale(0.27f,0.27f);
 		spriteBackground.setOrigin(0f,0f);
 		staticSprites.add(spriteBackground);
@@ -243,8 +243,7 @@ public class GameScreen extends ScreenAdapter {
         	}
         }
 		
-		// Box2d Render
-//		debugRenderer.render(world, camera.combined);
+		
 		
 		// Set object images
 		batch.setProjectionMatrix(camera.combined);
@@ -275,6 +274,8 @@ public class GameScreen extends ScreenAdapter {
 		// Hud
 		playerHud.render(delta);
 		
+		// Box2d Render
+//		debugRenderer.render(world, camera.combined);
 		debugRenderer.render(world, previewCamera.combined);
 		
 		if(!CarGame.getInstance().isGameOver() && !CarGame.getInstance().isWaiting()){

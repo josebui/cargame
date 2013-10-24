@@ -3,6 +3,7 @@ package cargame.desktop.listener;
 import cargame.desktop.gui.CarGameUI;
 
 import com.badlogic.gdx.LifecycleListener;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 
 public class DesktopApplicationListener implements LifecycleListener {
 
@@ -14,19 +15,13 @@ public class DesktopApplicationListener implements LifecycleListener {
 	}
 
 	@Override
-	public void pause() {
-		System.out.println("Pause");
-	}
+	public void pause() {}
 
 	@Override
-	public void resume() {
-		System.out.println("Resume");
-
-	}
+	public void resume() {}
 
 	@Override
 	public void dispose() {
-		System.out.println("Dispose");
 		carGameUI.toggleButton();
 	}
 

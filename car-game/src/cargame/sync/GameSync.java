@@ -15,7 +15,7 @@ import cargame.core.messaging.utils.UdpMessageUtils;
 public class GameSync extends Thread implements Client {
 
 	private static final int MESSAGE_LENGTH = 700;
-	private static final int PERMITED_MESSAGE_LOST = 50 ;
+	private static final int PERMITED_MESSAGE_LOST = 150 ;
 	
 	private InetAddress peerAddress;
 	private int serverPort;
@@ -34,7 +34,7 @@ public class GameSync extends Thread implements Client {
 		this.running = true; 
 		this.serverPort = 12343;
 		this.clientPort = 12353;
-		this.peerAddress = getInetAddress((serverIp == null)?"localhost":serverIp);
+		this.peerAddress = (serverIp == null)?null:getInetAddress(serverIp);
 		this.lastReceivedPlayerTime = Long.MIN_VALUE;
 	}
 	
@@ -59,6 +59,7 @@ public class GameSync extends Thread implements Client {
 			}else{
 				if(receiveData()){
 					lost_packets = 0;
+					game.setConnectionLost(false);
 				}else{
 					lost_packets++;
 				}
@@ -66,7 +67,9 @@ public class GameSync extends Thread implements Client {
 				if(!game.isGameOver() && !game.isWaiting() && lost_packets >= PERMITED_MESSAGE_LOST){
 					game.setConnectionLost(true);
 				}
-				sendData();
+				if(this.peerAddress != null){
+					sendData();
+				}
 			}
 		}
 	}
@@ -93,7 +96,7 @@ public class GameSync extends Thread implements Client {
 		if(inMessage.getTime() <= this.lastReceivedPlayerTime) return true; // Ignore old packet
 		this.lastReceivedPlayerTime = inMessage.getTime(); 
 		
-		if(this.server){
+		if(this.server && this.peerAddress == null){
 			this.peerAddress = inMessage.getAddress();
 		}
 		

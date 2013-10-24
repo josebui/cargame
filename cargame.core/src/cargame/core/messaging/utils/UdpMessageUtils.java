@@ -55,7 +55,7 @@ public class UdpMessageUtils {
 		}catch(SocketTimeoutException e){
 			// Message timeout
 		}catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} 
 		if(serverSocket!=null && !serverSocket.isClosed()){
 			serverSocket.close();
