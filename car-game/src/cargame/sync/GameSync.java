@@ -14,7 +14,8 @@ import cargame.core.messaging.utils.UdpMessageUtils;
 
 public class GameSync extends Thread implements Client {
 
-	private static final int MESSAGE_LENGTH = 1024;
+	private static final int MESSAGE_LENGTH = 700;
+	private static final int PERMITED_MESSAGE_LOST = 50 ;
 	
 	private InetAddress peerAddress;
 	private int serverPort;
@@ -25,7 +26,7 @@ public class GameSync extends Thread implements Client {
 	private boolean server;
 	
 	private long lastReceivedPlayerTime;
-
+	
 	public GameSync(CarGame game,boolean server,String serverIp) {
 		super();
 		this.game = game;
@@ -50,12 +51,24 @@ public class GameSync extends Thread implements Client {
 	
 	@Override
 	public void run(){
+		
+		int lost_packets = 0;
+		
 		while(running){
 			if(game.getStatus() == CarGame.STATUS_WAITING){
 				long latency = getLatency();
 				System.out.println("Latency:"+latency);
 			}else{
-				receiveData();
+				if(receiveData()){
+					lost_packets = 0;
+				}else{
+					lost_packets++;
+				}
+				
+				if(!game.isGameOver() && !game.isWaiting() && lost_packets >= PERMITED_MESSAGE_LOST){
+					game.setConnectionLost(true);
+					System.out.println("Connection lost.");
+				}
 				sendData();
 			}
 		}
@@ -76,11 +89,11 @@ public class GameSync extends Thread implements Client {
 
 	}
 	
-	private void receiveData(){
-		UdpMessage inMessage = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 1);
+	private boolean receiveData(){
+		UdpMessage inMessage = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 20);
 		
-		if(inMessage == null) return; // No new message
-		if(inMessage.getTime() <= this.lastReceivedPlayerTime) return; // Ignore old packet
+		if(inMessage == null) return false; // No new message
+		if(inMessage.getTime() <= this.lastReceivedPlayerTime) return true; // Ignore old packet
 		this.lastReceivedPlayerTime = inMessage.getTime(); 
 		
 		if(this.server){
@@ -93,6 +106,7 @@ public class GameSync extends Thread implements Client {
 				syncPlayerInfo(receivedPlayer);
 			break;
 		}
+		return true;
 	}
 	
 	private long getLatency(){
