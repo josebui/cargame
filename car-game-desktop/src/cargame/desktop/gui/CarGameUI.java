@@ -29,7 +29,9 @@ public class CarGameUI {
 	private final Action startProcess = new SwingAction(this);
 	private StartGame startGame = null;
 	private JButton btnConnectPlay;
-
+	private boolean isIPValid;
+	private boolean isPortValid;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -63,13 +65,6 @@ public class CarGameUI {
 	 * @throws HeadlessException
 	 */
 	private void initialize() throws HeadlessException, IOException {
-		// frmCarGame = new JFrame() {
-		// private Image backgroundImage = ImageIO.read(new File("nascar.jpg"));
-		// public void paint( Graphics g ) {
-		// super.paint(g);
-		// g.drawImage(backgroundImage, 0, 0, null);
-		// }
-		// };
 		frmCarGame = new JFrame();
 		frmCarGame.getContentPane().setBackground(Color.BLUE);
 
@@ -78,7 +73,8 @@ public class CarGameUI {
 		frmCarGame.setBounds(100, 100, 224, 148);
 		frmCarGame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmCarGame.getContentPane().setLayout(null);
-
+		
+		//Initializing IP input with Verifier
 		ipTextField = new JTextField();
 		ipTextField.setBounds(101, 22, 107, 20);
 		ipTextField.setInputVerifier(new InputVerifier() {
@@ -91,10 +87,12 @@ public class CarGameUI {
 			public boolean shouldYieldFocus(JComponent input) {
 				boolean inputOK = verify(input);
 				if (inputOK) {
+					isIPValid = true;
 					return true;
 				} else {
-					ShootError.shoot("Invalid IP",
-							"Please Enter a valid IP address");
+					((JTextField) input).setText("");
+					isIPValid = false;
+					ShootError.shoot("Invalid IP","Please Enter a valid IP address");
 					return false;
 				}
 			}
@@ -111,7 +109,8 @@ public class CarGameUI {
 		JLabel lblTrackerIp = new JLabel("Tracker IP:");
 		lblTrackerIp.setBounds(10, 25, 62, 14);
 		frmCarGame.getContentPane().add(lblTrackerIp);
-
+		
+		//initializing Port input with verifier
 		portTextField = new JTextField();
 		portTextField.setBounds(138, 53, 70, 20);
 		frmCarGame.getContentPane().add(portTextField);
@@ -121,8 +120,11 @@ public class CarGameUI {
 			public boolean shouldYieldFocus(JComponent input) {
 				boolean inputOK = verify(input);
 				if (inputOK) {
+					isPortValid = true;
 					return true;
 				} else {
+					isPortValid = false;
+					((JTextField) input).setText("");
 					ShootError.shoot("Invalid Port",
 							"Please Enter a valid port number: 0 - 65535");
 					return false;
@@ -131,6 +133,8 @@ public class CarGameUI {
 
 			public boolean verify(JComponent input) {
 				JTextField field = (JTextField) input;
+				if(field.getText().length()>7)
+					return false;
 				Matcher m = pat.matcher(field.getText());
 				if (m.matches()) {
 					int portNumber = Integer.parseInt(field.getText());
@@ -140,7 +144,7 @@ public class CarGameUI {
 				return false;
 			}
 		});
-		portTextField.setColumns(10);
+		portTextField.setColumns(6);
 
 		JLabel lblTrackerPort = new JLabel(" Tracker Port: ");
 		lblTrackerPort.setBounds(10, 56, 86, 14);
@@ -169,10 +173,12 @@ public class CarGameUI {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			
+			if(isIPValid && isPortValid)
 			if (startGame == null || !startGame.isAlive()) {
 				startGame = new StartGame(carGameUI, ipTextField.getText(),
 						Integer.parseInt(portTextField.getText()));
-				toggleButton();
+				toggleButton(); //Making start button false
 				startGame.start();
 			}
 		}

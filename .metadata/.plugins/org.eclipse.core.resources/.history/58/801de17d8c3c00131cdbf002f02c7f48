@@ -1,0 +1,23 @@
+package cargame.desktop.gui;
+import java.awt.EventQueue;
+import java.awt.Toolkit;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+
+public class ShootError {
+	public static void shoot(final String messageHeader, final String message){
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				Thread.sleep(100);
+				JOptionPane.showMessageDialog(new JFrame(),
+		    		    message,
+		    		    messageHeader,
+		    		    JOptionPane.ERROR_MESSAGE);
+				Toolkit.getDefaultToolkit().beep();
+			}
+		});
+		
+	}
+}

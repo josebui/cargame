@@ -7,6 +7,9 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import cargame.desktop.Main;
 import cargame.desktop.listener.DesktopApplicationListener;
 
+/*When the ip and port is entered in the main Graphical user interface
+ * This Class is called
+ * */
 public class StartGame extends Thread {
 	private String IP;
 	private int port;
@@ -40,7 +43,8 @@ public class StartGame extends Thread {
 						trackerClient.toConnectIP, 1,
 						(trackerClient.isServer ? 1 : 3));
 				app.addLifecycleListener(new DesktopApplicationListener(carGameUI));
-			}
+			}else
+				carGameUI.toggleButton();
 		} catch (InterruptedException e) {
 			ShootError.shoot("Interrupted",
 					"Application execution was interrupted!");

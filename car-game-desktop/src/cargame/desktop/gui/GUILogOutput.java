@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+//This class opens a small text area, served as log and user info area
 
 public class GUILogOutput {
 
