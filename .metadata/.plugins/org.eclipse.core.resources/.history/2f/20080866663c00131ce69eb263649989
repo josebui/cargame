@@ -1,0 +1,7 @@
+
+public class ShootError {
+	public static void shoot(String Message){
+		
+	}
+
+}
