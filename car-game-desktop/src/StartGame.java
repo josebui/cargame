@@ -1,6 +1,6 @@
 import java.io.IOException;
 
-import cargame.Main;
+import cargame.desktop.Main;
 
 public class StartGame extends Thread{
 	private String IP;

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cargame.core.Player;
+import cargame.listeners.GameCycleListener;
 import cargame.screens.GameScreen;
 import cargame.sync.GameSync;
 
@@ -30,6 +31,8 @@ public class CarGame extends Game{
 	
 	public static final int STATUS_WAITING = 0;
 	public static final int STATUS_PLAYING = 1;
+	
+	private GameCycleListener cycleListener;
 	
 	private Screen gameScreen;
 	
@@ -131,4 +134,16 @@ public class CarGame extends Game{
 		this.connectionLost = connectionLost;
 	}
 	
+	public GameCycleListener getCycleListener() {
+		return cycleListener;
+	}
+
+	public void setCycleListener(GameCycleListener cycleListener) {
+		this.cycleListener = cycleListener;
+	}
+
+	public void endGame(){
+		cycleListener.endGame();
+	}
+
 }

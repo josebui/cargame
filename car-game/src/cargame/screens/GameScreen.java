@@ -306,15 +306,19 @@ public class GameScreen extends ScreenAdapter {
 					playerHud.showMessage(countDown+"",new Color(1f, 0f, 0f, 1f),"");
 				}
 			}else{
-				playerHud.showMessage("Waiting...",new Color(1f, 1f, 0f, 1f),"Press space to exit.");
+				playerHud.showMessage("Waiting...",new Color(1f, 1f, 0f, 1f),"");
 			}
 		}
 		if(CarGame.getInstance().isConnectionLost()){
-			playerHud.showMessage("Connection lost",new Color(1f, 1f, 0f, 1f),"");
+			playerHud.showMessage("Connection lost",new Color(1f, 1f, 0f, 1f),"Press space to exit.");
+			if (Gdx.input.isKeyPressed(Keys.SPACE)){
+				CarGame.getInstance().endGame();
+			}
 		}
 		
 		// Game over
 		if(CarGame.getInstance().isGameOver()){
+
 			playerHud.showLeaderBoard();
 			
 		}
