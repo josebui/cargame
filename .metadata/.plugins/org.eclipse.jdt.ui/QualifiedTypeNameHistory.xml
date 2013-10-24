@@ -13,4 +13,5 @@
 <fullyQualifiedTypeName name="java.awt.Toolkit"/>
 <fullyQualifiedTypeName name="TrackerClient"/>
 <fullyQualifiedTypeName name="StartGame"/>
+<fullyQualifiedTypeName name="cargame.Main"/>
 </qualifiedTypeNameHistroy>

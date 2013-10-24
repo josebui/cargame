@@ -19,6 +19,7 @@ public class TrackerClient extends Thread {
 	private boolean status = false;
 	public boolean isServer;
 	public String toConnectIP;
+	public boolean stopClient = false;
 	
 	public TrackerClient(String ip, int port, StartGameOutput guiOutput) throws IOException {
 		super("MulticastServerThread");
@@ -77,7 +78,7 @@ public class TrackerClient extends Thread {
 			System.out.println("Hi Exception Happened!");
 		}
 		int tries = 0;
-		while (tries < 5) {
+		while (tries < 5 && !stopClient) {
 			try {
 				//It sends the request and wait for TIME_BETWEEN_TRIES ms
 				socket.send(sendPacket);

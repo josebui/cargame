@@ -157,6 +157,8 @@ public class CarGameUI {
 		else
 			btnConnectPlay.setEnabled(true);
 	}
+	
+	
 	private class SwingAction extends AbstractAction {
 		CarGameUI carGameUI;
 		public SwingAction(CarGameUI carGameUI) {
@@ -165,17 +167,12 @@ public class CarGameUI {
 			this.carGameUI = carGameUI;
 		}
 		public void actionPerformed(ActionEvent e) {			
-			try {
-				if(startGame == null || !startGame.isAlive()){
-				startGame = new StartGame(carGameUI,ipTextField.getText(), Integer.parseInt(portTextField.getText()));
-				toggleButton();
-				startGame.start();
-				
-				}
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if(startGame == null || !startGame.isAlive()){
+			startGame = new StartGame(carGameUI,ipTextField.getText(), Integer.parseInt(portTextField.getText()));
+			toggleButton();
+			startGame.start();			
 			}
 		}
 	}
+	
 }
