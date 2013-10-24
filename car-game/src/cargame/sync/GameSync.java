@@ -67,7 +67,9 @@ public class GameSync extends Thread implements Client {
 				if(!game.isGameOver() && !game.isWaiting() && lost_packets >= PERMITED_MESSAGE_LOST){
 					game.setConnectionLost(true);
 				}
-				sendData();
+				if(this.peerAddress != null){
+					sendData();
+				}
 			}
 		}
 	}
