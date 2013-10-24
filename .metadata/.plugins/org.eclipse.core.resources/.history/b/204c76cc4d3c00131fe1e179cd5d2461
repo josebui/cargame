@@ -23,7 +23,6 @@ public class StartGame extends Thread{
 			if(trackerClient.getStatus())
 				Main.startCarGameDesktop(trackerClient.isServer, trackerClient.toConnectIP, 1, 1);
 			window.closeWindow();
-			carGameUI.toggleButton();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

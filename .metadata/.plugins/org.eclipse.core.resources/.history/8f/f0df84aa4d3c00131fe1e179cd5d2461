@@ -27,7 +27,7 @@ public class CarGameUI {
 	private JFrame frmCarGame;
 	private JTextField ipTextField;
 	private JTextField portTextField;
-	private final Action startProcess = new SwingAction(this);
+	private final Action startProcess = new SwingAction();
 	private StartGame startGame = null;
 	private JButton btnConnectPlay;
 	/**
@@ -152,10 +152,7 @@ public class CarGameUI {
 		frmCarGame.getContentPane().add(btnConnectPlay);
 	}
 	public void toggleButton(){
-		if(btnConnectPlay.isEnabled())
-			btnConnectPlay.setEnabled(false);
-		else
-			btnConnectPlay.setEnabled(true);
+		btnConnectPlay
 	}
 	private class SwingAction extends AbstractAction {
 		CarGameUI carGameUI;
@@ -168,9 +165,7 @@ public class CarGameUI {
 			try {
 				if(startGame == null || !startGame.isAlive()){
 				startGame = new StartGame(carGameUI,ipTextField.getText(), Integer.parseInt(portTextField.getText()));
-				toggleButton();
 				startGame.start();
-				
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
