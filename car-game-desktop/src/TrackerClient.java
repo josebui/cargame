@@ -13,23 +13,24 @@ import javax.swing.JOptionPane;
 public class TrackerClient extends Thread {
 
 	private int TIME_BETWEEN_TRIES = 1000;
+	//Tracker Server Address and port
 	private String ip;
 	private int port;
-	private StartGameOutput guiOutput;
-	private boolean status = false;
+	private GUILogOutput guiLogOutput;
+	private boolean ifGotAnswerFromTracker = false;
 	public boolean isServer;
 	public String toConnectIP;
 	public boolean stopClient = false;
 	
-	public TrackerClient(String ip, int port, StartGameOutput guiOutput) throws IOException {
+	public TrackerClient(String ip, int port, GUILogOutput guiLogOutput){
 		super("MulticastServerThread");
 		this.ip = ip;
 		this.port = port;
-		this.guiOutput = guiOutput;
+		this.guiLogOutput = guiLogOutput;
 	}
 	
-	public boolean getStatus(){
-		return status;
+	public boolean ifGotAnswerFromTracker(){
+		return ifGotAnswerFromTracker;
 	}
 
 	public void run() {
@@ -37,13 +38,8 @@ public class TrackerClient extends Thread {
 			queryTheTracker();
 		} catch (UnreachableTracker e) {
 			// TODO Auto-generated catch block
-			guiOutput.writeOutput("Tracker is Unreachable");
-			JOptionPane.showMessageDialog(new JFrame(),
-        		    "The tracker is unreachable",
-        		    "Unreachable Tracker",
-        		    JOptionPane.ERROR_MESSAGE);
-            Toolkit.getDefaultToolkit().beep();
-            
+			guiLogOutput.writeOutput("Tracker is Unreachable");
+			ShootError.shoot("Unreachable Tracker", "Tracker is Unreachable!");            
 		}
 	}
 	
@@ -87,18 +83,18 @@ public class TrackerClient extends Thread {
 				String receivedMSG = new String(recPacket.getData(), 0,
 						recPacket.getLength());
 				System.out.println(receivedMSG);
-				status = true;
+				ifGotAnswerFromTracker = true;
 				parseDataRecieved(receivedMSG);
 				
 				break;
 
 			} catch (SocketTimeoutException e) {
 				tries++;
-				guiOutput.writeOutput("Couldn't reach the tracker("+this.ip+":"+this.port+"), try #"+tries);
+				guiLogOutput.writeOutput("Couldn't reach the tracker("+this.ip+":"+this.port+"), try #"+tries);
 				if(tries == 5)
 					throw new UnreachableTracker();
 			} catch (Exception e){
-				guiOutput.writeOutput("System error, please contact the developers!");
+				guiLogOutput.writeOutput("System error, please contact the developers!");
 			}
 		}
 		
