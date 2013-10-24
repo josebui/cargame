@@ -64,8 +64,7 @@ public class Tracker extends Thread {
 			socket.receive(packet);
 			String receivedMSG = new String(packet.getData(), 0,
 					packet.getLength());
-			guiObject.outputLog(receivedMSG);
-			myAddressAsClientSees = receivedMSG;//receivedMSG.split("!")[1];
+			myAddressAsClientSees = receivedMSG.split("!")[1];
 			guiObject.outputLog(myAddressAsClientSees);
 			WaitingPeer wp = new WaitingPeer();
 			wp.address = packet.getAddress().getHostAddress();

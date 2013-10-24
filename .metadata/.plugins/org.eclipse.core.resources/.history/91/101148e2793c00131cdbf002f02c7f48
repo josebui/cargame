@@ -30,7 +30,6 @@ public class StartGame extends Thread {
 
 		try {
 			window = new GUILogOutput(this);
-			System.out.println(IP+":"+port);
 			trackerClient = new TrackerClient(IP, port, window);
 			trackerClient.start();
 			trackerClient.join();

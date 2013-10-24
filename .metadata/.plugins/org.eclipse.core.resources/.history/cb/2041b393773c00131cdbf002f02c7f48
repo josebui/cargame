@@ -52,7 +52,12 @@ public class Tracker extends Thread {
 	
 	public void run() {
 		guiObject.outputLog("Start listenning on port "+port+"...");
-
+		try {
+			guiObject.outputLog(InetAddress.getLocalHost());
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		notStopped = true;
 		try {
 			socket = new DatagramSocket(port);
@@ -64,11 +69,11 @@ public class Tracker extends Thread {
 			socket.receive(packet);
 			String receivedMSG = new String(packet.getData(), 0,
 					packet.getLength());
-			guiObject.outputLog(receivedMSG);
-			myAddressAsClientSees = receivedMSG;//receivedMSG.split("!")[1];
+			myAddressAsClientSees = receivedMSG.split("!")[1];
 			guiObject.outputLog(myAddressAsClientSees);
 			WaitingPeer wp = new WaitingPeer();
 			wp.address = packet.getAddress().getHostAddress();
+			guiObject.outputLog(packet.getData());
 			guiObject.outputLog("Request from "+wp.address);
 			
 			if(serverPeers.size() != 0){

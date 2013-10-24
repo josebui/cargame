@@ -128,7 +128,7 @@ public class GUI {
 		public SwingAction(GUI guiObject) {
 			this.guiObject = guiObject;
 			putValue(NAME, "Start");
-			putValue(SHORT_DESCRIPTION, "Starting the tracker");
+			putValue(SHORT_DESCRIPTION, "Some short description");
 		}
 		public void actionPerformed(ActionEvent e) {
 			toggleButtons();
@@ -142,7 +142,7 @@ public class GUI {
 
 		public SwingAction_1() {
 			putValue(NAME, "Stop");
-			putValue(SHORT_DESCRIPTION, "Stopping the tracker");
+			putValue(SHORT_DESCRIPTION, "Some short description");
 		}
 		public void actionPerformed(ActionEvent e) {
 			tracker.stopTracker();
@@ -162,6 +162,6 @@ public class GUI {
 	}
 	
 	public void outputLog(String message){
-		textArea.append(message+"\n");
+		textArea.append(message);
 	}
 }

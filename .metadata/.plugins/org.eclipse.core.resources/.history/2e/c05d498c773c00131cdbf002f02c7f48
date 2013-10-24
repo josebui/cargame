@@ -42,17 +42,22 @@ public class Tracker extends Thread {
 		packet = new DatagramPacket(buf, buf.length, packet.getAddress(), packet.getPort());
         socket.send(packet);
 
-        guiObject.outputLog("   Assigned : "+(isServer?"Server":"Client"));
+        System.out.println("   Assigned : "+(isServer?"Server":"Client"));
 	}
 	
 	public void stopTracker(){
 		notStopped = false;
-		guiObject.outputLog("Tracker Stopped");
+		System.out.println("Tracker Stopped");
 	}
 	
 	public void run() {
-		guiObject.outputLog("Start listenning on port "+port+"...");
-
+		System.out.println("Start listenning on port "+port+"...");
+		try {
+			System.out.println(InetAddress.getLocalHost());
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		notStopped = true;
 		try {
 			socket = new DatagramSocket(port);
@@ -64,12 +69,12 @@ public class Tracker extends Thread {
 			socket.receive(packet);
 			String receivedMSG = new String(packet.getData(), 0,
 					packet.getLength());
-			guiObject.outputLog(receivedMSG);
-			myAddressAsClientSees = receivedMSG;//receivedMSG.split("!")[1];
-			guiObject.outputLog(myAddressAsClientSees);
+			myAddressAsClientSees = receivedMSG.split("!")[1];
+			System.out.println(myAddressAsClientSees);
 			WaitingPeer wp = new WaitingPeer();
 			wp.address = packet.getAddress().getHostAddress();
-			guiObject.outputLog("Request from "+wp.address);
+			System.out.println(packet.getData());
+			System.out.println("Request from "+wp.address);
 			
 			if(serverPeers.size() != 0){
 				if(isInTheList(wp))
@@ -81,7 +86,7 @@ public class Tracker extends Thread {
 				sendBack(true, wp);
 			}
 			}catch(SocketTimeoutException e){
-				//guiObject.outputLog("patiently waiting");
+				//System.out.println("patiently waiting");
 			}
 		}
 		guiObject.toggleButtons();

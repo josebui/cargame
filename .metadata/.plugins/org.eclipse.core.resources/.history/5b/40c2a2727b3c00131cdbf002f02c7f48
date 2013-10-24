@@ -162,6 +162,6 @@ public class GUI {
 	}
 	
 	public void outputLog(String message){
-		textArea.append(message+"\n");
+		textArea.append(message);
 	}
 }
