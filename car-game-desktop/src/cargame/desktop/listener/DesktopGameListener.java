@@ -1,21 +1,18 @@
 package cargame.desktop.listener;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.Gdx;
 
 import cargame.listeners.GameCycleListener;
 
 public class DesktopGameListener implements GameCycleListener {
 
-	private LwjglApplication app;
-	
-	public DesktopGameListener(LwjglApplication app) {
+	public DesktopGameListener() {
 		super();
-		this.app = app;
 	}
 
 	@Override
 	public void endGame() {
-		app.exit();
+		Gdx.app.exit();
 	}
 	
 }
