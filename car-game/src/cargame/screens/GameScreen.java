@@ -38,6 +38,8 @@ public class GameScreen extends ScreenAdapter {
 	private static final int BOX_VELOCITY_ITERATIONS = 6;
 	private static final int BOX_POSITION_ITERATIONS = 2;
 	
+	private static final int COUNT_DOWN_NUMBER = 5;
+	
 	private World world;
 	private Box2DDebugRenderer debugRenderer;
 	private TrackContactListener contactListener;
@@ -53,8 +55,6 @@ public class GameScreen extends ScreenAdapter {
 	
 	private Hud playerHud;
 	
-	private boolean gameOver;
-	
 	private Car playerCar;
 	private Map<Integer,Car> otherPlayersCars;
 	
@@ -65,8 +65,6 @@ public class GameScreen extends ScreenAdapter {
 	
 	private long initialTrackTime;
 	
-	private boolean waiting;
-	
 	private int countDown;
 	
 	static {
@@ -75,14 +73,12 @@ public class GameScreen extends ScreenAdapter {
 	
 	public GameScreen(Player clientPlayer,int lapsNumber) {
 		super();
-		waiting = true;
 		world = new World(new Vector2(0, 0), true);
-		gameOver = false;
 		playerCar = new Car(clientPlayer, this, clientPlayer.car_id);
 		otherPlayersCars = new HashMap<Integer, Car>();
 		this.lapsNumber = lapsNumber;
 		this.initialTrackTime = System.currentTimeMillis();
-		this.countDown = 11;
+		this.countDown = COUNT_DOWN_NUMBER+1;
 	}
 	
 	@Override
@@ -207,7 +203,7 @@ public class GameScreen extends ScreenAdapter {
 		camera.update();
 		
 		// Key listeners
-		if(!gameOver && !waiting){
+		if(!CarGame.getInstance().isGameOver() && ! CarGame.getInstance().isWaiting()){
 			if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
 				playerCar.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
 			}
@@ -281,41 +277,44 @@ public class GameScreen extends ScreenAdapter {
 		
 		debugRenderer.render(world, previewCamera.combined);
 		
-		if(!gameOver && !waiting){
+		if(!CarGame.getInstance().isGameOver() && !CarGame.getInstance().isWaiting()){
 			playerCar.getPlayer().trackTime = System.currentTimeMillis() - initialTrackTime;
 		}
 		
 		if(playerCar.getPlayer().getLaps() >= this.lapsNumber){
-			gameOver = true;
+			CarGame.getInstance().setGameOver(true);
 		}
 		
 		// Waiting
-		if(waiting){
+		if(CarGame.getInstance().isWaiting()){
 			
 			if(otherPlayersCars.size() > 0){
 				if(countDown <= 0){
 					// Start race
-					playerHud.showMessage("GO",new Color(0.5f, 1f, 0f, 1f));
-					this.waiting = false;
+					playerHud.showMessage("GO",new Color(0.5f, 1f, 0f, 1f),"");
+					CarGame.getInstance().setWaiting(false);
 					initialTrackTime = System.currentTimeMillis();
 					
 					contactListener.startLapCounter();
 					
-				}else if(countDown == 11){
+				}else if(countDown == COUNT_DOWN_NUMBER+1){
 					initialTrackTime = System.currentTimeMillis();
 					countDown--;
 				}else{
 					int count = (int)((System.currentTimeMillis() - initialTrackTime)/1000.0);
-					countDown = 10 - count;
-					playerHud.showMessage(countDown+"",new Color(1f, 0f, 0f, 1f));
+					countDown = COUNT_DOWN_NUMBER - count;
+					playerHud.showMessage(countDown+"",new Color(1f, 0f, 0f, 1f),"");
 				}
 			}else{
-				playerHud.showMessage("Waiting...",new Color(1f, 1f, 0f, 1f));
+				playerHud.showMessage("Waiting...",new Color(1f, 1f, 0f, 1f),"Press space to exit.");
 			}
+		}
+		if(CarGame.getInstance().isConnectionLost()){
+			playerHud.showMessage("Connection lost",new Color(1f, 1f, 0f, 1f),"");
 		}
 		
 		// Game over
-		if(gameOver){
+		if(CarGame.getInstance().isGameOver()){
 			playerHud.showLeaderBoard();
 			
 		}
@@ -347,8 +346,4 @@ public class GameScreen extends ScreenAdapter {
 		return allCars;
 	}
 
-	public boolean isGameOver() {
-		return gameOver;
-	}
-	
 }

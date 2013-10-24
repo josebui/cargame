@@ -11,6 +11,7 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenAccessor;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
+import cargame.CarGame;
 import cargame.elements.Car;
 import cargame.screens.GameScreen;
 
@@ -24,7 +25,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class Hud {
 
-	private GameScreen game;
+	private GameScreen gameScreen;
 	
 	private BitmapFont font;
 	
@@ -32,13 +33,14 @@ public class Hud {
 	
 	private BitmapFont msgFont;
 	private TweenManager msgTweenManager;
+	private String message;
 	
 	private boolean showLeaderBoard;
 
-	private String message;
+	private String subMessage;
 	
 	public Hud(GameScreen game) {
-		this.game = game;
+		this.gameScreen = game;
 		this.showLeaderBoard = false;
 		font = new BitmapFont(Gdx.files.internal("fonts/font2.fnt"));
 		batch = new SpriteBatch();
@@ -62,8 +64,10 @@ public class Hud {
 	}
 	
 	private void showMessage(float delta, String msg){
+		msgFont.setScale(1f);
 		if(msgTweenManager != null && msgTweenManager.size() == 0){
 			this.message = null;
+			this.subMessage = null;
 		}
 		if(msgTweenManager == null || msgTweenManager.size() == 0){
 			if(msgTweenManager == null){
@@ -76,10 +80,22 @@ public class Hud {
 		}else if(msgTweenManager.size() != 0){
 			msgTweenManager.update(delta);
 		}
-		float msgX = this.game.getFixedCamera().viewportWidth /2.0f;
+		float msgX = this.gameScreen.getFixedCamera().viewportWidth /2.0f;
 		msgX -= ((msg.length()*20)/2.0); 
-		float msgY = this.game.getFixedCamera().viewportHeight/2.0f;
+		float msgY = this.gameScreen.getFixedCamera().viewportHeight/2.0f;
 		msgFont.draw(batch, msg, msgX,msgY);
+		if(this.subMessage != null){
+			
+			 
+			
+			Color msgColor = msgFont.getColor();
+			msgFont.setScale(0.3f);
+			float subMsgX = this.gameScreen.getFixedCamera().viewportWidth /2.0f;
+			subMsgX -= ((subMessage.length()*20*msgFont.getScaleX())/2.0);
+			msgFont.setColor(0.11f, 0.79f, 0.8f, 0.9f);
+			msgFont.draw(batch, this.subMessage, subMsgX,msgY-70);
+			msgFont.setColor(msgColor);
+		}
 	}
 	
 	public void render(float delta){
@@ -89,9 +105,9 @@ public class Hud {
 		// Stats background
 		Color backgroundColor = new Color(0, 0, 0, 0.7f);
 		ShapeRenderer shapeRenderer = new ShapeRenderer();
-		shapeRenderer.setProjectionMatrix(this.game.getFixedCamera().combined);
+		shapeRenderer.setProjectionMatrix(this.gameScreen.getFixedCamera().combined);
 		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.rect(0, this.game.getFixedCamera().viewportHeight-140, this.game.getFixedCamera().viewportWidth, 140, backgroundColor, backgroundColor, backgroundColor, backgroundColor);
+		shapeRenderer.rect(0, this.gameScreen.getFixedCamera().viewportHeight-140, this.gameScreen.getFixedCamera().viewportWidth, 140, backgroundColor, backgroundColor, backgroundColor, backgroundColor);
 	    shapeRenderer.end();
 	    
 	    float boxWidth = 600;
@@ -102,22 +118,22 @@ public class Hud {
 	    	// Leaderboard backgorund
 	    	backgroundColor = new Color(0, 0, 0, 0.7f);
 			shapeRenderer = new ShapeRenderer();
-			shapeRenderer.setProjectionMatrix(this.game.getFixedCamera().combined);
+			shapeRenderer.setProjectionMatrix(this.gameScreen.getFixedCamera().combined);
 			shapeRenderer.begin(ShapeType.Filled);
 			
-			leaderBoardX = this.game.getFixedCamera().viewportWidth/2 - boxWidth/2;
-			leaderBoardY = this.game.getFixedCamera().viewportHeight/2 - boxHeight/2;
+			leaderBoardX = this.gameScreen.getFixedCamera().viewportWidth/2 - boxWidth/2;
+			leaderBoardY = this.gameScreen.getFixedCamera().viewportHeight/2 - boxHeight/2;
 			shapeRenderer.rect(leaderBoardX, leaderBoardY, boxWidth, boxHeight, backgroundColor, backgroundColor, backgroundColor, backgroundColor);
 		    shapeRenderer.end();
 	    }
 	    
 	    Gdx.gl.glDisable(GL10.GL_BLEND);
 	    
-	    batch.setProjectionMatrix(game.getFixedCamera().combined);
+	    batch.setProjectionMatrix(gameScreen.getFixedCamera().combined);
 		batch.begin();
 		renderStats(batch);
 		
-		if(game.getPlayerCar().isWrongDirection()){
+		if(gameScreen.getPlayerCar().isWrongDirection()){
 			showMessage(delta,"Wrong Direction");
 		}
 		
@@ -137,18 +153,18 @@ public class Hud {
 //		font.setScale(0.03f, 0.03f);
 		font.setScale(1f, 1f);
 		font.setColor(new Color(1f, 1f, 1f, 1));
-		font.draw(batch, "Speed: ", 10,this.game.getFixedCamera().viewportHeight-10);
-		font.draw(batch, "Lap: ", 38, this.game.getFixedCamera().viewportHeight-45);
-		font.draw(batch, "Time: ", 30, this.game.getFixedCamera().viewportHeight-87);
-		font.draw(batch, "Best lap: ", 500, this.game.getFixedCamera().viewportHeight-10);
-		float speed = game.getPlayerCar().getSpeed();
+		font.draw(batch, "Speed: ", 10,this.gameScreen.getFixedCamera().viewportHeight-10);
+		font.draw(batch, "Lap: ", 38, this.gameScreen.getFixedCamera().viewportHeight-45);
+		font.draw(batch, "Time: ", 30, this.gameScreen.getFixedCamera().viewportHeight-87);
+		font.draw(batch, "Best lap: ", 500, this.gameScreen.getFixedCamera().viewportHeight-10);
+		float speed = gameScreen.getPlayerCar().getSpeed();
 		Color color = new Color(1, 1-speed/250.0f, 0, speed/160.0f+0.7f);
 		font.setColor(color);
-		font.draw(batch, Math.round(speed)+" km/h", 100,this.game.getFixedCamera().viewportHeight-10);
+		font.draw(batch, Math.round(speed)+" km/h", 100,this.gameScreen.getFixedCamera().viewportHeight-10);
 		font.setColor(new Color(0.7f, 0.7f, 0.7f, 1));
-		font.draw(batch, game.getPlayerCar().getPlayer().getLaps()+"", 100, this.game.getFixedCamera().viewportHeight-45);
-		font.draw(batch, game.getPlayerCar().getPlayer().getTrackTimeTxt(), 100, this.game.getFixedCamera().viewportHeight-87);
-		font.draw(batch, game.getPlayerCar().getPlayer().getBestLapTxt(), 623, this.game.getFixedCamera().viewportHeight-10);
+		font.draw(batch, gameScreen.getPlayerCar().getPlayer().getLaps()+"", 100, this.gameScreen.getFixedCamera().viewportHeight-45);
+		font.draw(batch, gameScreen.getPlayerCar().getPlayer().getTrackTimeTxt(), 100, this.gameScreen.getFixedCamera().viewportHeight-87);
+		font.draw(batch, gameScreen.getPlayerCar().getPlayer().getBestLapTxt(), 623, this.gameScreen.getFixedCamera().viewportHeight-10);
 	}
 	
 	private void renderLeaderBoard(float leaderBoardX, float leaderBoardY,SpriteBatch batch){
@@ -158,7 +174,7 @@ public class Hud {
 		float colspan = 110;
 		float rowspan = 50;
 		
-		if(game.isGameOver()){
+		if(CarGame.getInstance().isGameOver()){
 			font.setColor(new Color(1f, 0f, 0f, 1));
 			font.draw(batch,"GAME OVER",x,y);
 			y-=rowspan;
@@ -175,9 +191,9 @@ public class Hud {
 		y-= rowspan;
 		
 		
-		Map<Integer,Car> allCars = game.getAllPlayersCars();
+		Map<Integer,Car> allCars = gameScreen.getAllPlayersCars();
 		List<Car> cars = new ArrayList<Car>(allCars.values()); 
-		if(game.isGameOver()){
+		if(CarGame.getInstance().isGameOver()){
 			Collections.sort(cars,new Comparator<Car>() {
 				@Override
 				public int compare(Car o1, Car o2) {
@@ -189,15 +205,15 @@ public class Hud {
 		}
 		for(Car car : cars){
 			font.setColor(new Color(0.8f, 0.8f, 0.8f, 1));
-			if(game.isGameOver()){
+			if(CarGame.getInstance().isGameOver()){
 				font.draw(batch, cars.indexOf(car)+1+"",x,y);
 			}else{
 				font.draw(batch, "--",x,y);
 			}
-			font.draw(batch, (car.getPlayer().id+1)+((car == game.getPlayerCar())?" ( me )":""), x+ colspan,y);
+			font.draw(batch, (car.getPlayer().id+1)+((car == gameScreen.getPlayerCar())?" ( me )":""), x+ colspan,y);
 			font.draw(batch, car.getPlayer().getLaps()+"",x + colspan*2,y);
 			font.draw(batch, car.getPlayer().getBestLapTxt(),x + colspan*3,y);
-			if(game.isGameOver()){
+			if(CarGame.getInstance().isGameOver()){
 				font.draw(batch, car.getPlayer().getTrackTimeTxt(),x + colspan*4,y);
 			}
 			y-=rowspan;
@@ -217,8 +233,9 @@ public class Hud {
 		this.showLeaderBoard = true;
 	}
 
-	public void showMessage(String msg,Color color) {
+	public void showMessage(String msg,Color color,String subMsg) {
 		this.message = msg;
+		this.subMessage = subMsg;
 		msgFont.setColor(color);
 		msgTweenManager = null;
 	}

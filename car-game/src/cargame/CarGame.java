@@ -40,9 +40,15 @@ public class CarGame extends Game{
 	
 	private int status;
 	
+	private boolean waiting;
+	private boolean gameOver;
+	private boolean connectionLost;
+	
 	private CarGame(boolean server,String serverIp, int lapsNumber,int carType) {
 		super();
 		this.status = STATUS_PLAYING;
+		this.waiting = true;
+		this.connectionLost = false;
 		gameSync = new GameSync(this,server,serverIp);
 //		Integer playerId = gameSync.getPlayerId();
 //		if(playerId == null){
@@ -99,6 +105,30 @@ public class CarGame extends Game{
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public boolean isWaiting() {
+		return waiting;
+	}
+
+	public void setWaiting(boolean waiting) {
+		this.waiting = waiting;
+	}
+
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
+	public void setGameOver(boolean gameOver) {
+		this.gameOver = gameOver;
+	}
+
+	public boolean isConnectionLost() {
+		return connectionLost;
+	}
+
+	public void setConnectionLost(boolean connectionLost) {
+		this.connectionLost = connectionLost;
 	}
 	
 }
