@@ -318,9 +318,10 @@ public class GameScreen extends ScreenAdapter {
 		
 		// Game over
 		if(CarGame.getInstance().isGameOver()){
-
 			playerHud.showLeaderBoard();
-			
+			if (Gdx.input.isKeyPressed(Keys.SPACE)){
+				CarGame.getInstance().endGame();
+			}
 		}
 	}
 
