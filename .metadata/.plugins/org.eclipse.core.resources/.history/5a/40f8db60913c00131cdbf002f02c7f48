@@ -60,11 +60,14 @@ public class TrackerClient extends Thread {
 			// -------Preparing the receive Packet Data-------
 			recPacket = new DatagramPacket(buf, buf.length, serverAddress, this.port);
 		} catch (SocketException e) {
-			ShootError.shoot("Socket Error", "Can't open socket, check app's permissions.");
+			// Can not open new socket, check the permissions
+			// To-Do the Appropriate job for Socket Exception
+			e.printStackTrace();
 		} catch (java.net.UnknownHostException e) {
-			ShootError.shoot("Unknown Host", "The app can't find the IP you have entered");
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch ( Exception e){
-			ShootError.shoot("Error", "Restart the application, if error persists please email: samana@student.unimelb.edu.au");
+			System.out.println("Hi Exception Happened!");
 		}
 		int tries = 0;
 		while (tries < 5 && !stopClient) {
@@ -87,7 +90,6 @@ public class TrackerClient extends Thread {
 				if(tries == 5)
 					throw new UnreachableTracker();
 			} catch (Exception e){
-				ShootError.shoot("Error", "Restart the application, if error persists please email: samana@student.unimelb.edu.au");
 				guiLogOutput.writeOutput("System error, please contact the developers!");
 			}
 		}

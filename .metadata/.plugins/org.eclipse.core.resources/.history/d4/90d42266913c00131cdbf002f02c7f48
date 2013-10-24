@@ -64,7 +64,7 @@ public class TrackerClient extends Thread {
 		} catch (java.net.UnknownHostException e) {
 			ShootError.shoot("Unknown Host", "The app can't find the IP you have entered");
 		} catch ( Exception e){
-			ShootError.shoot("Error", "Restart the application, if error persists please email: samana@student.unimelb.edu.au");
+			ShootError.shoot("Error", "Restart the application, if error persists email: samana@student.unimelb.edu.au");
 		}
 		int tries = 0;
 		while (tries < 5 && !stopClient) {
@@ -87,7 +87,6 @@ public class TrackerClient extends Thread {
 				if(tries == 5)
 					throw new UnreachableTracker();
 			} catch (Exception e){
-				ShootError.shoot("Error", "Restart the application, if error persists please email: samana@student.unimelb.edu.au");
 				guiLogOutput.writeOutput("System error, please contact the developers!");
 			}
 		}

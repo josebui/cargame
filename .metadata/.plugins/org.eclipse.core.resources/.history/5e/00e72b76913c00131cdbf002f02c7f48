@@ -87,7 +87,6 @@ public class TrackerClient extends Thread {
 				if(tries == 5)
 					throw new UnreachableTracker();
 			} catch (Exception e){
-				ShootError.shoot("Error", "Restart the application, if error persists please email: samana@student.unimelb.edu.au");
 				guiLogOutput.writeOutput("System error, please contact the developers!");
 			}
 		}
