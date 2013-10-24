@@ -218,7 +218,12 @@ public class Hud {
 			}
 			y-=rowspan;
 		}
-		
+		if(CarGame.getInstance().isGameOver()){
+			font.setScale(0.7f); 
+			font.setColor(new Color(1f, 0f, 0f, 1));
+			font.draw(batch,"Press space to exit",x,y);
+			y-=rowspan;
+		}
 	}
 	
 	public void dispose(){

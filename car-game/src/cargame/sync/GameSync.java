@@ -36,8 +36,6 @@ public class GameSync extends Thread implements Client {
 		this.clientPort = 12353;
 		this.peerAddress = getInetAddress((serverIp == null)?"localhost":serverIp);
 		this.lastReceivedPlayerTime = Long.MIN_VALUE;
-//		this.url = "10.9.193.134";
-//		this.url = "192.168.0.102";
 	}
 	
 	private InetAddress getInetAddress(String url){
@@ -67,7 +65,6 @@ public class GameSync extends Thread implements Client {
 				
 				if(!game.isGameOver() && !game.isWaiting() && lost_packets >= PERMITED_MESSAGE_LOST){
 					game.setConnectionLost(true);
-					System.out.println("Connection lost.");
 				}
 				sendData();
 			}

@@ -1,4 +1,7 @@
-package cargame;
+package cargame.desktop;
+
+import cargame.CarGame;
+import cargame.desktop.listener.DesktopGameListener;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -12,7 +15,9 @@ public class Main{
 		cfg.width = 1024;
 		cfg.height = 768;
 		
-		new LwjglApplication(CarGame.createInstance(server,serverIp,lapsNumber,carType), cfg);
+		CarGame game = CarGame.createInstance(server,serverIp,lapsNumber,carType);
+		LwjglApplication app = new LwjglApplication(game, cfg);
+		game.setCycleListener(new DesktopGameListener(app));
 	}
 	
 	public static void main(String[] args) {
