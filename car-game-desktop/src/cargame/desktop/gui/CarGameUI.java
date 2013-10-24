@@ -1,3 +1,4 @@
+package cargame.desktop.gui;
 
 import java.awt.Color;
 import java.awt.EventQueue;

@@ -1,14 +1,10 @@
-import java.awt.Toolkit;
-import java.io.IOException;
+package cargame.desktop.gui;
 import java.io.InputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 public class TrackerClient extends Thread {
 

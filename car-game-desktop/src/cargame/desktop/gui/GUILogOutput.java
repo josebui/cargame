@@ -1,3 +1,4 @@
+package cargame.desktop.gui;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;

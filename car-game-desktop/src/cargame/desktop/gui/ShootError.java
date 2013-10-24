@@ -1,3 +1,4 @@
+package cargame.desktop.gui;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;

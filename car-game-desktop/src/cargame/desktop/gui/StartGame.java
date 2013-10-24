@@ -1,7 +1,11 @@
+package cargame.desktop.gui;
 
 import java.io.IOException;
 
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+
 import cargame.desktop.Main;
+import cargame.desktop.listener.DesktopApplicationListener;
 
 public class StartGame extends Thread {
 	private String IP;
@@ -30,11 +34,12 @@ public class StartGame extends Thread {
 			trackerClient.start();
 			trackerClient.join();
 			window.closeWindow();
-			if (trackerClient.ifGotAnswerFromTracker())
-				Main.startCarGameDesktop(trackerClient.isServer,
+			if (trackerClient.ifGotAnswerFromTracker()){
+				LwjglApplication app = Main.startCarGameDesktop(trackerClient.isServer,
 						trackerClient.toConnectIP, 1,
-						(trackerClient.isServer ? 1 : 3));			
-			carGameUI.toggleButton();
+						(trackerClient.isServer ? 1 : 3));
+				app.addLifecycleListener(new DesktopApplicationListener(carGameUI));
+			}
 		} catch (InterruptedException e) {
 			ShootError.shoot("Interrupted",
 					"Application execution was interrupted!");
