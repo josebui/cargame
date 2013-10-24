@@ -34,7 +34,7 @@ public class GameSync extends Thread implements Client {
 		this.running = true; 
 		this.serverPort = 12343;
 		this.clientPort = 12353;
-		this.peerAddress = getInetAddress((serverIp == null)?null:serverIp);
+		this.peerAddress = (serverIp == null)?null:getInetAddress(serverIp);
 		this.lastReceivedPlayerTime = Long.MIN_VALUE;
 	}
 	
