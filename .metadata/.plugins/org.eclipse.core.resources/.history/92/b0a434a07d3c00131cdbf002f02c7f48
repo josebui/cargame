@@ -52,7 +52,7 @@ public class TrackerClient extends Thread {
 			socket = new DatagramSocket();
 			socket.setSoTimeout(TIME_BETWEEN_TRIES);
 			// -------Preparing the Send Packet----------------
-			String dString = ip+"!Alive__________________________";
+			String dString = ip;
 			buf = dString.getBytes();
 			serverAddress = InetAddress.getByName(this.ip);
 			sendPacket = new DatagramPacket(buf, buf.length, serverAddress,
@@ -97,7 +97,6 @@ public class TrackerClient extends Thread {
 	}
 	
 	private void parseDataRecieved(String receivedMSG){
-		System.out.println(receivedMSG);
 		String [] splittedMessage = receivedMSG.split("!");
 		
 		if(splittedMessage[0].equalsIgnoreCase("true"))

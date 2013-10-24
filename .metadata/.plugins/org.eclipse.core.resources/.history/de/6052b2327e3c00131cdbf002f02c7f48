@@ -36,7 +36,7 @@ public class Tracker extends Thread {
 	}
 	
 	private static void sendBack(boolean isServer, WaitingPeer wp) throws IOException{
-		String dString = isServer+"!"+((wp.address.equals("127.0.0.1")) ? myAddressAsClientSees : wp.address)+"!Alive_________";
+		String dString = isServer+"!"+((wp.address.equals("127.0.0.1")) ? myAddressAsClientSees : wp.address);
         buf = dString.getBytes();
         
 		packet = new DatagramPacket(buf, buf.length, packet.getAddress(), packet.getPort());
@@ -65,7 +65,7 @@ public class Tracker extends Thread {
 			String receivedMSG = new String(packet.getData(), 0,
 					packet.getLength());
 			guiObject.outputLog(receivedMSG);
-			myAddressAsClientSees = receivedMSG.split("!")[0];
+			myAddressAsClientSees = receivedMSG;//receivedMSG.split("!")[1];
 			guiObject.outputLog(myAddressAsClientSees);
 			WaitingPeer wp = new WaitingPeer();
 			wp.address = packet.getAddress().getHostAddress();
