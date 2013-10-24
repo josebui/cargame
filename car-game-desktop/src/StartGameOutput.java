@@ -1,7 +1,7 @@
 import java.awt.EventQueue;
-import java.awt.TextArea;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -10,27 +10,21 @@ public class StartGameOutput {
 
 	private JFrame frame;
 	private JTextArea textArea;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					StartGameOutput window = new StartGameOutput();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	StartGame startGame;
 
 	/**
 	 * Create the application.
 	 */
-	public StartGameOutput() {
+	public StartGameOutput(final StartGame startGame) {
+		this.startGame = startGame;
 		initialize();
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    		startGame.windowClosed();
+		       }
+		});
+		frame.setDefaultCloseOperation(0);
 		frame.setVisible(true);
 	}
 
@@ -55,6 +49,7 @@ public class StartGameOutput {
 		textArea.append(msg+"\n");
 	}
 	
+
 	public void closeWindow(){
 		frame.setVisible(false);
 	}

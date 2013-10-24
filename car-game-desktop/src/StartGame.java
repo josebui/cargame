@@ -6,22 +6,29 @@ public class StartGame extends Thread{
 	private String IP;
 	private int port;
 	private StartGameOutput window;
-	CarGameUI carGameUI;
-	public StartGame(CarGameUI carGameUI,String ip, int port) throws IOException{
+	private CarGameUI carGameUI;
+	TrackerClient trackerClient;
+	public StartGame(CarGameUI carGameUI,String ip, int port){
 		this.IP = ip;
 		this.port = port;
 		this.carGameUI = carGameUI;
 	}
 	
+	public void windowClosed(){
+		if(trackerClient.isAlive())
+			trackerClient.stopClient = true;
+	}
+	
 	public void run(){
-		TrackerClient trackerClient;
+		
 		try{
-			window = new StartGameOutput();
+			window = new StartGameOutput(this);
 			trackerClient = new TrackerClient(IP, port, window);
 			trackerClient.start();
 			trackerClient.join();
 			if(trackerClient.getStatus())
 				Main.startCarGameDesktop(trackerClient.isServer, trackerClient.toConnectIP, 1, 1);
+			
 			window.closeWindow();
 			carGameUI.toggleButton();
 		} catch (IOException e) {
