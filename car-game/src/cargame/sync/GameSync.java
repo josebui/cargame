@@ -60,23 +60,18 @@ public class GameSync extends Thread implements Client {
 		int lost_packets = 0;
 		while(checkState(STATUS_RUNNING) || checkState(STATUS_WAITING)){
 			if(checkState(STATUS_RUNNING)){
-				if(CarGame.getInstance().checkStatus(CarGame.STATUS_WAITING)){
-					long latency = getLatency();
-					System.out.println("Latency:"+latency);
+				if(receiveData()){
+					lost_packets = 0;
+					CarGame.getInstance().setConnectionLost(false);
 				}else{
-					if(receiveData()){
-						lost_packets = 0;
-						CarGame.getInstance().setConnectionLost(false);
-					}else{
-						lost_packets++;
-					}
-					
-					if(!CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER) && !CarGame.getInstance().checkStatus(CarGame.STATUS_WAITING) && lost_packets >= PERMITED_MESSAGE_LOST){
-						CarGame.getInstance().setConnectionLost(true);
-					}
-					if(this.peerAddress != null){
-						sendData();
-					}
+					lost_packets++;
+				}
+				
+				if(!CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER) && !CarGame.getInstance().checkStatus(CarGame.STATUS_WAITING) && lost_packets >= PERMITED_MESSAGE_LOST){
+					CarGame.getInstance().setConnectionLost(true);
+				}
+				if(this.peerAddress != null){
+					sendData();
 				}
 			}
 		}
