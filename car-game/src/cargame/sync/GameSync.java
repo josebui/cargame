@@ -66,8 +66,7 @@ public class GameSync extends Thread implements Client {
 				}else{
 					lost_packets++;
 				}
-				
-				if(!CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER) && !CarGame.getInstance().checkStatus(CarGame.STATUS_WAITING) && lost_packets >= PERMITED_MESSAGE_LOST){
+				if(CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING) && lost_packets >= PERMITED_MESSAGE_LOST){
 					CarGame.getInstance().setConnectionLost(true);
 				}
 				if(this.peerAddress != null){
@@ -168,32 +167,6 @@ public class GameSync extends Thread implements Client {
 	private boolean checkState(int state){
 		return state == this.state;
 	}
-	
-//	private void syncPlayersInfo(Map<Integer, Player> newPlayerList){
-//		Map<Integer, Player> playerList = game.getPlayers();
-//		for(Integer playerId : newPlayerList.keySet()){
-//			Player newPlayerInfo = newPlayerList.get(playerId);
-//			Player actualPlayerInfo = playerList.put(playerId, newPlayerInfo);
-//			if(actualPlayerInfo != null){
-//				if(newPlayerInfo.time <= actualPlayerInfo.time){
-//					playerList.put(playerId, actualPlayerInfo);
-//				}
-//			}
-//		}
-//	}
-//	
-//	private void syncPlayerInfo(int playerId, float[] values){
-//		Map<Integer, Player> playerList = game.getPlayers();
-//		if(!playerList.containsKey(playerId)){
-//			Player newPlayer = new Player();
-//			newPlayer.id = playerId;
-//			newPlayer.movingPosition = new MovingPosition();
-//			playerList.put(playerId, newPlayer);
-//		}
-//		Player player = playerList.get(playerId);
-//		player.time = (new Date()).getTime();
-//		player.movingPosition.setValues(values);
-//	}
 	
 	private void syncPlayerInfo(Player player){
 		Map<Integer, Player> playerList = CarGame.getInstance().getPlayers();
