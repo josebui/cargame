@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import cargame.CarGame;
 import cargame.screens.GameScreen;
 import cargame.utils.Box2DUtils;
 
@@ -64,6 +65,7 @@ public class TrackContactListener implements ContactListener {
 	@Override
 	public void endContact(Contact contact) {
 
+		if(!CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING)) return;
 		// Finish line sensors
 		Car car = getCarCollision(contact,sensor1);
         if(car != null && car == gameScreen.getPlayerCar()){
@@ -78,7 +80,6 @@ public class TrackContactListener implements ContactListener {
         		passedSensor1.put(car, false);
         	}
         }
-        
         car = getCarCollision(contact,sensor2);
         if(car != null && car == gameScreen.getPlayerCar()){
         	passedSensor2.put(car, true);
