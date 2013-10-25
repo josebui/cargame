@@ -21,11 +21,11 @@ public class Tracker extends Thread {
 	private static GUI guiObject;
 	private static boolean notStopped;
 	
-	private Map<WaitingPeer,String> gameIds;
+	private Map<String,String> gameIds; // <Server address, game id>
 	
 	public Tracker( GUI guiObject){
 		this.guiObject = guiObject;
-		this.gameIds = new HashMap<WaitingPeer, String>();
+		this.gameIds = new HashMap<String, String>();
 	}
 	
 	public void setPort(int port){
@@ -79,16 +79,19 @@ public class Tracker extends Thread {
 			
 			if(serverPeers.size() != 0){
 				if(isInTheList(wp)){
-					sendBack(true, wp,gameIds.get(wp));
+//					System.out.println("1 "+gameIds.get(wp.address));
+					sendBack(true, wp,gameIds.get(wp.address));
 				}else{
 					WaitingPeer waitingPeer = serverPeers.remove(0);
-					String gameId = gameIds.remove(waitingPeer);
+					String gameId = gameIds.remove(waitingPeer.address);
+//					System.out.println("2 "+gameId);
 					sendBack(false, waitingPeer,gameId);
 				}
 			}else if(serverPeers.size()==0){
 				serverPeers.add(wp);
 				String gameId = newGameId();
-				gameIds.put(wp, gameId);
+				gameIds.put(wp.address, gameId);
+//				System.out.println("3 "+gameId);
 				sendBack(true, wp,gameId);
 			}
 			}catch(SocketTimeoutException e){

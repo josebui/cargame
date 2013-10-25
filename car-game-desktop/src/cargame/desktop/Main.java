@@ -1,8 +1,5 @@
 package cargame.desktop;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-
 import cargame.CarGame;
 import cargame.desktop.gui.CarGameUI;
 import cargame.desktop.listener.DesktopGameListener;

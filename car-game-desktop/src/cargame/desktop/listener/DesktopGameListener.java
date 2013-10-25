@@ -1,8 +1,8 @@
 package cargame.desktop.listener;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 
-import cargame.CarGame;
 import cargame.desktop.Main;
 import cargame.desktop.gui.CarGameUI;
 import cargame.listeners.GameCycleListener;
@@ -31,8 +31,14 @@ public class DesktopGameListener implements GameCycleListener {
 
 	@Override
 	public void startGame() {
-		// TODO Auto-generated method stub
-		
+		// TODO gain focus
+		Display.update();
+		try {
+			Display.makeCurrent();
+		} catch (LWJGLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

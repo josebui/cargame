@@ -222,9 +222,9 @@ public class GameScreen extends ScreenAdapter {
 		} 
 		
 		// Game end
-		if (!CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED) && Gdx.input.isKeyPressed(Keys.K)){
-			CarGame.getInstance().endGame();
-		}
+//		if (!CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED) && Gdx.input.isKeyPressed(Keys.K)){
+//			CarGame.getInstance().endGame();
+//		}
 		
 		// Key listeners
 		if(CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING)){
@@ -332,12 +332,16 @@ public class GameScreen extends ScreenAdapter {
 				playerHud.showMessage("Waiting...",new Color(1f, 1f, 0f, 1f),"");
 			}
 		}
-		if(CarGame.getInstance().isConnectionLost()){
+		if(CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING) && CarGame.getInstance().isConnectionLost()){
 			playerHud.showMessage("Connection lost",new Color(1f, 1f, 0f, 1f),"Press space to exit.");
 			if (!CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED) && Gdx.input.isKeyPressed(Keys.SPACE)){
 				CarGame.getInstance().endGame();
 				CarGame.getInstance().setStatus(CarGame.STATUS_ENDED);
 			}
+		}
+		
+		if(CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED)){
+			playerHud.showMessage("Connect and play...",new Color(1f, 1f, 0f, 1f),"");
 		}
 		
 	}
