@@ -68,6 +68,7 @@ public class Car implements Element,Comparable<Car>{
 	public void setSteeringAngle(float steeringAngle){
 		if(body.getLinearVelocity().len() < 20) return;
 		body.setAngularVelocity(steeringAngle);
+		body.setAngularVelocity((float) (body.getAngularVelocity()*0.5));
 	}
 	
 	public void createCarObject(){

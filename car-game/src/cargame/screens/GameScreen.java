@@ -14,7 +14,6 @@ import cargame.ui.Hud;
 import cargame.utils.BodyEditorLoader;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -77,7 +76,6 @@ public class GameScreen extends ScreenAdapter {
 	}
 	
 	public void startGame(Player clientPlayer,int lapsNumber){
-//		world = new World(new Vector2(0, 0), true);
 		cleanWorld();
 		playerCar = new Car(clientPlayer, this, clientPlayer.car_id);
 		otherPlayersCars = new HashMap<Integer, Car>();
@@ -216,33 +214,12 @@ public class GameScreen extends ScreenAdapter {
 		playerHud.hideLeaderBoard();
 		if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
 			playerHud.showLeaderBoard();
-			if (!CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED) && Gdx.input.isKeyPressed(Keys.SPACE)){
-				CarGame.getInstance().endGame();
-			}
 		} 
 		
-		// Game end
-//		if (!CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED) && Gdx.input.isKeyPressed(Keys.K)){
-//			CarGame.getInstance().endGame();
-//		}
-		
-		// Key listeners
+		// Playing
 		if(CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING)){
-			if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
-				playerCar.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
-			}
-			if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)){
-				playerCar.setSteeringAngle((float)-Car.MAX_STEER_ANGLE);
-			}
-			if (Gdx.input.isKeyPressed(Keys.DPAD_UP)){
-				playerCar.setEngineSpeed(Car.HORSEPOWERS);
-			}
-			if (Gdx.input.isKeyPressed(Keys.DPAD_DOWN)){
-				playerCar.setEngineSpeed(-Car.HORSEPOWERS);
-			}
-			
 			playerHud.hideLeaderBoard();
-			if (Gdx.input.isKeyPressed(Keys.TAB)){
+			if(CarGame.getInstance().isActionActive(CarGame.ACTION_TAB)){
 				playerHud.showLeaderBoard();
 			}
 		}
@@ -278,10 +255,8 @@ public class GameScreen extends ScreenAdapter {
 		
 		for(Element element : elements){
 			Body body = element.getBody();
-//			if(element.equals(playerCar)){
-				element.getBody().setAngularVelocity((float) (element.getBody().getAngularVelocity()*0.5));
-				element.getBody().setLinearVelocity(element.getBody().getLinearVelocity().scl(0.95f));
-//			}
+			element.getBody().setAngularVelocity((float) (element.getBody().getAngularVelocity()*0.5));
+			element.getBody().setLinearVelocity(element.getBody().getLinearVelocity().scl(0.95f));
 			
 			// Cars sprites
 			if(body.getUserData() != null && body.getUserData() instanceof Sprite) {
@@ -334,16 +309,29 @@ public class GameScreen extends ScreenAdapter {
 		}
 		if(CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING) && CarGame.getInstance().isConnectionLost()){
 			playerHud.showMessage("Connection lost",new Color(1f, 1f, 0f, 1f),"Press space to exit.");
-			if (!CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED) && Gdx.input.isKeyPressed(Keys.SPACE)){
-				CarGame.getInstance().endGame();
-				CarGame.getInstance().setStatus(CarGame.STATUS_ENDED);
-			}
 		}
 		
 		if(CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED)){
 			playerHud.showMessage("Connect and play...",new Color(1f, 1f, 0f, 1f),"");
 		}
 		
+	}
+	
+	public void executeAction(int action){
+		switch(action){
+			case CarGame.ACTION_FORWARD:
+				playerCar.setEngineSpeed(Car.HORSEPOWERS);
+			break;
+			case CarGame.ACTION_REVERSE:
+				playerCar.setEngineSpeed(-Car.HORSEPOWERS);
+			break;
+			case CarGame.ACTION_RIGHT:
+				playerCar.setSteeringAngle((float)-Car.MAX_STEER_ANGLE);
+			break;
+			case CarGame.ACTION_LEFT:
+				playerCar.setSteeringAngle((float)Car.MAX_STEER_ANGLE);
+			break;
+		}
 	}
 
 	public World getWorld() {

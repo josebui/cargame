@@ -1,7 +1,9 @@
 package cargame;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import cargame.core.Player;
 import cargame.listeners.GameCycleListener;
@@ -36,6 +38,16 @@ public class CarGame extends Game{
 	public static final int STATUS_GAME_OVER = 4;
 	public static final int STATUS_CONNECTION_LOST = 5;
 	
+	public static final int ACTION_FORWARD = 0;
+	public static final int ACTION_REVERSE = 1;
+	public static final int ACTION_LEFT = 2;
+	public static final int ACTION_RIGHT = 3;
+	
+	public static final int ACTION_TAB = 4;
+	public static final int ACTION_SPACE = 5;
+	
+	private Set<Integer> currentActions;
+	
 	private GameCycleListener cycleListener;
 	
 	private GameScreen gameScreen;
@@ -47,6 +59,7 @@ public class CarGame extends Game{
 	
 	private int status;
 	private boolean connectionLost;
+	
 	// Game attributes
 	private boolean server;
 	private String serverIp;
@@ -62,26 +75,11 @@ public class CarGame extends Game{
 		this.lapsNumber = lapsNumber;
 		this.carType = carType;
 		this.gameId = gameId;
-//		this.status = STATUS_PLAYING;
-//		this.waiting = true;
-//		this.connectionLost = false;
-//		gameSync = new GameSync(this,server,serverIp);
-//		Integer playerId = gameSync.getPlayerId();
-//		if(playerId == null){
-//			return;
-//		}
-//		myPlayer = new Player();
-//		myPlayer.id = (server)?1:0;
-//		myPlayer.car_id = carType;
-//		
-//		gameScreen = new GameScreen(myPlayer,lapsNumber);
 	}
 	
 	@Override
 	public void create() {
 		newGame(gameId,server,serverIp,lapsNumber,carType);
-//		this.setScreen(gameScreen);
-//		gameSync.start();
 	}
 	
 	public void newGame(String gameId,boolean server,String serverIp, int lapsNumber,int carType){
@@ -91,6 +89,7 @@ public class CarGame extends Game{
 		this.carType = carType;
 		this.connectionLost = false;
 		this.gameId = gameId;
+		this.currentActions = new HashSet<Integer>();
 		this.setStatus(STATUS_NEW_GAME);
 	}
 	
@@ -122,7 +121,39 @@ public class CarGame extends Game{
 		if(this.checkStatus(STATUS_NEW_GAME)){
 			startNewGame();
 		}
+		if(this.checkStatus(STATUS_PLAYING)){
+			for(int action : currentActions){
+				this.executeAction(action);
+			}
+		}
 		super.render();
+	}
+	
+	public void addAction(int action){
+		this.currentActions.add(action);
+		switch(action){
+			case ACTION_SPACE:
+				if(checkStatus(CarGame.STATUS_PLAYING) && isConnectionLost()){
+					endGame();
+				}else if(checkStatus(CarGame.STATUS_GAME_OVER)){
+					endGame();
+				}
+			break;
+		}
+		
+	}
+	
+	public void removeAction(int action){
+		this.currentActions.remove(action);
+	}
+	
+	private void executeAction(int action){
+		if(this.gameScreen == null) return;
+		this.gameScreen.executeAction(action);
+	}
+	
+	public boolean isActionActive(int action){
+		return this.currentActions.contains(action);
 	}
 	
 	public void switchScreen(int screen){
