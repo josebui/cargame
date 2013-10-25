@@ -96,8 +96,6 @@ public class CarGame extends Game{
 			this.gameSync = new GameSync();
 		}
 		
-		this.setStatus(STATUS_WAITING);
-		
 		// Players
 		myPlayer = new Player();
 		myPlayer.id = (server)?1:0;
@@ -130,7 +128,6 @@ public class CarGame extends Game{
 			break;
 		}
 		if(!this.getScreen().equals(nextScreen)){
-			System.out.println("Next screen");
 			this.setScreen(nextScreen);
 		}
 	}
@@ -179,7 +176,7 @@ public class CarGame extends Game{
 	}
 
 	public void endGame(){
-		this.status = CarGame.STATUS_ENDED;
+		this.setStatus(CarGame.STATUS_ENDED);
 //		this.gameSync.stopSync();
 //		gameScreen = new GameScreen(myPlayer,3);
 //		this.setScreen(gameScreen);

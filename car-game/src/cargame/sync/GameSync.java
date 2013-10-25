@@ -39,8 +39,8 @@ public class GameSync extends Thread implements Client {
 	public void start(boolean server,String serverIp){
 		this.state = STATUS_RUNNING; 
 		this.server = server;
-		this.peerAddress = (serverIp == null)?null:getInetAddress(serverIp);
-		System.out.println("Received address:"+this.peerAddress.getHostAddress());
+		this.peerAddress = (server)?null:getInetAddress(serverIp);
+		System.out.println("Received address:"+this.peerAddress);
 		this.lastReceivedPlayerTime = Long.MIN_VALUE;
 		if(!this.isAlive()){
 			super.start();

@@ -212,6 +212,20 @@ public class GameScreen extends ScreenAdapter {
 		camera.position.set(cameraX, cameraY, 0);
 		camera.update();
 		
+		// Game over
+		playerHud.hideLeaderBoard();
+		if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
+			playerHud.showLeaderBoard();
+			if (!CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED) && Gdx.input.isKeyPressed(Keys.SPACE)){
+				CarGame.getInstance().endGame();
+			}
+		} 
+		
+		// Game end
+		if (!CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED) && Gdx.input.isKeyPressed(Keys.K)){
+			CarGame.getInstance().endGame();
+		}
+		
 		// Key listeners
 		if(CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING)){
 			if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)){
@@ -290,7 +304,7 @@ public class GameScreen extends ScreenAdapter {
 			playerCar.getPlayer().trackTime = System.currentTimeMillis() - initialTrackTime;
 		}
 		
-		if(playerCar.getPlayer().getLaps() >= this.lapsNumber){
+		if(CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING) && playerCar.getPlayer().getLaps() >= this.lapsNumber){
 			CarGame.getInstance().setStatus(CarGame.STATUS_GAME_OVER);
 		}
 		
@@ -324,18 +338,6 @@ public class GameScreen extends ScreenAdapter {
 				CarGame.getInstance().endGame();
 				CarGame.getInstance().setStatus(CarGame.STATUS_ENDED);
 			}
-		}
-		
-		// Game over
-		if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
-			playerHud.showLeaderBoard();
-			if (!CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED) && Gdx.input.isKeyPressed(Keys.SPACE)){
-				CarGame.getInstance().endGame();
-			}
-		} 
-		
-		if (CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING) && Gdx.input.isKeyPressed(Keys.K)){
-			CarGame.getInstance().endGame();
 		}
 		
 	}

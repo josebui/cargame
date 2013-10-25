@@ -40,10 +40,10 @@ public class Main{
 		String serverIp = (args.length>1)?args[1]:null;
 		int carType = ("1".equals(args[0])?0:1);
 		
-		startCarGameDesktop(null,server,serverIp,2,carType);
+		startCarGameDesktop(null,server,serverIp,1,carType);
 	}
 
 	public static void restartGame() {
-		startCarGameDesktop(null,true,"127.0.0.1",2,1);
+		startCarGameDesktop(null,true,"127.0.0.1",1,0);
 	}
 }
