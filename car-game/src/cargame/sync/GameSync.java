@@ -70,7 +70,7 @@ public class GameSync extends Thread implements Client {
 				if(CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING) && lost_packets >= PERMITED_MESSAGE_LOST){
 					CarGame.getInstance().setConnectionLost(true);
 				}
-				if(this.peerAddress != null){
+				if(this.peerAddress != null && CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING)){
 					sendData();
 				}
 			}
