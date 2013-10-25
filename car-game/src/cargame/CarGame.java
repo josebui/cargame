@@ -19,8 +19,8 @@ public class CarGame extends Game{
 		return instance;
 	}
 	
-	public static CarGame createInstance(boolean server,String serverIp, int lapsNumber,int carType){
-		instance = new CarGame(server,serverIp,lapsNumber,carType);
+	public static CarGame createInstance(String gameId,boolean server,String serverIp, int lapsNumber,int carType){
+		instance = new CarGame(gameId,server,serverIp,lapsNumber,carType);
 		return instance;
 	}
 	
@@ -53,12 +53,15 @@ public class CarGame extends Game{
 	private int lapsNumber;
 	private int carType;
 	
-	private CarGame(boolean server,String serverIp, int lapsNumber,int carType) {
+	private String gameId;
+	
+	private CarGame(String gameId,boolean server,String serverIp, int lapsNumber,int carType) {
 		super();
 		this.server = server;
 		this.serverIp = serverIp;
 		this.lapsNumber = lapsNumber;
 		this.carType = carType;
+		this.gameId = gameId;
 //		this.status = STATUS_PLAYING;
 //		this.waiting = true;
 //		this.connectionLost = false;
@@ -76,17 +79,18 @@ public class CarGame extends Game{
 	
 	@Override
 	public void create() {
-		newGame(server,serverIp,lapsNumber,carType);
+		newGame(gameId,server,serverIp,lapsNumber,carType);
 //		this.setScreen(gameScreen);
 //		gameSync.start();
 	}
 	
-	public void newGame(boolean server,String serverIp, int lapsNumber,int carType){
+	public void newGame(String gameId,boolean server,String serverIp, int lapsNumber,int carType){
 		this.server = server;
 		this.serverIp = serverIp;
 		this.lapsNumber = lapsNumber;
 		this.carType = carType;
 		this.connectionLost = false;
+		this.gameId = gameId;
 		this.setStatus(STATUS_NEW_GAME);
 	}
 	
@@ -111,6 +115,7 @@ public class CarGame extends Game{
 		
 		gameSync.start(server,serverIp);
 		this.setStatus(STATUS_WAITING);
+		cycleListener.startGame();
 	}
 	
 	public void render(){
@@ -190,7 +195,11 @@ public class CarGame extends Game{
 	}
 
 	public void restartGame() {
-		CarGame.getInstance().newGame(server, serverIp, lapsNumber, carType);
+		CarGame.getInstance().newGame(gameId,server, serverIp, lapsNumber, carType);
+	}
+
+	public String getGameId() {
+		return this.gameId;
 	}
 	
 }

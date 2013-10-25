@@ -17,6 +17,7 @@ public class TrackerClient extends Thread {
 	public boolean isServer;
 	public String toConnectIP;
 	public boolean stopClient = false;
+	public String gameId;
 	
 	public TrackerClient(String ip, int port, GUILogOutput guiLogOutput){
 		super("MulticastServerThread");
@@ -104,5 +105,6 @@ public class TrackerClient extends Thread {
 			isServer = false;
 		
 		toConnectIP = splittedMessage[1];
+		gameId = splittedMessage[2];
 	}
 }

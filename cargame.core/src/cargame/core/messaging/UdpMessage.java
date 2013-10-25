@@ -13,12 +13,14 @@ public class UdpMessage implements Serializable {
 	private Serializable data;
 	private long time;
 	private transient InetAddress address;
+	private String gameId;
 	
-	public UdpMessage(int type, Serializable data, long time) {
+	public UdpMessage(int type, Serializable data, long time,String gameId) {
 		super();
 		this.type = type;
 		this.data = data;
 		this.time = time;
+		this.gameId = gameId;
 	}
 
 	public int getType() {
@@ -39,6 +41,10 @@ public class UdpMessage implements Serializable {
 
 	public void setAddress(InetAddress address) {
 		this.address = address;
+	}
+
+	public String getGameId() {
+		return this.gameId;
 	}
 	
 }

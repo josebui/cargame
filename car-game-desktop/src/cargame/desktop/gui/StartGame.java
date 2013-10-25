@@ -39,7 +39,7 @@ public class StartGame extends Thread {
 			trackerClient.join();
 			window.closeWindow();
 			if (trackerClient.ifGotAnswerFromTracker()){
-				LwjglApplication app = Main.startCarGameDesktop(carGameUI,trackerClient.isServer,
+				LwjglApplication app = Main.startCarGameDesktop(carGameUI,trackerClient.gameId,trackerClient.isServer,
 						trackerClient.toConnectIP, 1,
 						(trackerClient.isServer ? 1 : 3));
 				app.addLifecycleListener(new DesktopApplicationListener(carGameUI));

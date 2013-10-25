@@ -14,7 +14,7 @@ public class Main{
 	
 	private static LwjglApplication app;
 	
-	public static LwjglApplication startCarGameDesktop(CarGameUI carGameUI, boolean server, String serverIp, int lapsNumber, int carType){
+	public static LwjglApplication startCarGameDesktop(CarGameUI carGameUI, String gameId, boolean server, String serverIp, int lapsNumber, int carType){
 		if(CarGame.getInstance() == null){
 			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 			cfg.title = "car-game";
@@ -25,11 +25,11 @@ public class Main{
 			cfg.resizable = true;
 	//		cfg.vSyncEnabled = true;
 			
-			CarGame game = CarGame.createInstance(server,serverIp,lapsNumber,carType);
+			CarGame game = CarGame.createInstance(gameId,server,serverIp,lapsNumber,carType);
 			app = new LwjglApplication(game, cfg);
 			game.setCycleListener(new DesktopGameListener(carGameUI));
 		}else{
-			CarGame.getInstance().newGame(server, serverIp, lapsNumber, carType);
+			CarGame.getInstance().newGame(gameId,server, serverIp, lapsNumber, carType);
 		}
 		return app;
 	}
@@ -40,10 +40,10 @@ public class Main{
 		String serverIp = (args.length>1)?args[1]:null;
 		int carType = ("1".equals(args[0])?0:1);
 		
-		startCarGameDesktop(null,server,serverIp,1,carType);
+		startCarGameDesktop(null,"localgame",server,serverIp,1,carType);
 	}
 
 	public static void restartGame() {
-		startCarGameDesktop(null,true,"127.0.0.1",1,0);
+		startCarGameDesktop(null,"localgame",true,"127.0.0.1",1,0);
 	}
 }

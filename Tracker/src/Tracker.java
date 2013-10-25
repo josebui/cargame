@@ -6,7 +6,12 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 public class Tracker extends Thread {
 	private static List<WaitingPeer> serverPeers = new ArrayList<WaitingPeer>();
@@ -18,8 +23,11 @@ public class Tracker extends Thread {
 	private static GUI guiObject;
 	private static boolean notStopped;
 	
+	private Map<WaitingPeer,String> gameIds;
+	
 	public Tracker( GUI guiObject){
 		this.guiObject = guiObject;
+		this.gameIds = new HashMap<WaitingPeer, String>();
 	}
 	
 	public void setPort(int port){
@@ -35,8 +43,8 @@ public class Tracker extends Thread {
 		return false;
 	}
 	
-	private static void sendBack(boolean isServer, WaitingPeer wp) throws IOException{
-		String dString = isServer+"!"+((wp.address.equals("127.0.0.1")) ? myAddressAsClientSees : wp.address)+"!Alive_________";
+	private static void sendBack(boolean isServer, WaitingPeer wp, String gameId) throws IOException{
+		String dString = isServer+"!"+((wp.address.equals("127.0.0.1")) ? myAddressAsClientSees : wp.address)+"!"+gameId+"!Alive_________";
         buf = dString.getBytes();
         
 		packet = new DatagramPacket(buf, buf.length, packet.getAddress(), packet.getPort());
@@ -72,13 +80,19 @@ public class Tracker extends Thread {
 			guiObject.outputLog("Request from "+wp.address);
 			
 			if(serverPeers.size() != 0){
-				if(isInTheList(wp))
-					sendBack(true, wp);
-				else
-					sendBack(false, serverPeers.remove(0));
+				if(isInTheList(wp)){
+					sendBack(true, wp,gameIds.get(wp));
+				}else{
+					WaitingPeer waitingPeer = serverPeers.remove(0);
+					String gameId = gameIds.get(wp);
+					gameIds.remove(wp);
+					sendBack(false, waitingPeer,gameId);
+				}
 			}else if(serverPeers.size()==0){
 				serverPeers.add(wp);
-				sendBack(true, wp);
+				String gameId = newGameId();
+				gameIds.put(wp, gameId);
+				sendBack(true, wp,gameId);
 			}
 			}catch(SocketTimeoutException e){
 				//guiObject.outputLog("patiently waiting");
@@ -92,6 +106,28 @@ public class Tracker extends Thread {
 			System.err.println("ERROR: Exception happened trying to send and recieve data, check your connection please.");
 			socket.close();
 		}
+		
+	}
+
+	private String newGameId() {
+		Set<String> knownGameIds = new HashSet<String>(this.gameIds.values());
+		String newGameId = generateId(10);
+		while(knownGameIds.contains(newGameId)){
+			newGameId = generateId(10);
+		}
+		return newGameId;
+	}
+	
+	public static String generateId(int size){
+		char[] c = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+		StringBuilder sb = new StringBuilder();
+		Random random = new Random();
+		for (int i = 0; i < size; i++) {
+		    char ch = c[random.nextInt(c.length)];
+		    sb.append(ch);
+		}
+		String output = sb.toString();
+		return output;
 		
 	}
 

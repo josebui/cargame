@@ -28,5 +28,11 @@ public class DesktopGameListener implements GameCycleListener {
 			System.out.println("Ended");
 		}
 	}
+
+	@Override
+	public void startGame() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

@@ -3,8 +3,6 @@ package cargame.sync;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
-import java.util.TimeZone;
-
 import cargame.CarGame;
 import cargame.core.Client;
 import cargame.core.GameInfo;
@@ -82,7 +80,7 @@ public class GameSync extends Thread implements Client {
 	}
 	
 	private void sendData() {
-		UdpMessage outMessage = new UdpMessage(UdpMessage.TYPE_PLAYER_DATA, CarGame.getInstance().getMyPlayer(), System.currentTimeMillis());
+		UdpMessage outMessage = new UdpMessage(UdpMessage.TYPE_PLAYER_DATA, CarGame.getInstance().getMyPlayer(), System.currentTimeMillis(),CarGame.getInstance().getGameId());
 		outMessage.setAddress(this.peerAddress);
 		UdpMessageUtils.sendMessage(outMessage, (server)?this.clientPort:this.serverPort);
 
@@ -92,6 +90,7 @@ public class GameSync extends Thread implements Client {
 		UdpMessage inMessage = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 20);
 		
 		if(inMessage == null) return false; // No new message
+		if(!CarGame.getInstance().getGameId().equals(inMessage.getGameId())) return false; // Message from other game
 		if(inMessage.getTime() <= this.lastReceivedPlayerTime) return true; // Ignore old packet
 		this.lastReceivedPlayerTime = inMessage.getTime(); 
 		
@@ -107,40 +106,6 @@ public class GameSync extends Thread implements Client {
 			break;
 		}
 		return true;
-	}
-	
-	private long getLatency(){
-		long latency = 0l;
-		if(this.server){
-			UdpMessage inMsg = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 0);
-//			String timeZone = (String) inMsg.getData();
-			if(inMsg.getType() == UdpMessage.TYPE_SYNC_MESSAGE){
-				latency = System.currentTimeMillis();
-				UdpMessage outMsg = new UdpMessage(UdpMessage.TYPE_SYNC_MESSAGE, TimeZone.getDefault().getDisplayName(), System.currentTimeMillis());
-				while(outMsg != null){
-					outMsg.setAddress(this.peerAddress);
-					UdpMessageUtils.sendMessage(outMsg, (server)?this.clientPort:this.serverPort);
-					inMsg = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 0);
-					if(inMsg != null){
-						latency = System.currentTimeMillis() - latency;
-						System.out.println("Latency:"+latency);
-					}
-				}
-			}
-		}else{
-			UdpMessage outMsg = new UdpMessage(UdpMessage.TYPE_SYNC_MESSAGE, TimeZone.getDefault().getDisplayName(), System.currentTimeMillis());
-			while(outMsg != null){
-				outMsg.setAddress(this.peerAddress);
-				latency = System.currentTimeMillis();
-				UdpMessageUtils.sendMessage(outMsg, (server)?this.clientPort:this.serverPort);
-				UdpMessage inMsg = UdpMessageUtils.receiveMessage((server)?this.serverPort:this.clientPort, MESSAGE_LENGTH, 0);
-				if(inMsg != null){
-					latency = System.currentTimeMillis() - latency;
-					System.out.println("Latency:"+latency);
-				}
-			}
-		}
-		return latency;
 	}
 	
 	@Override
