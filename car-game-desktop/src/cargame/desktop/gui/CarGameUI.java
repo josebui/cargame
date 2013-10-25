@@ -162,6 +162,10 @@ public class CarGameUI {
 		else
 			btnConnectPlay.setEnabled(true);
 	}
+	
+	public void bringToFront(){
+		frmCarGame.toFront();
+	}
 
 	private class SwingAction extends AbstractAction {
 		CarGameUI carGameUI;
@@ -183,5 +187,5 @@ public class CarGameUI {
 			}
 		}
 	}
-
+	
 }

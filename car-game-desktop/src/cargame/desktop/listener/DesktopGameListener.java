@@ -1,18 +1,32 @@
 package cargame.desktop.listener;
 
-import com.badlogic.gdx.Gdx;
+import org.lwjgl.opengl.Display;
 
+import cargame.CarGame;
+import cargame.desktop.Main;
+import cargame.desktop.gui.CarGameUI;
 import cargame.listeners.GameCycleListener;
 
 public class DesktopGameListener implements GameCycleListener {
 
-	public DesktopGameListener() {
+	private CarGameUI carGameUI;
+	
+	public DesktopGameListener(CarGameUI carGameUI) {
 		super();
+		this.carGameUI = carGameUI;
 	}
 
 	@Override
 	public void endGame() {
-		Gdx.app.exit();
+		if(carGameUI == null){
+//			System.exit(0);
+//			CarGame.getInstance().restartGame();
+			Main.restartGame();
+		}else{
+			carGameUI.bringToFront();
+			carGameUI.toggleButton();
+			System.out.println("Ended");
+		}
 	}
 	
 }

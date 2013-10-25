@@ -17,25 +17,33 @@ public class GameSync extends Thread implements Client {
 	private static final int MESSAGE_LENGTH = 700;
 	private static final int PERMITED_MESSAGE_LOST = 150 ;
 	
+	private static final int STATUS_RUNNING = 0;
+	private static final int STATUS_WAITING = 1;
+	
 	private InetAddress peerAddress;
 	private int serverPort;
 	private int clientPort;
 	
-	private CarGame game;
-	private boolean running;
+	private int state;
 	private boolean server;
 	
 	private long lastReceivedPlayerTime;
 	
-	public GameSync(CarGame game,boolean server,String serverIp) {
+	public GameSync() {
 		super();
-		this.game = game;
-		this.server = server;
-		this.running = true; 
 		this.serverPort = 12343;
 		this.clientPort = 12353;
+		this.state = STATUS_WAITING;
+	}
+	
+	public void start(boolean server,String serverIp){
+		this.state = STATUS_RUNNING; 
+		this.server = server;
 		this.peerAddress = (serverIp == null)?null:getInetAddress(serverIp);
 		this.lastReceivedPlayerTime = Long.MIN_VALUE;
+		if(!this.isAlive()){
+			super.start();
+		}
 	}
 	
 	private InetAddress getInetAddress(String url){
@@ -49,41 +57,37 @@ public class GameSync extends Thread implements Client {
 	
 	@Override
 	public void run(){
-		
 		int lost_packets = 0;
-		
-		while(running){
-			if(game.getStatus() == CarGame.STATUS_WAITING){
-				long latency = getLatency();
-				System.out.println("Latency:"+latency);
-			}else{
-				if(receiveData()){
-					lost_packets = 0;
-					game.setConnectionLost(false);
+		while(checkState(STATUS_RUNNING) || checkState(STATUS_WAITING)){
+			if(checkState(STATUS_RUNNING)){
+				if(CarGame.getInstance().checkStatus(CarGame.STATUS_WAITING)){
+					long latency = getLatency();
+					System.out.println("Latency:"+latency);
 				}else{
-					lost_packets++;
-				}
-				
-				if(!game.isGameOver() && !game.isWaiting() && lost_packets >= PERMITED_MESSAGE_LOST){
-					game.setConnectionLost(true);
-				}
-				if(this.peerAddress != null){
-					sendData();
+					if(receiveData()){
+						lost_packets = 0;
+						CarGame.getInstance().setConnectionLost(false);
+					}else{
+						lost_packets++;
+					}
+					
+					if(!CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER) && !CarGame.getInstance().checkStatus(CarGame.STATUS_WAITING) && lost_packets >= PERMITED_MESSAGE_LOST){
+						CarGame.getInstance().setConnectionLost(true);
+					}
+					if(this.peerAddress != null){
+						sendData();
+					}
 				}
 			}
 		}
 	}
 
-	public boolean isRunning() {
-		return running;
-	}
-
-	public void setRunning(boolean running) {
-		this.running = running;
+	public void setSetState(int state) {
+		this.state = state;
 	}
 	
 	private void sendData() {
-		UdpMessage outMessage = new UdpMessage(UdpMessage.TYPE_PLAYER_DATA, game.getMyPlayer(), System.currentTimeMillis());
+		UdpMessage outMessage = new UdpMessage(UdpMessage.TYPE_PLAYER_DATA, CarGame.getInstance().getMyPlayer(), System.currentTimeMillis());
 		outMessage.setAddress(this.peerAddress);
 		UdpMessageUtils.sendMessage(outMessage, (server)?this.clientPort:this.serverPort);
 
@@ -166,6 +170,10 @@ public class GameSync extends Thread implements Client {
 
 	}
 	
+	private boolean checkState(int state){
+		return state == this.state;
+	}
+	
 //	private void syncPlayersInfo(Map<Integer, Player> newPlayerList){
 //		Map<Integer, Player> playerList = game.getPlayers();
 //		for(Integer playerId : newPlayerList.keySet()){
@@ -193,7 +201,7 @@ public class GameSync extends Thread implements Client {
 //	}
 	
 	private void syncPlayerInfo(Player player){
-		Map<Integer, Player> playerList = game.getPlayers();
+		Map<Integer, Player> playerList = CarGame.getInstance().getPlayers();
 		playerList.put(player.id, player);
 	}
 }

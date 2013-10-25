@@ -31,10 +31,14 @@ public class CarGame extends Game{
 	
 	public static final int STATUS_WAITING = 0;
 	public static final int STATUS_PLAYING = 1;
+	public static final int STATUS_ENDED = 2;
+	public static final int STATUS_NEW_GAME = 3;
+	public static final int STATUS_GAME_OVER = 4;
+	public static final int STATUS_CONNECTION_LOST = 5;
 	
 	private GameCycleListener cycleListener;
 	
-	private Screen gameScreen;
+	private GameScreen gameScreen;
 	
 	private Map<Integer,Player> players;
 	private Player myPlayer;
@@ -42,32 +46,80 @@ public class CarGame extends Game{
 	private GameSync gameSync;
 	
 	private int status;
-	
-	private boolean waiting;
-	private boolean gameOver;
 	private boolean connectionLost;
+	// Game attributes
+	private boolean server;
+	private String serverIp;
+	private int lapsNumber;
+	private int carType;
 	
 	private CarGame(boolean server,String serverIp, int lapsNumber,int carType) {
 		super();
-		this.status = STATUS_PLAYING;
-		this.waiting = true;
-		this.connectionLost = false;
-		gameSync = new GameSync(this,server,serverIp);
+		this.server = server;
+		this.serverIp = serverIp;
+		this.lapsNumber = lapsNumber;
+		this.carType = carType;
+//		this.status = STATUS_PLAYING;
+//		this.waiting = true;
+//		this.connectionLost = false;
+//		gameSync = new GameSync(this,server,serverIp);
 //		Integer playerId = gameSync.getPlayerId();
 //		if(playerId == null){
 //			return;
 //		}
-		myPlayer = new Player();
-		myPlayer.id = (server)?1:0;
-		myPlayer.car_id = carType;
-		
-		gameScreen = new GameScreen(myPlayer,lapsNumber);
+//		myPlayer = new Player();
+//		myPlayer.id = (server)?1:0;
+//		myPlayer.car_id = carType;
+//		
+//		gameScreen = new GameScreen(myPlayer,lapsNumber);
 	}
 	
 	@Override
 	public void create() {
-		this.setScreen(gameScreen);
-		gameSync.start();
+		newGame(server,serverIp,lapsNumber,carType);
+//		this.setScreen(gameScreen);
+//		gameSync.start();
+	}
+	
+	public void newGame(boolean server,String serverIp, int lapsNumber,int carType){
+		this.server = server;
+		this.serverIp = serverIp;
+		this.lapsNumber = lapsNumber;
+		this.carType = carType;
+		this.connectionLost = false;
+		this.setStatus(STATUS_NEW_GAME);
+	}
+	
+	public void startNewGame(){
+		System.out.println("New game");
+		if(this.gameSync == null){
+			this.gameSync = new GameSync();
+		}
+		
+		this.setStatus(STATUS_WAITING);
+		
+		// Players
+		myPlayer = new Player();
+		myPlayer.id = (server)?1:0;
+		myPlayer.car_id = carType;
+		players = new HashMap<Integer, Player>();
+		
+		if( this.gameScreen==null){
+			this.gameScreen = new GameScreen();
+			this.setScreen(gameScreen);
+		}
+
+		this.gameScreen.startGame(myPlayer,lapsNumber);
+		
+		gameSync.start(server,serverIp);
+		this.setStatus(STATUS_WAITING);
+	}
+	
+	public void render(){
+		if(this.checkStatus(STATUS_NEW_GAME)){
+			startNewGame();
+		}
+		super.render();
 	}
 	
 	public void switchScreen(int screen){
@@ -110,24 +162,8 @@ public class CarGame extends Game{
 		this.status = status;
 	}
 
-	public boolean isWaiting() {
-		return waiting;
-	}
-
-	public void setWaiting(boolean waiting) {
-		this.waiting = waiting;
-	}
-
-	public boolean isGameOver() {
-		return gameOver;
-	}
-
-	public void setGameOver(boolean gameOver) {
-		this.gameOver = gameOver;
-	}
-
 	public boolean isConnectionLost() {
-		return connectionLost;
+		return connectionLost; 
 	}
 
 	public void setConnectionLost(boolean connectionLost) {
@@ -143,7 +179,21 @@ public class CarGame extends Game{
 	}
 
 	public void endGame(){
+		this.status = CarGame.STATUS_ENDED;
+//		this.gameSync.stopSync();
+//		gameScreen = new GameScreen(myPlayer,3);
+//		this.setScreen(gameScreen);
 		cycleListener.endGame();
+//		CarGame.getInstance().newGame(server, serverIp, lapsNumber, carType);
+//		newGame(server,serverIp,lapsNumber,carType);
 	}
 
+	public boolean checkStatus(int status){
+		return this.status == status;
+	}
+
+	public void restartGame() {
+		CarGame.getInstance().newGame(server, serverIp, lapsNumber, carType);
+	}
+	
 }

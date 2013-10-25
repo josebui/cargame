@@ -174,7 +174,7 @@ public class Hud {
 		float colspan = 110;
 		float rowspan = 50;
 		
-		if(CarGame.getInstance().isGameOver()){
+		if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
 			font.setColor(new Color(1f, 0f, 0f, 1));
 			font.draw(batch,"GAME OVER",x,y);
 			y-=rowspan;
@@ -193,7 +193,7 @@ public class Hud {
 		
 		Map<Integer,Car> allCars = gameScreen.getAllPlayersCars();
 		List<Car> cars = new ArrayList<Car>(allCars.values()); 
-		if(CarGame.getInstance().isGameOver()){
+		if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
 			Collections.sort(cars,new Comparator<Car>() {
 				@Override
 				public int compare(Car o1, Car o2) {
@@ -205,7 +205,7 @@ public class Hud {
 		}
 		for(Car car : cars){
 			font.setColor(new Color(0.8f, 0.8f, 0.8f, 1));
-			if(CarGame.getInstance().isGameOver()){
+			if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
 				font.draw(batch, cars.indexOf(car)+1+"",x,y);
 			}else{
 				font.draw(batch, "--",x,y);
@@ -213,12 +213,12 @@ public class Hud {
 			font.draw(batch, (car.getPlayer().id+1)+((car == gameScreen.getPlayerCar())?" ( me )":""), x+ colspan,y);
 			font.draw(batch, car.getPlayer().getLaps()+"",x + colspan*2,y);
 			font.draw(batch, car.getPlayer().getBestLapTxt(),x + colspan*3,y);
-			if(CarGame.getInstance().isGameOver()){
+			if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
 				font.draw(batch, car.getPlayer().getTrackTimeTxt(),x + colspan*4,y);
 			}
 			y-=rowspan;
 		}
-		if(CarGame.getInstance().isGameOver()){
+		if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
 			font.setScale(0.7f); 
 			font.setColor(new Color(1f, 0f, 0f, 1));
 			font.draw(batch,"Press space to exit",x,y);

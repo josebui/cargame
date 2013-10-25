@@ -16,7 +16,7 @@ import cargame.utils.Box2DUtils;
 
 public class TrackContactListener implements ContactListener {
 
-	private GameScreen game;
+	private GameScreen gameScreen;
 	private Body sensor1;
 	private Body sensor2;
 	
@@ -30,23 +30,28 @@ public class TrackContactListener implements ContactListener {
 	public TrackContactListener(GameScreen game) {
 		super();
 		
-		this.game = game;
+		this.gameScreen = game;
 		
 		// Finish line sensors
-		
 		passedSensor1 = new HashMap<Car, Boolean>();
 		passedSensor2 = new HashMap<Car, Boolean>();
 		sensor2 = Box2DUtils.createPolygonBody(game.getWorld(), new Vector2(135, 25), 1f, 15f, 0f, 0f, 0f, false,true);
 		sensor1 = Box2DUtils.createPolygonBody(game.getWorld(), new Vector2(140, 25), 1f, 15f, 0f, 0f, 0f, false,true);
 		
 		wrongDirection =  new HashMap<Car, Boolean>();
+	}
+	
+	public void startListener(){
+		wrongDirection.clear();
+		passedSensor1.clear();
+		passedSensor2.clear();
 		
 		// Move cars to start line
-		for(int i=0;i<game.getElements().size();i++){
-			Car car = (Car) game.getElements().get(i);
+		for(int i=0;i<this.gameScreen.getElements().size();i++){
+			Car car = (Car) this.gameScreen.getElements().get(i);
 			if(car != null){
 				wrongDirection.put(car, true);
-				car.getBody().setTransform(sensor1.getPosition().x+20, sensor1.getPosition().y +6 -this.game.getPlayerCar().getPlayer().id*10, (float)( sensor1.getAngle()-Math.PI/2.0));
+				car.getBody().setTransform(sensor1.getPosition().x+20, sensor1.getPosition().y +6 -this.gameScreen.getPlayerCar().getPlayer().id*10, (float)( sensor1.getAngle()-Math.PI/2.0));
 			}
 			
 		}
@@ -61,7 +66,7 @@ public class TrackContactListener implements ContactListener {
 
 		// Finish line sensors
 		Car car = getCarCollision(contact,sensor1);
-        if(car != null && car == game.getPlayerCar()){
+        if(car != null && car == gameScreen.getPlayerCar()){
         	passedSensor1.put(car, true);
         	if(passedSensor2.containsKey(car) && passedSensor2.get(car)){
         		if(!wrongDirection.containsKey(car) || !wrongDirection.get(car)){
@@ -75,7 +80,7 @@ public class TrackContactListener implements ContactListener {
         }
         
         car = getCarCollision(contact,sensor2);
-        if(car != null && car == game.getPlayerCar()){
+        if(car != null && car == gameScreen.getPlayerCar()){
         	passedSensor2.put(car, true);
         	if(passedSensor1.containsKey(car) && passedSensor1.get(car)){
         		if(wrongDirection.containsKey(car) && wrongDirection.get(car)){
@@ -96,7 +101,7 @@ public class TrackContactListener implements ContactListener {
 	}
 	
 	private Car getCarCollision(Contact contact,Body sensor){
-		List<Element> gameElements = game.getElements();
+		List<Element> gameElements = gameScreen.getElements();
 		
 		for(Element element: gameElements){
 			if(contact.getFixtureA().getBody().equals(element.getBody()) && contact.getFixtureB().getBody().equals(sensor)){
