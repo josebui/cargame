@@ -1,10 +1,8 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -84,8 +82,7 @@ public class Tracker extends Thread {
 					sendBack(true, wp,gameIds.get(wp));
 				}else{
 					WaitingPeer waitingPeer = serverPeers.remove(0);
-					String gameId = gameIds.get(wp);
-					gameIds.remove(wp);
+					String gameId = gameIds.remove(waitingPeer);
 					sendBack(false, waitingPeer,gameId);
 				}
 			}else if(serverPeers.size()==0){
