@@ -31,10 +31,9 @@ public class DesktopGameListener implements GameCycleListener {
 
 	@Override
 	public void startGame() {
-		// TODO gain focus
-		Display.update();
 		try {
-			Display.makeCurrent();
+			// Gain focus
+			Display.setDisplayMode(Display.getDisplayMode());
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
