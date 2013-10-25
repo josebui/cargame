@@ -17,10 +17,10 @@ public class Car implements Element,Comparable<Car>{
 	private static final Vector2 CAR_STARTING_POS = new Vector2(115,115);
 	 
 	// Sprites
-	public static final String SPRITE_1 = "img\\car2.png";
+	public static final String SPRITE_1 = "img\\coche.png";
 	public static final String SPRITE_2 = "img\\car3.png";
 	public static final String SPRITE_3 = "img\\car4.png";
-	public static final String SPRITE_4 = "img\\coche.png";
+	public static final String SPRITE_4 = "img\\car2.png";
 	
 	public static final int TYPE_1 = 0;
 	public static final int TYPE_2 = 1;
