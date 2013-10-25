@@ -168,31 +168,8 @@ public class Hud {
 	}
 	
 	private void renderLeaderBoard(float leaderBoardX, float leaderBoardY,SpriteBatch batch){
-		
-		float y= leaderBoardY-10;
-		float x = leaderBoardX+10;
-		float colspan = 110;
-		float rowspan = 50;
-		
-		if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
-			font.setColor(new Color(1f, 0f, 0f, 1));
-			font.draw(batch,"GAME OVER",x,y);
-			y-=rowspan;
-		}
-		
-		// header
-		
-		font.setColor(new Color(1f, 1f, 1f, 1));
-		font.draw(batch, "Pos", x,y);
-		font.draw(batch, "Player", x+colspan,y);
-		font.draw(batch, "Laps", x+colspan*2,y);
-		font.draw(batch, "Best", x+colspan*3,y);
-		font.draw(batch, "Time", x+colspan*4,y);
-		y-= rowspan;
-		
-		
 		Map<Integer,Car> allCars = gameScreen.getAllPlayersCars();
-		List<Car> cars = new ArrayList<Car>(allCars.values()); 
+		List<Car> cars = new ArrayList<Car>(allCars.values());
 		if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
 			Collections.sort(cars,new Comparator<Car>() {
 				@Override
@@ -203,6 +180,28 @@ public class Hud {
 		}else{
 			Collections.sort(cars);
 		}
+		
+		float y= leaderBoardY-10;
+		float x = leaderBoardX+10;
+		float colspan = 110;
+		float rowspan = 50;
+		
+		if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
+			font.setColor(new Color(1f, 0f, 0f, 1));
+			font.draw(batch,"GAME OVER - "+((cars.get(0) == gameScreen.getPlayerCar())?" You win":"You lose"),x,y);
+			y-=rowspan;
+		}
+		
+		// Header
+		font.setColor(new Color(1f, 1f, 1f, 1));
+		font.draw(batch, "Pos", x,y);
+		font.draw(batch, "Player", x+colspan,y);
+		font.draw(batch, "Laps", x+colspan*2,y);
+		font.draw(batch, "Best", x+colspan*3,y);
+		font.draw(batch, "Time", x+colspan*4,y);
+		y-= rowspan;
+		 
+		
 		for(Car car : cars){
 			font.setColor(new Color(0.8f, 0.8f, 0.8f, 1));
 			if(CarGame.getInstance().checkStatus(CarGame.STATUS_GAME_OVER)){
