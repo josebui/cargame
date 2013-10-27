@@ -140,7 +140,8 @@ public class GameScreen extends ScreenAdapter {
         
         batch = new SpriteBatch();
         
-        debugRenderer = new Box2DDebugRenderer(true,false,false,true,false,false);  
+        debugRenderer = new Box2DDebugRenderer(true,false,false,true,false,false);
+//        debugRenderer = new Box2DDebugRenderer(true,true,true,true,true,true);
 	}
 	
 	private void loadTrack(String trackName) {
@@ -304,7 +305,7 @@ public class GameScreen extends ScreenAdapter {
 					playerHud.showMessage(countDown+"",new Color(1f, 0f, 0f, 1f),"");
 				}
 			}else{
-				playerHud.showMessage("Waiting...",new Color(1f, 1f, 0f, 1f),(CarGame.getInstance().isWaitStop())?"Nobody is online. You can keep waiting, or press space to exit.":"");
+				playerHud.showMessage("Waiting...",new Color(1f, 1f, 0f, 1f),(CarGame.getInstance().isWaitStop())?"Nobody is online. We suggest you press space and reconnect again.":"");
 			}
 		}
 		if(CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING) && CarGame.getInstance().isConnectionLost()){
