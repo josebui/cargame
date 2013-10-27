@@ -1,7 +1,6 @@
 package cargame.desktop.gui;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-
+import cargame.CarGame;
 import cargame.communication.tracker.client.TrackerClient;
 import cargame.desktop.Main;
 import cargame.error.ShootError;
@@ -38,8 +37,8 @@ public class StartGame extends Thread {
 			trackerClient.join();
 			window.closeWindow();
 			if (trackerClient.ifGotAnswerFromTracker()){
-				LwjglApplication app = Main.startCarGameDesktop(carGameUI,trackerClient.gameId,trackerClient.isServer,
-						trackerClient.toConnectIP, 1,
+				Main.startCarGameDesktop(carGameUI,trackerClient.gameId,trackerClient.isServer,
+						trackerClient.toConnectIP, CarGame.LAPS_NUMBER,
 						(trackerClient.isServer ? 1 : 3));
 			}else
 				carGameUI.toggleButton();
