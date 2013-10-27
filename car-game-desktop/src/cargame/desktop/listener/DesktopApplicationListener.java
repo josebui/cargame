@@ -22,7 +22,8 @@ public class DesktopApplicationListener implements LifecycleListener {
 
 	@Override
 	public void dispose() {
-		carGameUI.toggleButton();
+		if(carGameUI != null)
+			carGameUI.toggleButton();
 	}
 	
 }

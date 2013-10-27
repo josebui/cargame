@@ -1,7 +1,7 @@
 package cargame.elements;
 
-import cargame.core.MovingPosition;
-import cargame.core.Player;
+import cargame.communication.MovingPosition;
+import cargame.communication.Player;
 import cargame.screens.GameScreen;
 import cargame.utils.Box2DUtils;
 
@@ -143,6 +143,10 @@ public class Car implements Element,Comparable<Car>{
 		}else{
 			return -1;
 		}
+	}
+
+	public String getSpritePath() {
+		return spritePath;
 	}
 	
 }

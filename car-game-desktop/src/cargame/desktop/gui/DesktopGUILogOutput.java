@@ -1,14 +1,13 @@
 package cargame.desktop.gui;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import cargame.communication.tracker.client.GUILogOutput;
+
 //This class opens a small text area, served as log and user info area
 
-public class GUILogOutput {
+public class DesktopGUILogOutput implements GUILogOutput {
 
 	private JFrame frame;
 	private JTextArea textArea;
@@ -17,7 +16,7 @@ public class GUILogOutput {
 	/**
 	 * Create the application.
 	 */
-	public GUILogOutput(final StartGame startGame) {
+	public DesktopGUILogOutput(final StartGame startGame) {
 		this.startGame = startGame;
 		initialize();
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {

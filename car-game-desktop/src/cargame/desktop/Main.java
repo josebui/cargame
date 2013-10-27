@@ -3,6 +3,7 @@ package cargame.desktop;
 import cargame.CarGame;
 import cargame.desktop.gui.CarGameUI;
 import cargame.desktop.input.DesktopInputProcessor;
+import cargame.desktop.listener.DesktopApplicationListener;
 import cargame.desktop.listener.DesktopGameListener;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -25,8 +26,9 @@ public class Main{
 			
 			CarGame game = CarGame.createInstance(gameId,server,serverIp,lapsNumber,carType);
 			app = new LwjglApplication(game, cfg);
+			app.addLifecycleListener(new DesktopApplicationListener(carGameUI));
 			app.getInput().setInputProcessor(new DesktopInputProcessor(game));
-			game.setCycleListener(new DesktopGameListener(carGameUI));
+			game.setGameCycleListener(new DesktopGameListener(carGameUI));
 		}else{
 			CarGame.getInstance().newGame(gameId,server, serverIp, lapsNumber, carType);
 		}

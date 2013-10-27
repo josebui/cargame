@@ -1,4 +1,4 @@
-package cargame.desktop.gui;
+package cargame.communication.tracker.client;
 
 public class UnreachableTracker extends Exception {
 	public UnreachableTracker(){

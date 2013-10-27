@@ -3,7 +3,6 @@ package cargame.desktop.gui;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.HeadlessException;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,13 +12,14 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.AbstractAction;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.Action;
+
+import cargame.error.ShootError;
 
 public class CarGameUI {
 
@@ -36,6 +36,10 @@ public class CarGameUI {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
+		// Register log implementation
+		ShootError.registerShootErrorImplementation(new DesktopShootError());
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

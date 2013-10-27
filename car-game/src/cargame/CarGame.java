@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import cargame.core.Player;
+import cargame.communication.Player;
 import cargame.listeners.GameCycleListener;
 import cargame.screens.GameScreen;
 import cargame.sync.GameSync;
@@ -22,6 +22,9 @@ public class CarGame extends Game{
 	}
 	
 	public static CarGame createInstance(String gameId,boolean server,String serverIp, int lapsNumber,int carType){
+		if(instance != null){
+			instance.dispose();
+		}
 		instance = new CarGame(gameId,server,serverIp,lapsNumber,carType);
 		return instance;
 	}
@@ -114,7 +117,9 @@ public class CarGame extends Game{
 		
 		gameSync.start(server,serverIp);
 		this.setStatus(STATUS_WAITING);
-		cycleListener.startGame();
+		
+		if(cycleListener != null)
+			cycleListener.startGame();
 	}
 	
 	public void render(){
@@ -207,7 +212,7 @@ public class CarGame extends Game{
 		return cycleListener;
 	}
 
-	public void setCycleListener(GameCycleListener cycleListener) {
+	public void setGameCycleListener(GameCycleListener cycleListener) {
 		this.cycleListener = cycleListener;
 	}
 
@@ -216,11 +221,18 @@ public class CarGame extends Game{
 //		this.gameSync.stopSync();
 //		gameScreen = new GameScreen(myPlayer,3);
 //		this.setScreen(gameScreen);
-		cycleListener.endGame();
+		if(cycleListener != null)
+			cycleListener.endGame();
 //		CarGame.getInstance().newGame(server, serverIp, lapsNumber, carType);
 //		newGame(server,serverIp,lapsNumber,carType);
 	}
 
+	@Override
+	public void dispose(){
+		super.dispose();
+		this.gameSync.stopSync();
+	}
+	
 	public boolean checkStatus(int status){
 		return this.status == status;
 	}

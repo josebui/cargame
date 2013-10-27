@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import cargame.CarGame;
-import cargame.core.Player;
+import cargame.communication.Player;
 import cargame.elements.Car;
 import cargame.elements.Element;
 import cargame.elements.TrackContactListener;

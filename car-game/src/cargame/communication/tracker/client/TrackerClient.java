@@ -1,10 +1,12 @@
-package cargame.desktop.gui;
+package cargame.communication.tracker.client;
 import java.io.InputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+
+import cargame.error.ShootError;
 
 public class TrackerClient extends Thread {
 

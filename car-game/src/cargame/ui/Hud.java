@@ -18,10 +18,13 @@ import cargame.screens.GameScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.MathUtils;
 
 public class Hud {
 
@@ -165,6 +168,17 @@ public class Hud {
 		font.draw(batch, gameScreen.getPlayerCar().getPlayer().getLaps()+"", 100, this.gameScreen.getFixedCamera().viewportHeight-45);
 		font.draw(batch, gameScreen.getPlayerCar().getPlayer().getTrackTimeTxt(), 100, this.gameScreen.getFixedCamera().viewportHeight-87);
 		font.draw(batch, gameScreen.getPlayerCar().getPlayer().getBestLapTxt(), 623, this.gameScreen.getFixedCamera().viewportHeight-10);
+		
+		// Player car
+		if(this.gameScreen.getPlayerCar().getSpritePath() != null) {
+			Sprite sprite = new Sprite(new Texture(this.gameScreen.getPlayerCar().getSpritePath()));
+//			sprite.setSize(15f, 15f);
+//			sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
+//			body.setUserData(sprite);
+			sprite.setPosition(950, this.gameScreen.getFixedCamera().viewportHeight-100);
+			sprite.rotate(180f);
+			sprite.draw(batch);
+		}
 	}
 	
 	private void renderLeaderBoard(float leaderBoardX, float leaderBoardY,SpriteBatch batch){

@@ -3,12 +3,13 @@ package cargame.sync;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
+
 import cargame.CarGame;
-import cargame.core.Client;
-import cargame.core.GameInfo;
-import cargame.core.Player;
-import cargame.core.messaging.UdpMessage;
-import cargame.core.messaging.utils.UdpMessageUtils;
+import cargame.communication.Client;
+import cargame.communication.GameInfo;
+import cargame.communication.Player;
+import cargame.communication.messaging.UdpMessage;
+import cargame.communication.utils.UdpMessageUtils;
 
 public class GameSync extends Thread implements Client {
 
@@ -17,12 +18,13 @@ public class GameSync extends Thread implements Client {
 	
 	private static final int STATUS_RUNNING = 0;
 	private static final int STATUS_WAITING = 1;
+	private static final int STATUS_STOP = 2;
 	
 	private InetAddress peerAddress;
 	private int serverPort;
 	private int clientPort;
 	
-	private int state;
+	private int status;
 	private boolean server;
 	
 	private long lastReceivedPlayerTime;
@@ -31,11 +33,11 @@ public class GameSync extends Thread implements Client {
 		super();
 		this.serverPort = 12343;
 		this.clientPort = 12353;
-		this.state = STATUS_WAITING;
+		this.status = STATUS_WAITING;
 	}
 	
 	public void start(boolean server,String serverIp){
-		this.state = STATUS_RUNNING; 
+		this.status = STATUS_RUNNING; 
 		this.server = server;
 		this.peerAddress = (server)?null:getInetAddress(serverIp);
 		System.out.println("Received address:"+this.peerAddress);
@@ -43,6 +45,10 @@ public class GameSync extends Thread implements Client {
 		if(!this.isAlive()){
 			super.start();
 		}
+	}
+	
+	public void stopSync(){
+		this.status = STATUS_STOP;
 	}
 	
 	private InetAddress getInetAddress(String url){
@@ -76,7 +82,7 @@ public class GameSync extends Thread implements Client {
 	}
 
 	public void setSetState(int state) {
-		this.state = state;
+		this.status = state;
 	}
 	
 	private void sendData() {
@@ -102,14 +108,16 @@ public class GameSync extends Thread implements Client {
 		switch(inMessage.getType()){
 			case UdpMessage.TYPE_PLAYER_DATA:
 				Player receivedPlayer = (Player)inMessage.getData();
-				syncPlayerInfo(receivedPlayer);
+				if(receivedPlayer != null){
+					syncPlayerInfo(receivedPlayer);
+				}
 			break;
 		}
 		return true;
 	}
 	
 	@Override
-	public cargame.core.ServerStatus ServerStatus() {
+	public cargame.communication.ServerStatus ServerStatus() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -132,7 +140,7 @@ public class GameSync extends Thread implements Client {
 	}
 	
 	private boolean checkState(int state){
-		return state == this.state;
+		return state == this.status;
 	}
 	
 	private void syncPlayerInfo(Player player){

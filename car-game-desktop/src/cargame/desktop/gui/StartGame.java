@@ -1,11 +1,10 @@
 package cargame.desktop.gui;
 
-import java.io.IOException;
-
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 
+import cargame.communication.tracker.client.TrackerClient;
 import cargame.desktop.Main;
-import cargame.desktop.listener.DesktopApplicationListener;
+import cargame.error.ShootError;
 
 /*When the ip and port is entered in the main Graphical user interface
  * This Class is called
@@ -13,7 +12,7 @@ import cargame.desktop.listener.DesktopApplicationListener;
 public class StartGame extends Thread {
 	private String IP;
 	private int port;
-	private GUILogOutput window;
+	private DesktopGUILogOutput window;
 	private CarGameUI carGameUI;
 	TrackerClient trackerClient;
 
@@ -32,7 +31,7 @@ public class StartGame extends Thread {
 	public void run() {
 
 		try {
-			window = new GUILogOutput(this);
+			window = new DesktopGUILogOutput(this);
 			System.out.println(IP+":"+port);
 			trackerClient = new TrackerClient(IP, port, window);
 			trackerClient.start();
@@ -42,7 +41,6 @@ public class StartGame extends Thread {
 				LwjglApplication app = Main.startCarGameDesktop(carGameUI,trackerClient.gameId,trackerClient.isServer,
 						trackerClient.toConnectIP, 1,
 						(trackerClient.isServer ? 1 : 3));
-				app.addLifecycleListener(new DesktopApplicationListener(carGameUI));
 			}else
 				carGameUI.toggleButton();
 		} catch (InterruptedException e) {
