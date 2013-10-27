@@ -67,7 +67,7 @@ public class GameSync extends Thread implements Client {
 	public void run(){
 		int lost_packets = 0;
 		while(checkState(STATUS_RUNNING) || checkState(STATUS_WAITING)){
-			if(checkState(STATUS_RUNNING)){
+			if(checkState(STATUS_RUNNING) && !CarGame.getInstance().checkStatus(CarGame.STATUS_ENDED)){
 				if(receiveData()){
 					
 					lost_packets = 0;
