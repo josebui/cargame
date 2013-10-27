@@ -29,6 +29,8 @@ public class CarGame extends Game{
 		return instance;
 	}
 	
+	public static final int LAPS_NUMBER = 2;
+	
 	public static final int GAME_SCREEN = 0;
 	public static final int SPLASH_SCREEN = 1;
 	public static final int INTRO_SCREEN = 2;

@@ -1,13 +1,13 @@
 package cargame.android.listener;
 
-import android.app.Activity;
+import cargame.android.GameActivity;
 import cargame.listeners.GameCycleListener;
 
 public class AndroidGameListener implements GameCycleListener {
 
-	private Activity gameActivity;
+	private GameActivity gameActivity;
 
-	public AndroidGameListener(Activity gameActivity) {
+	public AndroidGameListener(GameActivity gameActivity) {
 		super();
 		this.gameActivity = gameActivity;
 	}

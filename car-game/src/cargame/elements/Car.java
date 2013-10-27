@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 public class Car implements Element,Comparable<Car>{
 	
 	public static final double MAX_STEER_ANGLE = Math.PI*2.5;
-	public static final float HORSEPOWERS = 1800;
+	public static final float HORSEPOWERS = 2000;
 	private static final Vector2 CAR_STARTING_POS = new Vector2(115,115);
 	 
 	// Sprites

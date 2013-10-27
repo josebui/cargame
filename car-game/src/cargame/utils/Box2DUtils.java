@@ -26,6 +26,7 @@ public class Box2DUtils {
         fixtureDef.restitution = restitution;
         fixtureDef.isSensor = sensor;
         body.createFixture(fixtureDef);
+        body.setBullet(dynamic);
         body.resetMassData();
         return body;
 	}

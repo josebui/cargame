@@ -25,7 +25,7 @@ public class GameActivity extends AndroidApplication {
 		
 		AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
         cfg.useGL20 = false;
-        CarGame game = CarGame.createInstance(gameId,server,peerIp,1,(server)?1:3); 
+        CarGame game = CarGame.createInstance(gameId,server,peerIp,CarGame.LAPS_NUMBER,(server)?1:3); 
         initialize(game, cfg);
         this.getInput().setInputProcessor(new AndroidInputProcessor(this.getWindowManager()));
         this.addLifecycleListener(new AndroidApplicationListener());
