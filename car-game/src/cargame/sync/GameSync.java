@@ -15,6 +15,7 @@ public class GameSync extends Thread implements Client {
 
 	private static final int MESSAGE_LENGTH = 700;
 	private static final int PERMITED_MESSAGE_LOST = 150 ;
+	private static final int WAIT_TIME = 5000 ;
 	
 	private static final int STATUS_RUNNING = 0;
 	private static final int STATUS_WAITING = 1;
@@ -28,6 +29,7 @@ public class GameSync extends Thread implements Client {
 	private boolean server;
 	
 	private long lastReceivedPlayerTime;
+	private long waitingTime;
 	
 	public GameSync() {
 		super();
@@ -42,6 +44,7 @@ public class GameSync extends Thread implements Client {
 		this.peerAddress = (server)?null:getInetAddress(serverIp);
 		System.out.println("Received address:"+this.peerAddress);
 		this.lastReceivedPlayerTime = Long.MIN_VALUE;
+		this.waitingTime = System.currentTimeMillis();
 		if(!this.isAlive()){
 			super.start();
 		}
@@ -66,6 +69,7 @@ public class GameSync extends Thread implements Client {
 		while(checkState(STATUS_RUNNING) || checkState(STATUS_WAITING)){
 			if(checkState(STATUS_RUNNING)){
 				if(receiveData()){
+					
 					lost_packets = 0;
 					CarGame.getInstance().setConnectionLost(false);
 				}else{
@@ -77,6 +81,10 @@ public class GameSync extends Thread implements Client {
 				if(this.peerAddress != null){
 					sendData();
 				}
+			}
+			
+			if(CarGame.getInstance().checkStatus(CarGame.STATUS_WAITING) && (System.currentTimeMillis() -this.waitingTime >= WAIT_TIME )){
+				CarGame.getInstance().setWaitStop(true);
 			}
 		}
 	}

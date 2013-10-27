@@ -64,6 +64,7 @@ public class CarGame extends Game{
 	
 	private int status;
 	private boolean connectionLost;
+	private boolean waitStop;
 	
 	// Game attributes
 	private boolean server;
@@ -93,6 +94,7 @@ public class CarGame extends Game{
 		this.lapsNumber = lapsNumber;
 		this.carType = carType;
 		this.connectionLost = false;
+		this.waitStop = false;
 		this.gameId = gameId;
 		this.currentActions = new HashSet<Integer>();
 		this.setStatus(STATUS_NEW_GAME);
@@ -143,6 +145,8 @@ public class CarGame extends Game{
 				if(checkStatus(CarGame.STATUS_PLAYING) && isConnectionLost()){
 					endGame();
 				}else if(checkStatus(CarGame.STATUS_GAME_OVER)){
+					endGame();
+				}else if(checkStatus(CarGame.STATUS_WAITING) && isWaitStop()){
 					endGame();
 				}
 			break;
@@ -210,6 +214,14 @@ public class CarGame extends Game{
 		this.connectionLost = connectionLost;
 	}
 	
+	public boolean isWaitStop() {
+		return waitStop;
+	}
+
+	public void setWaitStop(boolean waitStop) {
+		this.waitStop = waitStop;
+	}
+
 	public GameCycleListener getCycleListener() {
 		return cycleListener;
 	}

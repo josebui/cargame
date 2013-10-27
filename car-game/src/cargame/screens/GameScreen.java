@@ -304,7 +304,7 @@ public class GameScreen extends ScreenAdapter {
 					playerHud.showMessage(countDown+"",new Color(1f, 0f, 0f, 1f),"");
 				}
 			}else{
-				playerHud.showMessage("Waiting...",new Color(1f, 1f, 0f, 1f),"");
+				playerHud.showMessage("Waiting...",new Color(1f, 1f, 0f, 1f),(CarGame.getInstance().isWaitStop())?"Nobody is online. You can keep waiting, or press space to exit.":"");
 			}
 		}
 		if(CarGame.getInstance().checkStatus(CarGame.STATUS_PLAYING) && CarGame.getInstance().isConnectionLost()){
