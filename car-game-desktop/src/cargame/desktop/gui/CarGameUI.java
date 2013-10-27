@@ -70,8 +70,8 @@ public class CarGameUI {
 	 */
 	private void initialize() throws HeadlessException, IOException {
 		frmCarGame = new JFrame();
-		frmCarGame.getContentPane().setBackground(Color.BLUE);
-
+		
+		frmCarGame.getContentPane().setBackground(Color.lightGray);
 		frmCarGame.setTitle("Car Game");
 		frmCarGame.setResizable(false);
 		frmCarGame.setBounds(100, 100, 224, 148);
@@ -111,12 +111,12 @@ public class CarGameUI {
 		ipTextField.setColumns(10);
 
 		JLabel lblTrackerIp = new JLabel("Tracker IP:");
-		lblTrackerIp.setBounds(10, 25, 62, 14);
+		lblTrackerIp.setBounds(10, 25, 162, 14);
 		frmCarGame.getContentPane().add(lblTrackerIp);
 		
 		//initializing Port input with verifier
 		portTextField = new JTextField();
-		portTextField.setBounds(138, 53, 70, 20);
+		portTextField.setBounds(100, 53, 70, 20);
 		frmCarGame.getContentPane().add(portTextField);
 		portTextField.setInputVerifier(new InputVerifier() {
 			Pattern pat = Pattern.compile("\\b([0-9]+)");
@@ -151,7 +151,7 @@ public class CarGameUI {
 		portTextField.setColumns(6);
 
 		JLabel lblTrackerPort = new JLabel(" Tracker Port: ");
-		lblTrackerPort.setBounds(10, 56, 86, 14);
+		lblTrackerPort.setBounds(10, 56, 100, 14);
 		frmCarGame.getContentPane().add(lblTrackerPort);
 
 		btnConnectPlay = new JButton("Connect & Play");
