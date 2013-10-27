@@ -251,7 +251,7 @@ public class TrackerClientActivity extends Activity {
 			showProgress(false);
 
 			if (success) {
-				Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+				Intent intent = new Intent(getApplicationContext(), GameActivity.class);
 				intent.putExtra("gameId", this.gameId);
 				intent.putExtra("server", this.server);
 				intent.putExtra("peerIp", this.peerIp);

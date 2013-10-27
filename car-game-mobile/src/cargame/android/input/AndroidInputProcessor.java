@@ -124,10 +124,10 @@ public class AndroidInputProcessor implements InputProcessor {
 			Point initial = this.touchStart.get(1).get(pointer);
 			int difX = initial.x - screenX;
 			System.out.println("Curva "+difX+" ScreenX: "+screenX+", ScreenY:"+screenY+", pointer:"+pointer);
-			if(difX > 30){
+			if(difX > 20){
 				game.removeAction(CarGame.ACTION_RIGHT);
 				game.addAction(CarGame.ACTION_LEFT);
-			}else if(difX < -30){
+			}else if(difX < -20){
 				game.removeAction(CarGame.ACTION_LEFT);
 				game.addAction(CarGame.ACTION_RIGHT);
 			}

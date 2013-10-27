@@ -1,11 +1,11 @@
 <resources>
 
-    <string name="title_activity_tracker_client">Connect &amp; play</string>
+    <string name="title_activity_tracker_client">Race</string>
 
-    <!-- Strings related to login -->
+    <!-- Strings related to game connection -->
     <string name="prompt_tracker_ip">Tracker IP</string>
     <string name="prompt_tracker_port">Tracker port</string>
-    <string name="action_sign_in_register"><b>Connect and play</b></string>
+    <string name="action_sign_in_register"><b>Connect &amp; play</b></string>
     <string name="action_sign_in_short">Connect</string>
     <string name="tracker_progress_connecting">Connecting&#8230;</string>
     <string name="error_tracker_unreachable">Tracker Unreachable</string>
