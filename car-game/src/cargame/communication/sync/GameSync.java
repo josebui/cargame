@@ -32,7 +32,7 @@ public class GameSync extends Thread implements Client {
 	private long waitingTime;
 	
 	public GameSync() {
-		super();
+		super("Game Sync");
 		this.serverPort = 12343;
 		this.clientPort = 12353;
 		this.status = STATUS_WAITING;
