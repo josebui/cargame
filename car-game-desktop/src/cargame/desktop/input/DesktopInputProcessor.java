@@ -4,15 +4,27 @@ import cargame.CarGame;
 import com.badlogic.gdx.InputProcessor;
 
 
+/**
+ * The Class DesktopInputProcessor.
+ */
 public class DesktopInputProcessor implements InputProcessor {
 	
+	/** The game. */
 	private CarGame game;
 	
+	/**
+	 * Instantiates a new desktop input processor.
+	 *
+	 * @param game the game
+	 */
 	public DesktopInputProcessor(CarGame game) {
 		super();
 		this.game = game;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.InputProcessor#keyDown(int)
+	 */
 	@Override
 	public boolean keyDown(int keycode) {
 		switch(keycode){
@@ -38,6 +50,9 @@ public class DesktopInputProcessor implements InputProcessor {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.InputProcessor#keyUp(int)
+	 */
 	@Override
 	public boolean keyUp(int keycode) {
 		switch(keycode){
@@ -63,31 +78,49 @@ public class DesktopInputProcessor implements InputProcessor {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.InputProcessor#keyTyped(char)
+	 */
 	@Override
 	public boolean keyTyped(char character) {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.InputProcessor#touchDown(int, int, int, int)
+	 */
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.InputProcessor#touchUp(int, int, int, int)
+	 */
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.InputProcessor#touchDragged(int, int, int)
+	 */
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.InputProcessor#mouseMoved(int, int)
+	 */
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.InputProcessor#scrolled(int)
+	 */
 	@Override
 	public boolean scrolled(int amount) {
 		return false;

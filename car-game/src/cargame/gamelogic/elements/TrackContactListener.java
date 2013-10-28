@@ -15,19 +15,45 @@ import cargame.CarGame;
 import cargame.gamelogic.screens.GameScreen;
 import cargame.gamelogic.utils.Box2DUtils;
 
+/**
+ * The listener interface for receiving trackContact events.
+ * The class that is interested in processing a trackContact
+ * event implements this interface, and the object created
+ * with that class is registered with a component using the
+ * component's <code>addTrackContactListener<code> method. When
+ * the trackContact event occurs, that object's appropriate
+ * method is invoked.
+ *
+ * @see TrackContactEvent
+ */
 public class TrackContactListener implements ContactListener {
 
+	/** The game screen. */
 	private GameScreen gameScreen;
+	
+	/** The sensor1. */
 	private Body sensor1;
+	
+	/** The sensor2. */
 	private Body sensor2;
 	
+	/** The wrong direction. */
 	private Map<Car,Boolean> wrongDirection;
 	
+	/** The passed sensor1. */
 	private Map<Car,Boolean> passedSensor1;
+	
+	/** The passed sensor2. */
 	private Map<Car,Boolean> passedSensor2;
 	
+	/** The initial lap time. */
 	private long initialLapTime;
 	
+	/**
+	 * Instantiates a new track contact listener.
+	 *
+	 * @param game the game
+	 */
 	public TrackContactListener(GameScreen game) {
 		super();
 		
@@ -42,6 +68,9 @@ public class TrackContactListener implements ContactListener {
 		wrongDirection =  new HashMap<Car, Boolean>();
 	}
 	
+	/**
+	 * Start listener.
+	 */
 	public void startListener(){
 		wrongDirection.clear();
 		passedSensor1.clear();
@@ -58,10 +87,16 @@ public class TrackContactListener implements ContactListener {
 		}
 	}
 	
+	/**
+	 * Start lap counter.
+	 */
 	public void startLapCounter(){
 		initialLapTime = System.currentTimeMillis();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.physics.box2d.ContactListener#endContact(com.badlogic.gdx.physics.box2d.Contact)
+	 */
 	@Override
 	public void endContact(Contact contact) {
 
@@ -97,10 +132,20 @@ public class TrackContactListener implements ContactListener {
         }
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.physics.box2d.ContactListener#beginContact(com.badlogic.gdx.physics.box2d.Contact)
+	 */
 	@Override
 	public void beginContact(Contact contact) {
 	}
 	
+	/**
+	 * Gets the car collision.
+	 *
+	 * @param contact the contact
+	 * @param sensor the sensor
+	 * @return the car collision
+	 */
 	private Car getCarCollision(Contact contact,Body sensor){
 		List<Element> gameElements = gameScreen.getElements();
 		
@@ -115,12 +160,18 @@ public class TrackContactListener implements ContactListener {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.physics.box2d.ContactListener#postSolve(com.badlogic.gdx.physics.box2d.Contact, com.badlogic.gdx.physics.box2d.ContactImpulse)
+	 */
 	@Override
 	public void postSolve(Contact arg0, ContactImpulse arg1) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.physics.box2d.ContactListener#preSolve(com.badlogic.gdx.physics.box2d.Contact, com.badlogic.gdx.physics.box2d.Manifold)
+	 */
 	@Override
 	public void preSolve(Contact arg0, Manifold arg1) {
 		// TODO Auto-generated method stub

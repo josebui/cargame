@@ -8,19 +8,45 @@ import java.net.SocketTimeoutException;
 
 import cargame.error.ShootError;
 
+/**
+ * The Class TrackerClient.
+ */
 public class TrackerClient extends Thread {
 
+	/** The time between tries. */
 	private int TIME_BETWEEN_TRIES = 1000;
 	//Tracker Server Address and port
+	/** The ip. */
 	private String ip;
+	
+	/** The port. */
 	private int port;
+	
+	/** The gui log output. */
 	private GUILogOutput guiLogOutput;
+	
+	/** The if got answer from tracker. */
 	private boolean ifGotAnswerFromTracker = false;
+	
+	/** The is server. */
 	public boolean isServer;
+	
+	/** The to connect ip. */
 	public String toConnectIP;
+	
+	/** The stop client. */
 	public boolean stopClient = false;
+	
+	/** The game id. */
 	public String gameId;
 	
+	/**
+	 * Instantiates a new tracker client.
+	 *
+	 * @param ip the ip
+	 * @param port the port
+	 * @param guiLogOutput the gui log output
+	 */
 	public TrackerClient(String ip, int port, GUILogOutput guiLogOutput){
 		super("MulticastServerThread");
 		this.ip = ip;
@@ -28,10 +54,18 @@ public class TrackerClient extends Thread {
 		this.guiLogOutput = guiLogOutput;
 	}
 	
+	/**
+	 * If got answer from tracker.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean ifGotAnswerFromTracker(){
 		return ifGotAnswerFromTracker;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	public void run() {
 		try {
 			queryTheTracker();
@@ -42,6 +76,11 @@ public class TrackerClient extends Thread {
 		}
 	}
 	
+	/**
+	 * Query the tracker.
+	 *
+	 * @throws UnreachableTracker the unreachable tracker
+	 */
 	private void queryTheTracker() throws UnreachableTracker{
 		//------------Define and Initialize vars--------------
 		DatagramSocket socket = null;
@@ -97,6 +136,11 @@ public class TrackerClient extends Thread {
 		
 	}
 	
+	/**
+	 * Parses the data recieved.
+	 *
+	 * @param receivedMSG the received msg
+	 */
 	private void parseDataRecieved(String receivedMSG){
 		System.out.println(receivedMSG);
 		String [] splittedMessage = receivedMSG.split("!");

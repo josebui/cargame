@@ -31,24 +31,43 @@ public class TrackerClientActivity extends Activity {
 	 */
 	private ConnectionTask mConnectionTask = null;
 
+	/** The m tracker address. */
 	private String mTrackerAddress;
+	
+	/** The m tracker port. */
 	private String mTrackerPort;
 
 	// UI references.
+	/** The m tracker address view. */
 	private EditText mTrackerAddressView;
+	
+	/** The m tracker port view. */
 	private EditText mTrackerPortView;
+	
+	/** The m connection form view. */
 	private View mConnectionFormView;
+	
+	/** The m connection status view. */
 	private View mConnectionStatusView;
+	
+	/** The m connection status message view. */
 	private TextView mConnectionStatusMessageView;
 
+	/** The m connect button view. */
 	private Button mConnectButtonView;
 	
 	
+	/**
+	 * Instantiates a new tracker client activity.
+	 */
 	public TrackerClientActivity() {
 		super();
 		ShootError.registerShootErrorImplementation(new AndroidShootError());
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,6 +106,9 @@ public class TrackerClientActivity extends Activity {
 				});
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -95,7 +117,7 @@ public class TrackerClientActivity extends Activity {
 	}
 
 	/**
-	 * Attempts to connect to a game
+	 * Attempts to connect to a game.
 	 */
 	public void attemptConnection() {
 		if (mConnectionTask != null) {
@@ -149,6 +171,8 @@ public class TrackerClientActivity extends Activity {
 
 	/**
 	 * Shows the progress UI and hides the login form.
+	 *
+	 * @param show the show
 	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 	private void showProgress(final boolean show) {
@@ -193,18 +217,35 @@ public class TrackerClientActivity extends Activity {
 	 */
 	public class ConnectionTask extends AsyncTask<Void, Void, Boolean> {
 		
+		/** The ip. */
 		private String ip;
+		
+		/** The port. */
 		private int port;
 		
+		/** The game id. */
 		private String gameId;
+		
+		/** The server. */
 		private boolean server;
+		
+		/** The peer ip. */
 		private String peerIp;
 		
+		/**
+		 * Instantiates a new connection task.
+		 *
+		 * @param ip the ip
+		 * @param port the port
+		 */
 		public ConnectionTask(String ip, int port) {
 			this.ip = ip;
 			this.port = port;
 		}
 
+		/* (non-Javadoc)
+		 * @see android.os.AsyncTask#doInBackground(java.lang.Object[])
+		 */
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.
@@ -245,6 +286,9 @@ public class TrackerClientActivity extends Activity {
 //			return true;
 		}
 
+		/* (non-Javadoc)
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
 		@Override
 		protected void onPostExecute(final Boolean success) {
 			mConnectionTask = null;
@@ -265,6 +309,9 @@ public class TrackerClientActivity extends Activity {
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see android.os.AsyncTask#onCancelled()
+		 */
 		@Override
 		protected void onCancelled() {
 			mConnectionTask = null;

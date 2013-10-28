@@ -5,16 +5,25 @@ import javax.swing.JTextArea;
 
 import cargame.communication.tracker.client.GUILogOutput;
 
-//This class opens a small text area, served as log and user info area
-
+/**
+ * The Class DesktopGUILogOutput.
+ * This class opens a small text area, served as log and user info area
+ */
 public class DesktopGUILogOutput implements GUILogOutput {
 
+	/** The frame. */
 	private JFrame frame;
+	
+	/** The text area. */
 	private JTextArea textArea;
+	
+	/** The start game. */
 	StartGame startGame;
 
 	/**
 	 * Create the application.
+	 *
+	 * @param startGame the start game
 	 */
 	public DesktopGUILogOutput(final StartGame startGame) {
 		this.startGame = startGame;
@@ -46,11 +55,17 @@ public class DesktopGUILogOutput implements GUILogOutput {
 		frame.getContentPane().add(scrollPane);
 	}
 	
+	/* (non-Javadoc)
+	 * @see cargame.communication.tracker.client.GUILogOutput#writeOutput(java.lang.String)
+	 */
 	public void writeOutput(String msg){
 		textArea.append(msg+"\n");
 	}
 	
 
+	/**
+	 * Close window.
+	 */
 	public void closeWindow(){
 		frame.setVisible(false);
 	}

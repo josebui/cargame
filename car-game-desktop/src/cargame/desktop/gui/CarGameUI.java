@@ -21,19 +21,39 @@ import javax.swing.Action;
 
 import cargame.error.ShootError;
 
+/**
+ * The Class CarGameUI.
+ */
 public class CarGameUI {
 
+	/** The frm car game. */
 	private JFrame frmCarGame;
+	
+	/** The ip text field. */
 	private JTextField ipTextField;
+	
+	/** The port text field. */
 	private JTextField portTextField;
+	
+	/** The start process. */
 	private final Action startProcess = new SwingAction(this);
+	
+	/** The start game. */
 	private StartGame startGame = null;
+	
+	/** The btn connect play. */
 	private JButton btnConnectPlay;
+	
+	/** The is ip valid. */
 	private boolean isIPValid;
+	
+	/** The is port valid. */
 	private boolean isPortValid;
 	
 	/**
 	 * Launch the application.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		
@@ -54,9 +74,9 @@ public class CarGameUI {
 
 	/**
 	 * Create the application.
-	 * 
-	 * @throws IOException
-	 * @throws HeadlessException
+	 *
+	 * @throws HeadlessException the headless exception
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public CarGameUI() throws HeadlessException, IOException {
 		initialize();
@@ -64,9 +84,9 @@ public class CarGameUI {
 
 	/**
 	 * Initialize the contents of the frame.
-	 * 
-	 * @throws IOException
-	 * @throws HeadlessException
+	 *
+	 * @throws HeadlessException the headless exception
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	private void initialize() throws HeadlessException, IOException {
 		frmCarGame = new JFrame();
@@ -160,6 +180,9 @@ public class CarGameUI {
 		frmCarGame.getContentPane().add(btnConnectPlay);
 	}
 
+	/**
+	 * Toggle button.
+	 */
 	public void toggleButton() {
 		if (btnConnectPlay.isEnabled())
 			btnConnectPlay.setEnabled(false);
@@ -167,19 +190,35 @@ public class CarGameUI {
 			btnConnectPlay.setEnabled(true);
 	}
 	
+	/**
+	 * Bring to front.
+	 */
 	public void bringToFront(){
 		frmCarGame.toFront();
 	}
 
+	/**
+	 * The Class SwingAction.
+	 */
 	private class SwingAction extends AbstractAction {
+		
+		/** The car game ui. */
 		CarGameUI carGameUI;
 
+		/**
+		 * Instantiates a new swing action.
+		 *
+		 * @param carGameUI the car game ui
+		 */
 		public SwingAction(CarGameUI carGameUI) {
 			putValue(NAME, "Connect & Play");
 			putValue(SHORT_DESCRIPTION, "Click to Start Playing");
 			this.carGameUI = carGameUI;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		public void actionPerformed(ActionEvent e) {
 			
 			if(isIPValid && isPortValid)

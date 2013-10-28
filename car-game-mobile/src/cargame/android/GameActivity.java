@@ -12,8 +12,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 
+/**
+ * The Class GameActivity.
+ */
 public class GameActivity extends AndroidApplication {
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,6 +38,9 @@ public class GameActivity extends AndroidApplication {
 		game.setGameCycleListener(new AndroidGameListener(this));
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

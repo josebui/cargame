@@ -9,10 +9,25 @@ import cargame.desktop.listener.DesktopGameListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+/**
+ * The Class Main. 
+ */
 public class Main{
 	
+	/** The app. */
 	private static LwjglApplication app;
 	
+	/**
+	 * Start car game desktop.
+	 *
+	 * @param carGameUI the car game ui
+	 * @param gameId the game id
+	 * @param server the server
+	 * @param serverIp the server ip
+	 * @param lapsNumber the laps number
+	 * @param carType the car type
+	 * @return the lwjgl application
+	 */
 	public static LwjglApplication startCarGameDesktop(CarGameUI carGameUI, String gameId, boolean server, String serverIp, int lapsNumber, int carType){
 		if(CarGame.getInstance() == null){
 			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
@@ -35,6 +50,11 @@ public class Main{
 		return app;
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		
 		boolean server = ("1".equals(args[0]));
@@ -44,6 +64,9 @@ public class Main{
 		startCarGameDesktop(null,"localgame",server,serverIp,CarGame.LAPS_NUMBER,carType);
 	}
 
+	/**
+	 * Restart game.
+	 */
 	public static void restartGame() {
 		startCarGameDesktop(null,"localgame",true,"127.0.0.1",CarGame.LAPS_NUMBER,0);
 	}

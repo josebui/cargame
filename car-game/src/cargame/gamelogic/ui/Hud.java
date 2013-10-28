@@ -25,22 +25,40 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
+/**
+ * The Class Hud.
+ */
 public class Hud {
 
+	/** The game screen. */
 	private GameScreen gameScreen;
 	
+	/** The font. */
 	private BitmapFont font;
 	
+	/** The batch. */
 	private SpriteBatch batch;
 	
+	/** The msg font. */
 	private BitmapFont msgFont;
+	
+	/** The msg tween manager. */
 	private TweenManager msgTweenManager;
+	
+	/** The message. */
 	private String message;
 	
+	/** The show leader board. */
 	private boolean showLeaderBoard;
 
+	/** The sub message. */
 	private String subMessage;
 	
+	/**
+	 * Instantiates a new hud.
+	 *
+	 * @param game the game
+	 */
 	public Hud(GameScreen game) {
 		this.gameScreen = game;
 		this.showLeaderBoard = false;
@@ -65,6 +83,12 @@ public class Hud {
 		});
 	}
 	
+	/**
+	 * Show message.
+	 *
+	 * @param delta the delta
+	 * @param msg the msg
+	 */
 	private void showMessage(float delta, String msg){
 		msgFont.setScale(1f);
 		if(msgTweenManager != null && msgTweenManager.size() == 0){
@@ -98,6 +122,11 @@ public class Hud {
 		}
 	}
 	
+	/**
+	 * Render.
+	 *
+	 * @param delta the delta
+	 */
 	public void render(float delta){
 		Gdx.gl.glEnable(GL10.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -149,6 +178,11 @@ public class Hud {
 		batch.end();
 	}
 	
+	/**
+	 * Render stats.
+	 *
+	 * @param batch the batch
+	 */
 	private void renderStats(SpriteBatch batch){
 //		font.setScale(0.03f, 0.03f);
 		font.setScale(1f, 1f);
@@ -178,6 +212,13 @@ public class Hud {
 		}
 	}
 	
+	/**
+	 * Render leader board.
+	 *
+	 * @param leaderBoardX the leader board x
+	 * @param leaderBoardY the leader board y
+	 * @param batch the batch
+	 */
 	private void renderLeaderBoard(float leaderBoardX, float leaderBoardY,SpriteBatch batch){
 		Map<Integer,Car> allCars = gameScreen.getAllPlayersCars();
 		List<Car> cars = new ArrayList<Car>(allCars.values());
@@ -236,18 +277,35 @@ public class Hud {
 		}
 	}
 	
+	/**
+	 * Dispose.
+	 */
 	public void dispose(){
 		font.dispose();
 		batch.dispose();
 	}
 
+	/**
+	 * Hide leader board.
+	 */
 	public void hideLeaderBoard() {
 		this.showLeaderBoard = false;
 	}
+	
+	/**
+	 * Show leader board.
+	 */
 	public void showLeaderBoard() {
 		this.showLeaderBoard = true;
 	}
 
+	/**
+	 * Show message.
+	 *
+	 * @param msg the msg
+	 * @param color the color
+	 * @param subMsg the sub msg
+	 */
 	public void showMessage(String msg,Color color,String subMsg) {
 		this.message = msg;
 		this.subMessage = subMsg;

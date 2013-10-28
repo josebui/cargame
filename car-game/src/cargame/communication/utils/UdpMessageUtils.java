@@ -13,8 +13,18 @@ import java.net.SocketTimeoutException;
 
 import cargame.communication.messaging.UdpMessage;
 
+
+/**
+ * The Class UdpMessageUtils.
+ */
 public class UdpMessageUtils {
 
+	/**
+	 * Send message.
+	 *
+	 * @param msg the msg
+	 * @param port the port
+	 */
 	public static void sendMessage(UdpMessage msg, int port){
 		DatagramSocket serverSocket = null;
 		try {
@@ -37,6 +47,14 @@ public class UdpMessageUtils {
 		}
 	}
 	
+	/**
+	 * Receive message.
+	 *
+	 * @param port the port
+	 * @param messageLength the message length
+	 * @param timeout the timeout
+	 * @return the udp message
+	 */
 	public static UdpMessage receiveMessage(int port, int messageLength, int timeout){
 		DatagramSocket serverSocket = null;
 		UdpMessage message = null;
