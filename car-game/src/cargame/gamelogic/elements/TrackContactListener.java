@@ -1,4 +1,4 @@
-package cargame.elements;
+package cargame.gamelogic.elements;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,8 +12,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
 import cargame.CarGame;
-import cargame.screens.GameScreen;
-import cargame.utils.Box2DUtils;
+import cargame.gamelogic.screens.GameScreen;
+import cargame.gamelogic.utils.Box2DUtils;
 
 public class TrackContactListener implements ContactListener {
 

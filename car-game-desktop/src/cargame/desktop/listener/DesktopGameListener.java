@@ -5,7 +5,7 @@ import org.lwjgl.opengl.Display;
 
 import cargame.desktop.Main;
 import cargame.desktop.gui.CarGameUI;
-import cargame.listeners.GameCycleListener;
+import cargame.gamelogic.listeners.GameCycleListener;
 
 public class DesktopGameListener implements GameCycleListener {
 

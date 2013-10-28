@@ -1,4 +1,4 @@
-package cargame.ui;
+package cargame.gamelogic.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,8 +12,8 @@ import aurelienribon.tweenengine.TweenAccessor;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import cargame.CarGame;
-import cargame.elements.Car;
-import cargame.screens.GameScreen;
+import cargame.gamelogic.elements.Car;
+import cargame.gamelogic.screens.GameScreen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

@@ -1,9 +1,9 @@
-package cargame.elements;
+package cargame.gamelogic.elements;
 
 import cargame.communication.MovingPosition;
 import cargame.communication.Player;
-import cargame.screens.GameScreen;
-import cargame.utils.Box2DUtils;
+import cargame.gamelogic.screens.GameScreen;
+import cargame.gamelogic.utils.Box2DUtils;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;

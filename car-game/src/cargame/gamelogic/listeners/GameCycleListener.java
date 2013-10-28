@@ -1,4 +1,4 @@
-package cargame.listeners;
+package cargame.gamelogic.listeners;
 
 public interface GameCycleListener {
 	void endGame();

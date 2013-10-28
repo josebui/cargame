@@ -1,7 +1,7 @@
 package cargame.android.listener;
 
 import cargame.android.GameActivity;
-import cargame.listeners.GameCycleListener;
+import cargame.gamelogic.listeners.GameCycleListener;
 
 public class AndroidGameListener implements GameCycleListener {
 

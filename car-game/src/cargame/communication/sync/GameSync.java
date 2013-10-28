@@ -1,4 +1,4 @@
-package cargame.sync;
+package cargame.communication.sync;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

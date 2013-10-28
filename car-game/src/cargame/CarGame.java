@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import cargame.communication.Player;
-import cargame.listeners.GameCycleListener;
-import cargame.screens.GameScreen;
-import cargame.sync.GameSync;
+import cargame.communication.sync.GameSync;
+import cargame.gamelogic.listeners.GameCycleListener;
+import cargame.gamelogic.screens.GameScreen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;

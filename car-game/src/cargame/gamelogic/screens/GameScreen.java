@@ -1,4 +1,4 @@
-package cargame.screens;
+package cargame.gamelogic.screens;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,11 +7,11 @@ import java.util.Map;
 
 import cargame.CarGame;
 import cargame.communication.Player;
-import cargame.elements.Car;
-import cargame.elements.Element;
-import cargame.elements.TrackContactListener;
-import cargame.ui.Hud;
-import cargame.utils.BodyEditorLoader;
+import cargame.gamelogic.elements.Car;
+import cargame.gamelogic.elements.Element;
+import cargame.gamelogic.elements.TrackContactListener;
+import cargame.gamelogic.ui.Hud;
+import cargame.gamelogic.utils.BodyEditorLoader;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
