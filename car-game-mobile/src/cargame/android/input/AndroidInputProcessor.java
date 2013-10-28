@@ -87,6 +87,9 @@ public class AndroidInputProcessor implements InputProcessor {
 		if(game.checkStatus(CarGame.STATUS_GAME_OVER) || game.isConnectionLost()){
 			game.addAction(CarGame.ACTION_SPACE);
 		}
+		if(game.checkStatus(CarGame.STATUS_WAITING) || game.isWaitStop()){
+			game.addAction(CarGame.ACTION_SPACE);
+		}
 		Point size = getScreenSize();
 		if(screenX > size.x/2){ // Right side
 			this.touchStart.get(0).put(pointer, new Point(screenX, screenY));
