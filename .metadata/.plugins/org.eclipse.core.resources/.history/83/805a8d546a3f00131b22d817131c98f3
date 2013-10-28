@@ -92,6 +92,7 @@ public class GUI {
 		
 		textField = new JTextField();
 		textField.setEditable(false);
+		textField.setText("Running on localhost");
 		textField.setBounds(77, 11, 180, 20);
 		frmTrackerCar.getContentPane().add(textField);
 		textField.setColumns(10);
@@ -115,7 +116,7 @@ public class GUI {
 		//textPane = new JTextPane();
 	    textArea.setEditable(false);
 	    scrollPane.setBounds(10, 104, 287, 120);
-	    Console.redirectOutput( textArea );
+	    //Console.redirectOutput( textArea );
 		frmTrackerCar.getContentPane().add(scrollPane);
 		
 		lblCarGameTracker = new JLabel("Car Game Tracker - Team 1");
@@ -128,10 +129,9 @@ public class GUI {
 		public SwingAction(GUI guiObject) {
 			this.guiObject = guiObject;
 			putValue(NAME, "Start");
-			putValue(SHORT_DESCRIPTION, "Some short description");
+			putValue(SHORT_DESCRIPTION, "Starting the tracker");
 		}
 		public void actionPerformed(ActionEvent e) {
-			Console.redirectOutput( textArea );
 			toggleButtons();
 			System.out.println("Started...");
 			tracker = new Tracker(guiObject);
@@ -143,7 +143,7 @@ public class GUI {
 
 		public SwingAction_1() {
 			putValue(NAME, "Stop");
-			putValue(SHORT_DESCRIPTION, "Some short description");
+			putValue(SHORT_DESCRIPTION, "Stopping the tracker");
 		}
 		public void actionPerformed(ActionEvent e) {
 			tracker.stopTracker();
@@ -160,5 +160,9 @@ public class GUI {
 			btnStart.setEnabled(true);
 			btnStop.setEnabled(false);
 		}
+	}
+	
+	public void outputLog(String message){
+		textArea.append(message+"\n");
 	}
 }

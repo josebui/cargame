@@ -70,9 +70,9 @@ public class Tracker extends Thread {
 			socket.receive(packet);
 			String receivedMSG = new String(packet.getData(), 0,
 					packet.getLength());
-			//guiObject.outputLog(receivedMSG);
+			guiObject.outputLog(receivedMSG);
 			myAddressAsClientSees = receivedMSG.split("!")[0];
-			//guiObject.outputLog(myAddressAsClientSees);
+			guiObject.outputLog(myAddressAsClientSees);
 			WaitingPeer wp = new WaitingPeer();
 			wp.address = packet.getAddress().getHostAddress();
 			guiObject.outputLog("Request from "+wp.address);

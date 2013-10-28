@@ -15,4 +15,6 @@
 <fullyQualifiedTypeName name="StartGame"/>
 <fullyQualifiedTypeName name="cargame.Main"/>
 <fullyQualifiedTypeName name="ShootError"/>
+<fullyQualifiedTypeName name="java.lang.Thread"/>
+<fullyQualifiedTypeName name="cargame.desktop.gui.ShootError"/>
 </qualifiedTypeNameHistroy>

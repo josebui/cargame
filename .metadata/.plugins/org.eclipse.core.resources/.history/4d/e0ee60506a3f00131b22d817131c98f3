@@ -92,7 +92,7 @@ public class GUI {
 		
 		textField = new JTextField();
 		textField.setEditable(false);
-		textField.setText("Running on localhost...");
+		textField.setText("LocalHost");
 		textField.setBounds(77, 11, 180, 20);
 		frmTrackerCar.getContentPane().add(textField);
 		textField.setColumns(10);
