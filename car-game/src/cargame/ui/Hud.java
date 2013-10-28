@@ -24,7 +24,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.MathUtils;
 
 public class Hud {
 
@@ -83,11 +82,9 @@ public class Hud {
 		}else if(msgTweenManager.size() != 0){
 			msgTweenManager.update(delta);
 		}
-		float msgX = this.gameScreen.getFixedCamera().viewportWidth /2.0f;
-		msgX -= ((msg.length()*20)/2.0); 
 		float msgY = this.gameScreen.getFixedCamera().viewportHeight/2.0f;
 		
-		msgX = this.gameScreen.getFixedCamera().viewportWidth /2.0f - 500;
+		float msgX = this.gameScreen.getFixedCamera().viewportWidth /2.0f - 500;
 		msgFont.drawMultiLine(batch, msg, msgX,msgY,1000,BitmapFont.HAlignment.CENTER);
 		if(this.subMessage != null){
 			
@@ -95,8 +92,6 @@ public class Hud {
 			
 			Color msgColor = msgFont.getColor();
 			msgFont.setScale(0.3f);
-			float subMsgX = this.gameScreen.getFixedCamera().viewportWidth /2.0f;
-			subMsgX -= ((subMessage.length()*20*msgFont.getScaleX())/2.0);
 			msgFont.setColor(0.11f, 0.79f, 0.8f, 0.9f);
 			msgFont.drawMultiLine(batch, this.subMessage, msgX,msgY-70,1000,BitmapFont.HAlignment.CENTER);
 			msgFont.setColor(msgColor);
