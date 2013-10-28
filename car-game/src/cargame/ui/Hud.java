@@ -86,7 +86,9 @@ public class Hud {
 		float msgX = this.gameScreen.getFixedCamera().viewportWidth /2.0f;
 		msgX -= ((msg.length()*20)/2.0); 
 		float msgY = this.gameScreen.getFixedCamera().viewportHeight/2.0f;
-		msgFont.draw(batch, msg, msgX,msgY);
+		
+		msgX = this.gameScreen.getFixedCamera().viewportWidth /2.0f - 500;
+		msgFont.drawMultiLine(batch, msg, msgX,msgY,1000,BitmapFont.HAlignment.CENTER);
 		if(this.subMessage != null){
 			
 			 
@@ -96,7 +98,7 @@ public class Hud {
 			float subMsgX = this.gameScreen.getFixedCamera().viewportWidth /2.0f;
 			subMsgX -= ((subMessage.length()*20*msgFont.getScaleX())/2.0);
 			msgFont.setColor(0.11f, 0.79f, 0.8f, 0.9f);
-			msgFont.draw(batch, this.subMessage, subMsgX,msgY-70);
+			msgFont.drawMultiLine(batch, this.subMessage, msgX,msgY-70,1000,BitmapFont.HAlignment.CENTER);
 			msgFont.setColor(msgColor);
 		}
 	}
